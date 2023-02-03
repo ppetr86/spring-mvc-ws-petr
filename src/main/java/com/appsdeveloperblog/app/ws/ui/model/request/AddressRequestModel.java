@@ -14,6 +14,4 @@ public class AddressRequestModel {
 	private String country;
 	private String streetName;
 	private String postalCode;
-	private String type;
-
 }

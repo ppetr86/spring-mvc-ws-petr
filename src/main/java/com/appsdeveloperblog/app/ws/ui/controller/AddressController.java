@@ -5,6 +5,7 @@ import com.appsdeveloperblog.app.ws.service.AddressService;
 import com.appsdeveloperblog.app.ws.service.UserService;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
+import com.appsdeveloperblog.app.ws.shared.dto.EnvelopeCollectionOut;
 import com.appsdeveloperblog.app.ws.ui.model.request.AddressRequestModel;
 import com.appsdeveloperblog.app.ws.ui.model.response.ErrorMessages;
 import com.appsdeveloperblog.app.ws.ui.model.response.OperationStatusModel;
@@ -13,8 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -82,17 +81,17 @@ public class AddressController {
     }
 
     @GetMapping
-    public List<AddressDtoOut> getAddresses(@RequestParam(defaultValue = "1") int page,
-                                           @RequestParam(defaultValue = "25", required = false) int limit,
-                                           @RequestParam(defaultValue = "", required = false) String addressId,
-                                           @RequestParam(defaultValue = "", required = false) String city,
-                                           @RequestParam(defaultValue = "", required = false) String country,
-                                           @RequestParam(defaultValue = "", required = false) String streetName,
-                                           @RequestParam(defaultValue = "", required = false) String postalCode) {
+    public EnvelopeCollectionOut<AddressDtoOut> getAddresses(@RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "25", required = false) int limit,
+                                                             @RequestParam(defaultValue = "", required = false) String addressId,
+                                                             @RequestParam(defaultValue = "", required = false) String city,
+                                                             @RequestParam(defaultValue = "", required = false) String country,
+                                                             @RequestParam(defaultValue = "", required = false) String streetName,
+                                                             @RequestParam(defaultValue = "", required = false) String postalCode) {
 
-        List<AddressDtoOut> returnValue = addressService.getAddresss(page, limit, addressId, city, country, streetName, postalCode);
+        var returnValue = addressService.getAddresss(page, limit, addressId, city, country, streetName, postalCode);
 
-        return returnValue;
+        return new EnvelopeCollectionOut<>(returnValue);
     }
 
 

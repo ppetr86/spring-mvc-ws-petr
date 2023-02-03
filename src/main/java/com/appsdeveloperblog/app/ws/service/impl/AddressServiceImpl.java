@@ -4,6 +4,9 @@ import com.appsdeveloperblog.app.ws.io.entity.address.AddressEntity;
 import com.appsdeveloperblog.app.ws.io.repository.AddressRepository;
 import com.appsdeveloperblog.app.ws.io.repository.UserRepository;
 import com.appsdeveloperblog.app.ws.service.AddressService;
+import com.appsdeveloperblog.app.ws.service.specification.GenericSpecification;
+import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
+import com.appsdeveloperblog.app.ws.service.specification.SpecificationFactory;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
 import lombok.AllArgsConstructor;
@@ -11,8 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
@@ -26,6 +27,8 @@ public class AddressServiceImpl implements AddressService {
     private AddressRepository addressRepository;
 
     private UserRepository userRepository;
+
+    private SpecificationFactory<AddressEntity> addressSpecificationFactory;
 
     @Override
     public List<AddressDtoIn> getAddresses(final String userId) {
@@ -80,36 +83,38 @@ public class AddressServiceImpl implements AddressService {
     public List<AddressDtoOut> getAddresss(final int page, final int limit, final String addressId, final String city,
                                            final String country, final String streetName, final String postalCode) {
 
-        Specification<AddressEntity> addressIdSpec = ((root, query, criteriaBuilder) -> {
-            return criteriaBuilder.like(root.get("addressId"), addressId);
-        });
+        //https://medium.com/fleetx-engineering/searching-and-filtering-spring-data-jpa-specification-way-e22bc055229a
+        GenericSpecificationsBuilder<AddressEntity> addressSpecBuilder = new GenericSpecificationsBuilder();
 
-        Specification<AddressEntity> citySpec =
-                (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("city"), city);
+        if (!addressId.isBlank()) {
+            addressSpecBuilder.with("addressId",
+                    GenericSpecification.SearchOperation.LIKE,
+                    true,
+                    List.of(addressId));
+        }
 
-        Specification<AddressEntity> countrySpec =
-                (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("country"), country);
+        if (!city.isBlank()) {
+            addressSpecBuilder.with(addressSpecificationFactory.isLike("city", city));
+        }
 
-        Specification<AddressEntity> streetNameSpec =
-                (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("streetName"), streetName);
+        if (!country.isBlank()) {
+            addressSpecBuilder.with(addressSpecificationFactory.isLike("country", country));
+        }
 
-        Specification<AddressEntity> postalCodeSpec =
-                (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("postalCode"), postalCode);
+        if (!streetName.isBlank()) {
+            addressSpecBuilder.with(addressSpecificationFactory.isLike("streetName", streetName));
+        }
 
-        Pageable pageable = PageRequest.of(page - 1, limit);
+        if (!postalCode.isBlank()) {
+            addressSpecBuilder.with(addressSpecificationFactory.isLike("postalCode", postalCode));
+        }
 
-        Specification<AddressEntity> findAllSpecification =  Specification.where(addressIdSpec)
-                .and(citySpec)
-                .and(countrySpec)
-                .and(streetNameSpec)
-                .and(postalCodeSpec);
-        Page<AddressEntity> foundBySpec = addressRepository.findAll(pageable);
+        Page<AddressEntity> foundBySpec = addressRepository.findAll(
+                addressSpecBuilder.build(),
+                PageRequest.of(page - 1, limit));
 
-        var returnValue = new ArrayList<AddressDtoOut>();
-        Type listType = new TypeToken<List<AddressDtoOut>>() {
-        }.getType();
-        returnValue = new ModelMapper().map(foundBySpec.get(), listType);
-
+        List<AddressDtoOut> returnValue = new ArrayList<>(foundBySpec.getSize());
+        foundBySpec.get().forEach(each -> returnValue.add(new AddressDtoOut(each)));
         return returnValue;
     }
 

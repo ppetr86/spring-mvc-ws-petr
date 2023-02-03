@@ -19,6 +19,4 @@ public abstract class IdBasedEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
 
-
-
 }

@@ -36,6 +36,9 @@ public class InitialUsersSetup {
 
     AddressRepository addressRepository;
 
+    private final int userIdDefaultLength = 10;
+
+
     @EventListener
     @Transactional
     public void onApplicationEvent(ApplicationReadyEvent event) {
@@ -80,7 +83,7 @@ public class InitialUsersSetup {
         adminUser.setLastName(Novotny);
         adminUser.setEmail(email);
         adminUser.setEmailVerificationStatus(true);
-        adminUser.setUserId(utils.generateUserId(30));
+        adminUser.setUserId(utils.generateUserId(userIdDefaultLength));
         adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
         adminUser.setRoles(List.of(roleAdmin));
         adminUser.setAddresses(getAddresses(adminUser));
@@ -96,11 +99,11 @@ public class InitialUsersSetup {
         var faker = new Faker();
         for (int i = 0; i < quantity; i++) {
             var randomUser = new UserEntity();
-            randomUser.setUserId(utils.generateUserId(10));
+            randomUser.setUserId(utils.generateUserId(userIdDefaultLength));
             randomUser.setFirstName(faker.name().firstName());
             randomUser.setLastName(faker.name().lastName());
             randomUser.setEmail(randomUser.getFirstName() + randomUser.getLastName() + "@test.com");
-            randomUser.setEncryptedPassword("1234");
+            randomUser.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
             randomUser.setRoles(List.of(role));
             randomUser.setAddresses(List.of(addressList.get(randomObj.nextInt(addressList.size()))));
             if (!userRepository.existsByEmail(randomUser.getEmail())) {
