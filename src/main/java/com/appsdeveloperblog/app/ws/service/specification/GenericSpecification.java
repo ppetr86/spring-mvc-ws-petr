@@ -1,33 +1,18 @@
 package com.appsdeveloperblog.app.ws.service.specification;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.data.jpa.domain.Specification;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.util.List;
 
 public class GenericSpecification<T> implements Specification<T> {
 
-    @Data
-    @AllArgsConstructor
-    public static class SearchCriteria {
-
-        private String key;
-        private SearchOperation searchOperation;
-        private boolean isOrOperation;
-        private List<Object> arguments;
-    }
-
-    public enum SearchOperation {
-        EQUALITY, NEGATION, GREATER_THAN, LESS_THAN, LIKE, STARTS_WITH, IN
-    }
-
     private SearchCriteria searchCriteria;
-
 
     public GenericSpecification(final SearchCriteria searchCriteria) {
         super();
@@ -45,8 +30,25 @@ public class GenericSpecification<T> implements Specification<T> {
             case IN -> root.get(searchCriteria.getKey()).in(arguments);
             case NEGATION -> cb.not(root.get(searchCriteria.getKey()));
             case LESS_THAN -> cb.lessThan(root.get(searchCriteria.getKey()), (Comparable) arg);
-            case LIKE -> criteriaQuery.where(cb.like(root.<String>get(searchCriteria.getKey()), "%" + arg + "%")).getRestriction();
-            case STARTS_WITH -> criteriaQuery.where(cb.like(root.<String>get(searchCriteria.getKey()), arg + "%")).getRestriction();
+            case LIKE ->
+                    criteriaQuery.where(cb.like(root.<String>get(searchCriteria.getKey()), "%" + arg + "%")).getRestriction();
+            case STARTS_WITH ->
+                    criteriaQuery.where(cb.like(root.<String>get(searchCriteria.getKey()), arg + "%")).getRestriction();
         };
+    }
+
+
+    public enum SearchOperation {
+        EQUALITY, NEGATION, GREATER_THAN, LESS_THAN, LIKE, STARTS_WITH, IN
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class SearchCriteria {
+
+        private String key;
+        private SearchOperation searchOperation;
+        private boolean isOrOperation;
+        private List<Object> arguments;
     }
 }

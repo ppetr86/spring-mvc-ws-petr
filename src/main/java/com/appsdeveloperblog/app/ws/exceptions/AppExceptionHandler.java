@@ -18,7 +18,7 @@ public class AppExceptionHandler {
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(value = {AddressServiceException.class})
+    @ExceptionHandler(value = {AddressServiceException.class, InvalidParameterException.class})
     public ResponseEntity<Object> handleAddressServiceException(UserServiceException ex, WebRequest req) {
         var errorMessage = new ErrorMessage(new Date(), ex.getMessage());
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.BAD_REQUEST);

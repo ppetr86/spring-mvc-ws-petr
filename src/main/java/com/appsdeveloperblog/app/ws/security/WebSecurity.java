@@ -1,6 +1,6 @@
 package com.appsdeveloperblog.app.ws.security;
 
-import com.appsdeveloperblog.app.ws.io.repository.UserRepository;
+import com.appsdeveloperblog.app.ws.repository.UserRepository;
 import com.appsdeveloperblog.app.ws.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

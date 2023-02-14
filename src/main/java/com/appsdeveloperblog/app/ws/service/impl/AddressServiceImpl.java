@@ -1,9 +1,10 @@
 package com.appsdeveloperblog.app.ws.service.impl;
 
-import com.appsdeveloperblog.app.ws.io.entity.address.AddressEntity;
-import com.appsdeveloperblog.app.ws.io.repository.AddressRepository;
-import com.appsdeveloperblog.app.ws.io.repository.UserRepository;
+import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
+import com.appsdeveloperblog.app.ws.repository.AddressRepository;
 import com.appsdeveloperblog.app.ws.service.AddressService;
+import com.appsdeveloperblog.app.ws.service.UserService;
+import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdBasedServiceImpl;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecification;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
 import com.appsdeveloperblog.app.ws.service.specification.SpecificationFactory;
@@ -11,22 +12,21 @@ import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class AddressServiceImpl implements AddressService {
+public class AddressServiceImpl extends AbstractIdBasedServiceImpl<AddressEntity> implements AddressService {
 
     private AddressRepository addressRepository;
 
-    private UserRepository userRepository;
+    private UserService userService;
 
     private SpecificationFactory<AddressEntity> addressSpecificationFactory;
 
@@ -34,7 +34,7 @@ public class AddressServiceImpl implements AddressService {
     public List<AddressDtoIn> getAddresses(final String userId) {
         var returnValue = new ArrayList<AddressDtoIn>();
 
-        var user = userRepository.findByUserId(userId);
+        var user = userService.findByUserId(userId);
         if (user == null)
             return returnValue;
 
@@ -61,17 +61,38 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public AddressDtoOut findByAddressId(final String addressId) {
-        return null;
+        var byAddressId = addressRepository.findByAddressId(addressId);
+        var addressDtoOut = new AddressDtoOut(byAddressId);
+        return addressDtoOut;
     }
 
     @Override
     public AddressDtoOut createAddress(final AddressDtoIn addressDtoIn) {
-        return null;
+        var addressEntity = new AddressEntity(addressDtoIn);
+        var persisted = addressRepository.save(addressEntity);
+        var dtoOut = new AddressDtoOut(persisted);
+        return dtoOut;
     }
 
+    @Transactional
     @Override
     public AddressDtoOut updateAddressByAddressId(final String addressId, AddressDtoIn dto) {
-        return null;
+        var foundByAddressid = addressRepository.findByAddressId(addressId);
+        if (!dto.getCity().isBlank())
+            foundByAddressid.setCity(dto.getCity());
+
+        if (!dto.getPostalCode().isBlank())
+            foundByAddressid.setPostalCode(dto.getPostalCode());
+
+        if (!dto.getCountry().isBlank())
+            foundByAddressid.setCountry(dto.getCountry());
+
+        if (!dto.getStreetName().isBlank())
+            foundByAddressid.setStreetName(dto.getStreetName());
+
+        var patched = addressRepository.save(foundByAddressid);
+
+        return new AddressDtoOut(patched);
     }
 
     @Override
@@ -80,8 +101,8 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<AddressDtoOut> getAddresss(final int page, final int limit, final String addressId, final String city,
-                                           final String country, final String streetName, final String postalCode) {
+    public List<AddressDtoOut> getAddress(final int page, final int limit, final String addressId, final String city,
+                                          final String country, final String streetName, final String postalCode) {
 
         //https://medium.com/fleetx-engineering/searching-and-filtering-spring-data-jpa-specification-way-e22bc055229a
         GenericSpecificationsBuilder<AddressEntity> addressSpecBuilder = new GenericSpecificationsBuilder();
@@ -116,6 +137,16 @@ public class AddressServiceImpl implements AddressService {
         List<AddressDtoOut> returnValue = new ArrayList<>(foundBySpec.getSize());
         foundBySpec.get().forEach(each -> returnValue.add(new AddressDtoOut(each)));
         return returnValue;
+    }
+
+    @Override
+    public AddressRepository getRepository() {
+        return this.addressRepository;
+    }
+
+    @Override
+    public Class<AddressEntity> getPojoClass() {
+        return AddressEntity.class;
     }
 
 

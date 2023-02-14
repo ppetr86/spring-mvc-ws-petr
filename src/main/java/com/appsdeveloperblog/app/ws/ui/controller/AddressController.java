@@ -27,10 +27,10 @@ public class AddressController {
 
     //default return format is MediaType.APPLICATION_XML_VALUE or APPLICATION_JSON_VALUE. Depends on accept header
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public AddressDtoOut getAddress(@PathVariable String addressId) {
+    public AddressDtoOut getAddressById(@PathVariable String id) {
 
         var returnValue = new AddressDtoOut();
-        var addressDto = addressService.findByAddressId(addressId);
+        var addressDto = addressService.findByAddressId(id);
         BeanUtils.copyProperties(addressDto, returnValue);
         return returnValue;
     }
@@ -89,7 +89,7 @@ public class AddressController {
                                                              @RequestParam(defaultValue = "", required = false) String streetName,
                                                              @RequestParam(defaultValue = "", required = false) String postalCode) {
 
-        var returnValue = addressService.getAddresss(page, limit, addressId, city, country, streetName, postalCode);
+        var returnValue = addressService.getAddress(page, limit, addressId, city, country, streetName, postalCode);
 
         return new EnvelopeCollectionOut<>(returnValue);
     }

@@ -1,6 +1,6 @@
 package com.appsdeveloperblog.app.ws.shared.dto;
 
-import com.appsdeveloperblog.app.ws.io.entity.address.AddressEntity;
+import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,18 +1,19 @@
 package com.appsdeveloperblog.app.ws;
 
-import com.appsdeveloperblog.app.ws.io.entity.AuthorityEntity;
-import com.appsdeveloperblog.app.ws.io.entity.RoleEntity;
-import com.appsdeveloperblog.app.ws.io.entity.UserEntity;
-import com.appsdeveloperblog.app.ws.io.entity.address.AddressEntity;
-import com.appsdeveloperblog.app.ws.io.repository.AddressRepository;
-import com.appsdeveloperblog.app.ws.io.repository.AuthorityRepository;
-import com.appsdeveloperblog.app.ws.io.repository.RoleRepository;
-import com.appsdeveloperblog.app.ws.io.repository.UserRepository;
+import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
+import com.appsdeveloperblog.app.ws.data.entity.AuthorityEntity;
+import com.appsdeveloperblog.app.ws.data.entity.RoleEntity;
+import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
+import com.appsdeveloperblog.app.ws.service.AddressService;
+import com.appsdeveloperblog.app.ws.service.AuthorityService;
+import com.appsdeveloperblog.app.ws.service.RoleService;
+import com.appsdeveloperblog.app.ws.service.UserService;
 import com.appsdeveloperblog.app.ws.shared.Roles;
 import com.appsdeveloperblog.app.ws.shared.Utils;
 import com.github.javafaker.Faker;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -22,19 +23,20 @@ import java.util.*;
 
 @Component
 @AllArgsConstructor
+@DependsOn("initialAddressSetup")
 public class InitialUsersSetup {
 
-    AuthorityRepository authorityRepository;
+    AuthorityService authorityService;
 
-    RoleRepository roleRepository;
+    RoleService<RoleEntity> roleService;
 
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     Utils utils;
 
-    UserRepository userRepository;
+    UserService userService;
 
-    AddressRepository addressRepository;
+    AddressService addressService;
 
     private final int userIdDefaultLength = 10;
 
@@ -44,7 +46,8 @@ public class InitialUsersSetup {
     public void onApplicationEvent(ApplicationReadyEvent event) {
         System.out.println("From Application ready event InitialUsersSetup...");
 
-        if (userRepository.count() >= 50)
+        long count = userService.getCount();
+        if (count >= 50)
             System.out.println("From Application ready event InitialUsersSetup...Will not create users");
         else {
             var readAuthority = createAuthority("READ_AUTHORITY");
@@ -58,18 +61,18 @@ public class InitialUsersSetup {
             var adminUser = new UserEntity();
             setUserProperties(adminUser, "Petr", "Novotny", "test@test.com", roleAdmin);
 
-            UserEntity storedUserDetails = userRepository.findByEmail("test@test.com");
+            UserEntity storedUserDetails = userService.findByEmail("test@test.com");
             if (storedUserDetails == null) {
-                userRepository.save(adminUser);
+                userService.save(adminUser);
             }
 
             var roleUser = createRole(Roles.ROLE_USER.name(), Arrays.asList(readAuthority, writeAuthority));
             var userUser = new UserEntity();
             setUserProperties(userUser, "Ivana", "Michalova", "ivana@test.com", roleUser);
 
-            var storedUserUserDetails = userRepository.findByEmail("ivana@test.com");
+            var storedUserUserDetails = userService.findByEmail("ivana@test.com");
             if (storedUserUserDetails == null) {
-                userRepository.save(userUser);
+                userService.save(userUser);
             }
 
             createRandomUsers(50, roleUser);
@@ -85,47 +88,50 @@ public class InitialUsersSetup {
         adminUser.setEmailVerificationStatus(true);
         adminUser.setUserId(utils.generateUserId(userIdDefaultLength));
         adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
-        adminUser.setRoles(List.of(roleAdmin));
+        adminUser.setRoles(Set.of(roleAdmin));
         adminUser.setAddresses(getAddresses(adminUser));
     }
 
     @Transactional
     void createRandomUsers(int quantity, RoleEntity role) {
 
-        var addressList = new ArrayList<>(addressRepository.findAll());
+        var addressList = new ArrayList<>(addressService.loadAll());
         var randomObj = new Random();
-        var resultSet = new HashSet<UserEntity>();
-
         var faker = new Faker();
+
         for (int i = 0; i < quantity; i++) {
-            var randomUser = new UserEntity();
-            randomUser.setUserId(utils.generateUserId(userIdDefaultLength));
-            randomUser.setFirstName(faker.name().firstName());
-            randomUser.setLastName(faker.name().lastName());
-            randomUser.setEmail(randomUser.getFirstName() + randomUser.getLastName() + "@test.com");
-            randomUser.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
-            randomUser.setRoles(List.of(role));
-            randomUser.setAddresses(List.of(addressList.get(randomObj.nextInt(addressList.size()))));
-            if (!userRepository.existsByEmail(randomUser.getEmail())) {
-                resultSet.add(randomUser);
+            var currentUser = new UserEntity();
+            currentUser.setUserId(utils.generateUserId(userIdDefaultLength));
+            currentUser.setFirstName(faker.name().firstName());
+            currentUser.setLastName(faker.name().lastName());
+            currentUser.setEmail(currentUser.getFirstName() + currentUser.getLastName() + "@test.com");
+            currentUser.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
+            currentUser.setRoles(Set.of(role));
+            var randomAddress = addressList.get(randomObj.nextInt(addressList.size()));
+            currentUser.setAddresses(Set.of(randomAddress));
+            if (!userService.existsByEmail(currentUser.getEmail())) {
+                userService.save(currentUser);
+                //save the user first, setUser on address later
+                randomAddress.setUser(currentUser);
             }
         }
-        userRepository.saveAll(resultSet);
     }
 
-    private List<AddressEntity> getAddresses(UserEntity userUser) {
-        return List.of(new AddressEntity(utils.generateAddressId(5),
+    private Set<AddressEntity> getAddresses(UserEntity userUser) {
+        AddressEntity addressEntity = new AddressEntity(utils.generateId(5),
                 "Praha", "Czech republic",
-                "Kocianova", "155 00"));
+                "Kocianova", "155 00");
+        addressEntity.setUser(userUser);
+        return Set.of(addressEntity);
     }
 
     @Transactional
     AuthorityEntity createAuthority(String name) {
 
-        AuthorityEntity authority = authorityRepository.findByName(name);
+        AuthorityEntity authority = authorityService.findByName(name);
         if (authority == null) {
             authority = new AuthorityEntity(name);
-            authorityRepository.save(authority);
+            authorityService.save(authority);
         }
         return authority;
     }
@@ -133,11 +139,11 @@ public class InitialUsersSetup {
     @Transactional
     RoleEntity createRole(String name, Collection<AuthorityEntity> authorities) {
 
-        RoleEntity role = roleRepository.findByName(name);
+        RoleEntity role = roleService.findByName(name);
         if (role == null) {
             role = new RoleEntity(name);
             role.setAuthorities(authorities);
-            roleRepository.save(role);
+            roleService.save(role);
         }
         return role;
     }

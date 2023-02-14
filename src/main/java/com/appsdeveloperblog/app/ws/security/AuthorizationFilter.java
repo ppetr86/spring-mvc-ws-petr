@@ -1,6 +1,6 @@
 package com.appsdeveloperblog.app.ws.security;
 
-import com.appsdeveloperblog.app.ws.io.repository.UserRepository;
+import com.appsdeveloperblog.app.ws.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -46,8 +46,8 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
             token = token.replace(SecurityConstants.TOKEN_PREFIX, "");
 
-            String user = Jwts.parser()
-                    .setSigningKey(SecurityConstants.getTokenSecret().getBytes())
+            String user = Jwts.parserBuilder()
+                    .setSigningKey(SecurityConstants.getTokenSecret().getBytes()).build()
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();

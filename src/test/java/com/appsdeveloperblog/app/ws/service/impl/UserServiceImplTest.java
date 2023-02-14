@@ -1,8 +1,8 @@
 package com.appsdeveloperblog.app.ws.service.impl;
 
 import com.appsdeveloperblog.app.ws.shared.Utils;
-import com.appsdeveloperblog.app.ws.io.entity.UserEntity;
-import com.appsdeveloperblog.app.ws.io.repository.UserRepository;
+import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
+import com.appsdeveloperblog.app.ws.repository.UserRepository;
 import com.appsdeveloperblog.app.ws.shared.AmazonSES;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoIn;
@@ -53,9 +53,9 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        userEntity = new UserEntity(1L, userId, "Petr",
+        userEntity = new UserEntity(userId, "Petr",
                 "Novotny", "test@test.com", encryptedPassword, "456",
-                true, Collections.emptyList());
+                true, Collections.emptySet(), Collections.emptySet(), Collections.emptySet());
 
         userDtoIn = new UserDtoIn(1l, userId, "Petr", "Novotny",
                 "test@test.com", encryptedPassword, encryptedPassword, "456",
@@ -72,7 +72,7 @@ class UserServiceImplTest {
     @Test
     final void testCreateUser() {
         when(userRepository.findByEmail(anyString())).thenReturn(null);
-        when(utils.generateAddressId(anyInt())).thenReturn("hgfnghtyrir884");
+        when(utils.generateId(anyInt())).thenReturn("hgfnghtyrir884");
         when(utils.generateUserId(anyInt())).thenReturn(userId);
         when(bCryptPasswordEncoder.encode(anyString())).thenReturn(encryptedPassword);
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
@@ -101,14 +101,12 @@ class UserServiceImplTest {
 
     List<AddressDtoIn> getAddressesDto() {
         AddressDtoIn addressDto = new AddressDtoIn();
-        addressDto.setType("shipping");
         addressDto.setCity("Vancouver");
         addressDto.setCountry("Canada");
         addressDto.setPostalCode("ABC123");
         addressDto.setStreetName("123 Street name");
 
         AddressDtoIn billingAddressDto = new AddressDtoIn();
-        billingAddressDto.setType("billling");
         billingAddressDto.setCity("Vancouver");
         billingAddressDto.setCountry("Canada");
         billingAddressDto.setPostalCode("ABC123");
@@ -125,9 +123,9 @@ class UserServiceImplTest {
 
     @Test
     void getUser() {
-        var userFromRepo = new UserEntity(1L, "123", "A",
+        var userFromRepo = new UserEntity("123", "A",
                 "B", "test@test.com", "123", "456",
-                true, Collections.emptyList());
+                true, Collections.emptySet(),Collections.emptySet(), Collections.emptySet());
 
         when(userRepository.findByEmail(anyString())).thenReturn(userFromRepo);
 

@@ -1,8 +1,8 @@
 package com.appsdeveloperblog.app.ws.security;
 
-import com.appsdeveloperblog.app.ws.io.entity.AuthorityEntity;
-import com.appsdeveloperblog.app.ws.io.entity.RoleEntity;
-import com.appsdeveloperblog.app.ws.io.entity.UserEntity;
+import com.appsdeveloperblog.app.ws.data.entity.AuthorityEntity;
+import com.appsdeveloperblog.app.ws.data.entity.RoleEntity;
+import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

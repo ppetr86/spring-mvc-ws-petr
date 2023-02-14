@@ -1,14 +1,18 @@
 package com.appsdeveloperblog.app.ws.service.impl;
 
-import com.appsdeveloperblog.app.ws.shared.Utils;
+import com.appsdeveloperblog.app.ws.data.entity.PasswordResetTokenEntity;
+import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
+import com.appsdeveloperblog.app.ws.data.entity.snapshots.*;
+import com.appsdeveloperblog.app.ws.exceptions.InvalidParameterException;
 import com.appsdeveloperblog.app.ws.exceptions.UserServiceException;
-import com.appsdeveloperblog.app.ws.io.entity.PasswordResetTokenEntity;
-import com.appsdeveloperblog.app.ws.io.entity.UserEntity;
-import com.appsdeveloperblog.app.ws.io.repository.PasswordResetTokenRepository;
-import com.appsdeveloperblog.app.ws.io.repository.UserRepository;
+import com.appsdeveloperblog.app.ws.repository.PasswordResetTokenRepository;
+import com.appsdeveloperblog.app.ws.repository.UserRepository;
 import com.appsdeveloperblog.app.ws.security.UserPrincipal;
 import com.appsdeveloperblog.app.ws.service.UserService;
+import com.appsdeveloperblog.app.ws.service.UserSnapshotService;
+import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdBasedTimeRevisionServiceImpl;
 import com.appsdeveloperblog.app.ws.shared.AmazonSES;
+import com.appsdeveloperblog.app.ws.shared.Utils;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoIn;
 import com.appsdeveloperblog.app.ws.ui.model.response.ErrorMessages;
@@ -24,21 +28,44 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<UserEntity> implements UserService {
 
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    Utils utils;
+    private Utils utils;
 
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    PasswordResetTokenRepository passwordResetTokenRepository;
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
-    AmazonSES amazonSES;
+    //private AmazonSES amazonSES;
+
+    private final UserSnapshotService userSnapshotService;
+
+    @Override
+    public void onBeforeWrite(UserEntity dbObj) {
+        super.onBeforeWrite(dbObj);
+
+        final boolean dbObjExists = dbObj != null && dbObj.getId() != null && loadById(dbObj.getId()) != null;
+
+        if (dbObjExists) {
+
+            //load obj from db
+            var dbStateOfObj = loadById(dbObj.getId());
+            var snapshot = new UserSnapshotEntity();
+            snapshot.setMaxRevision(this.findMaxRevision());
+            snapshot.setEmail(dbStateOfObj.getEmail());
+            snapshot.setEncryptedPassword(dbStateOfObj.getEncryptedPassword());
+            snapshot.setFirstName(dbStateOfObj.getFirstName());
+            snapshot.setLastName(dbStateOfObj.getLastName());
+            this.userSnapshotService.save(snapshot);
+        }
+    }
 
     @Override
     public UserDtoIn createUser(UserDtoIn user) {
@@ -48,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
         for (int i = 0; i < user.getAddresses().size(); i++) {
             AddressDtoIn address = user.getAddresses().get(i);
-            address.setAddressId(utils.generateAddressId(30));
+            address.setAddressId(utils.generateId(30));
             user.getAddresses().set(i, address);
         }
 
@@ -118,10 +145,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDtoIn> getUsers(int page, int limit) {
+
+        if (page <= 0)
+            throw new InvalidParameterException("page must be greater than 0");
+
         List<UserDtoIn> returnValue = new ArrayList<>();
 
-        if (page > 0)
-            page = page - 1;
+        page = page - 1;
 
         Pageable pageableRequest = PageRequest.of(page, limit);
 
@@ -203,8 +233,7 @@ public class UserServiceImpl implements UserService {
     public boolean resetPassword(String token, String password) {
         boolean returnValue = false;
 
-        if( Utils.hasTokenExpired(token) )
-        {
+        if (Utils.hasTokenExpired(token)) {
             return returnValue;
         }
 
@@ -233,4 +262,30 @@ public class UserServiceImpl implements UserService {
         return returnValue;
     }
 
+    @Override
+    public UserEntity findByUserId(String userId) {
+        return this.userRepository.findByUserId(userId);
+    }
+
+
+    @Override
+    public UserRepository getRepository() {
+        return this.userRepository;
+    }
+
+
+    @Override
+    public Class<UserEntity> getPojoClass() {
+        return UserEntity.class;
+    }
+
+    @Override
+    public UserEntity findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return getRepository().existsByEmail(email);
+    }
 }

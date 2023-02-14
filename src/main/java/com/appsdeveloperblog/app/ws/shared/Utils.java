@@ -4,23 +4,32 @@ import com.appsdeveloperblog.app.ws.security.SecurityConstants;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Random;
 
+import static java.lang.Thread.sleep;
+
 @Service
 public class Utils {
 
+    public static StopWatch stopWatch = new StopWatch();
     private final Random RANDOM = new SecureRandom();
     private final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private int defaultIdLength = 8;
 
     public String generateUserId(int length) {
         return generateRandomString(length);
     }
 
-    public String generateAddressId(int length) {
+    public String generateId() {
+        return generateRandomString(defaultIdLength);
+    }
+
+    public String generateId(int length) {
         return generateRandomString(length);
     }
 
@@ -71,5 +80,37 @@ public class Utils {
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
                 .compact();
         return token;
+    }
+
+    public static void delay(long delayMilliSeconds)  {
+        try{
+            sleep(delayMilliSeconds);
+        }catch (Exception e){
+            System.out.println("Exception is :" + e.getMessage());
+        }
+
+    }
+
+    public static String transForm(String s) {
+        Utils.delay(500);
+        return s.toUpperCase();
+    }
+
+    public static void startTimer(){
+        stopWatchReset();
+        stopWatch.start();
+    }
+
+    public static void timeTaken(){
+        stopWatch.stop();
+        System.out.println("Total Time Taken : " +stopWatch.getTime());
+    }
+
+    public static void stopWatchReset(){
+        stopWatch.reset();
+    }
+
+    public static  int noOfCores(){
+        return Runtime.getRuntime().availableProcessors();
     }
 }

@@ -1,12 +1,12 @@
 package com.appsdeveloperblog.app.ws.service;
 
+import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public interface AddressService {
+public interface AddressService extends IdBasedService<AddressEntity> {
 
     List<AddressDtoIn> getAddresses(String userId);
 
@@ -20,5 +20,6 @@ public interface AddressService {
 
     boolean deleteAddressByAddressId(String addressId);
 
-    List<AddressDtoOut> getAddresss(int page, int limit, String addressId, String city, String country, String streetName, String postalCode);
+    List<AddressDtoOut> getAddress(int page, int limit, String addressId, String city, String country, String streetName, String postalCode);
+
 }

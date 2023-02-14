@@ -1,10 +1,10 @@
 package com.appsdeveloperblog.app.ws;
 
-import com.appsdeveloperblog.app.ws.io.entity.address.AddressEntity;
-import com.appsdeveloperblog.app.ws.io.repository.AddressRepository;
-import com.appsdeveloperblog.app.ws.io.repository.AuthorityRepository;
-import com.appsdeveloperblog.app.ws.io.repository.RoleRepository;
-import com.appsdeveloperblog.app.ws.io.repository.UserRepository;
+import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
+import com.appsdeveloperblog.app.ws.repository.AddressRepository;
+import com.appsdeveloperblog.app.ws.repository.UserRepository;
+import com.appsdeveloperblog.app.ws.service.AddressService;
+import com.appsdeveloperblog.app.ws.service.AuthorityService;
 import com.appsdeveloperblog.app.ws.shared.Utils;
 import com.github.javafaker.Faker;
 import lombok.AllArgsConstructor;
@@ -18,29 +18,25 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class InitialAddressSetup {
 
-    AuthorityRepository authorityRepository;
-
-    RoleRepository roleRepository;
+    AuthorityService authorityService;
 
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     Utils utils;
 
-    UserRepository userRepository;
-
-    AddressRepository addressRepository;
+    AddressService addressService;
 
     @EventListener
     @Transactional
     public void onApplicationEvent(ApplicationReadyEvent event) {
         System.out.println("From Application ready event InitialAddressSetup...");
 
-        if (addressRepository.count() >= 50)
+        if (addressService.getCount() >= 50)
             System.out.println("From Application ready event InitialAddressSetup...Will not create addresses");
         else {
             var faker = new Faker();
             int size = 50;
-            var allAddressses = addressRepository.findAll();
+            var allAddressses = addressService.loadAll();
 
             for (int i = 0; i < size; i++) {
                 var zipCode = faker.address().zipCode();
@@ -63,13 +59,13 @@ public class InitialAddressSetup {
                     city = faker.address().city();
                 }
 
-                var addressEntity = new AddressEntity(utils.generateAddressId(5),
+                var addressEntity = new AddressEntity(utils.generateId(),
                         city,
                         country, streetName,
                         zipCode.substring(0, Math.min(zipCode.length(), 7)));
 
                 if (!allAddressses.contains(addressEntity)) {
-                    addressRepository.save(addressEntity);
+                    addressService.save(addressEntity);
                 }
             }
         }

@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AddressDtoIn {
-    private long id;
     private String addressId;
     private String city;
     private String country;
