@@ -3,13 +3,24 @@ package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeRevisionEntity;
 import com.appsdeveloperblog.app.ws.shared.Constants;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "products")
@@ -83,28 +94,16 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
         this.name = name;
     }
 
-    public void addExtraImage(String imageName) {
-        this.images.add(new ProductImageEntity(imageName, this));
-    }
-
     public void addDetail(String name, String value) {
         this.details.add(new ProductDetailEntity(name, value, this));
     }
 
-    @Transient
-    public String getMainImagePath() {
-        if (id == null || mainImage == null) return "/images/image-thumbnail.png";
-
-        return Constants.S3_BASE_URI + "/product-images/" + this.id + "/" + this.mainImage;
-    }
-
-    @Override
-    public String toString() {
-        return "Product [id=" + id + ", name=" + name + "]";
-    }
-
     public void addDetail(UUID id, String name, String value) {
         this.details.add(new ProductDetailEntity(id, name, value, this));
+    }
+
+    public void addExtraImage(String imageName) {
+        this.images.add(new ProductImageEntity(imageName, this));
     }
 
     public boolean containsImageName(String imageName) {
@@ -119,14 +118,6 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
     }
 
     @Transient
-    public String getShortName() {
-        if (name.length() > 70) {
-            return name.substring(0, 70).concat("...");
-        }
-        return name;
-    }
-
-    @Transient
     public float getDiscountPrice() {
         if (discountPercent > 0) {
             return price * ((100 - discountPercent) / 100);
@@ -135,8 +126,28 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
     }
 
     @Transient
+    public String getMainImagePath() {
+        if (id == null || mainImage == null) return "/images/image-thumbnail.png";
+
+        return Constants.S3_BASE_URI + "/product-images/" + this.id + "/" + this.mainImage;
+    }
+
+    @Transient
+    public String getShortName() {
+        if (name.length() > 70) {
+            return name.substring(0, 70).concat("...");
+        }
+        return name;
+    }
+
+    @Transient
     public String getURI() {
         return "/p/" + this.alias + "/";
+    }
+
+    @Override
+    public String toString() {
+        return "Product [id=" + id + ", name=" + name + "]";
     }
 
 }

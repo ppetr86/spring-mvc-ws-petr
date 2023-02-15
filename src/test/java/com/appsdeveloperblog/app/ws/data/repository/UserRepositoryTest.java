@@ -17,7 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,64 +28,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 class UserRepositoryTest {
 
+    static boolean recordsCreated = true;
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     Utils utils;
-
     @Autowired
     RoleRepository roleRepository;
     @Autowired
     AddressRepository addressRepository;
-
-    static boolean recordsCreated = true;
-
 
     @BeforeEach
     void setUp() throws Exception {
 
         if (!recordsCreated)
             createRecrods();
-    }
-
-    @Test
-    final void test_findAll(){
-        var allusers = userRepository.findAll();
-        Assertions.assertEquals(userRepository.count(),allusers.size());
-    }
-
-    @Test
-    final void test_saveUser() {
-
-        var userRole = roleRepository.findByName("ROLE_USER");
-        var address = addressRepository.findAll().stream().filter(Objects::nonNull).findFirst().get();
-
-        var user = new UserEntity();
-        user.setUserId(utils.generateUserId(7));
-
-        user.setRoles(Set.of(userRole));
-        user.setAddresses(Set.of(address));
-        user.setEmail("randomemail@gmail.com");
-        user.setEncryptedPassword("not_encrypted_pwd");
-        user.setFirstName("test_firstName");
-        user.setLastName("test_lastName");
-
-        var persistedUser = userRepository.save(user);
-        Assertions.assertNotNull(persistedUser.getCreatedAt());
-        Assertions.assertNotNull(persistedUser.getId());
-
-    }
-
-    @Test
-    final void testGetVerifiedUsers() {
-        Pageable pageableRequest = PageRequest.of(1, 1);
-        Page<UserEntity> page = userRepository.findAllUsersWithConfirmedEmailAddress(pageableRequest);
-        assertNotNull(page);
-
-        List<UserEntity> userEntities = page.getContent();
-        assertNotNull(userEntities);
-        assertTrue(userEntities.size() == 1);
     }
 
     @Test
@@ -109,17 +68,12 @@ class UserRepositoryTest {
     }
 
     @Test
-    final void testFindUsersByKeyword() {
-        String keyword = "erg";
-        List<UserEntity> users = userRepository.findUsersByKeyword(keyword);
-        assertNotNull(users);
-        assertTrue(users.size() == 2);
+    final void testFindUserEntityByUserId() {
+        String userId = "1a2b3c";
+        UserEntity userEntity = userRepository.findUserEntityByUserId(userId);
 
-        UserEntity user = users.get(0);
-        assertTrue(
-                user.getLastName().contains(keyword) ||
-                        user.getFirstName().contains(keyword)
-        );
+        assertNotNull(userEntity);
+        assertTrue(userEntity.getUserId().equals(userId));
     }
 
     @Test
@@ -145,26 +99,17 @@ class UserRepositoryTest {
     }
 
     @Test
-    final void testUpdateUserEmailVerificationStatus() {
-        boolean newEmailVerificationStatus = true;
-        userRepository.updateUserEmailVerificationStatus(newEmailVerificationStatus, "1a2b3c");
+    final void testFindUsersByKeyword() {
+        String keyword = "erg";
+        List<UserEntity> users = userRepository.findUsersByKeyword(keyword);
+        assertNotNull(users);
+        assertTrue(users.size() == 2);
 
-        UserEntity storedUserDetails = userRepository.findByUserId("1a2b3c");
-
-        boolean storedEmailVerificationStatus = storedUserDetails.getEmailVerificationStatus();
-
-        assertTrue(storedEmailVerificationStatus == newEmailVerificationStatus);
-
-    }
-
-
-    @Test
-    final void testFindUserEntityByUserId() {
-        String userId = "1a2b3c";
-        UserEntity userEntity = userRepository.findUserEntityByUserId(userId);
-
-        assertNotNull(userEntity);
-        assertTrue(userEntity.getUserId().equals(userId));
+        UserEntity user = users.get(0);
+        assertTrue(
+                user.getLastName().contains(keyword) ||
+                        user.getFirstName().contains(keyword)
+        );
     }
 
     @Test
@@ -185,15 +130,67 @@ class UserRepositoryTest {
     }
 
     @Test
-    final void testUpdateUserEntityEmailVerificationStatus() {
-        boolean newEmailVerificationStatus = true;
-        userRepository.updateUserEntityEmailVerificationStatus(newEmailVerificationStatus, "1a2b3c");
+    final void testGetVerifiedUsers() {
+        Pageable pageableRequest = PageRequest.of(1, 1);
+        Page<UserEntity> page = userRepository.findAllUsersWithConfirmedEmailAddress(pageableRequest);
+        assertNotNull(page);
+
+        List<UserEntity> userEntities = page.getContent();
+        assertNotNull(userEntities);
+        assertTrue(userEntities.size() == 1);
+    }
+
+    @Test
+    final void testUpdateUserEmailVerificationStatus() {
+        boolean newIsVerified = true;
+        userRepository.updateUserIsVerified(newIsVerified, "1a2b3c");
 
         UserEntity storedUserDetails = userRepository.findByUserId("1a2b3c");
 
-        boolean storedEmailVerificationStatus = storedUserDetails.getEmailVerificationStatus();
+        boolean storedEmailVerificationStatus = storedUserDetails.isVerified();
+
+        assertTrue(storedEmailVerificationStatus == newIsVerified);
+
+    }
+
+    @Test
+    final void testUpdateUserEntityEmailVerificationStatus() {
+        boolean newEmailVerificationStatus = true;
+        userRepository.updateUserEntityIsVerified(newEmailVerificationStatus, "1a2b3c");
+
+        UserEntity storedUserDetails = userRepository.findByUserId("1a2b3c");
+
+        boolean storedEmailVerificationStatus = storedUserDetails.isVerified();
 
         assertTrue(storedEmailVerificationStatus == newEmailVerificationStatus);
+
+    }
+
+    @Test
+    final void test_findAll() {
+        var allusers = userRepository.findAll();
+        Assertions.assertEquals(userRepository.count(), allusers.size());
+    }
+
+    @Test
+    final void test_saveUser() {
+
+        var userRole = roleRepository.findByName("ROLE_USER");
+        var address = addressRepository.findAll().stream().filter(Objects::nonNull).findFirst().get();
+
+        var user = new UserEntity();
+        user.setUserId(utils.generateUserId(7));
+
+        user.setRoles(Set.of(userRole));
+        user.setAddresses(Set.of(address));
+        user.setEmail("randomemail@gmail.com");
+        user.setEncryptedPassword("not_encrypted_pwd");
+        user.setFirstName("test_firstName");
+        user.setLastName("test_lastName");
+
+        var persistedUser = userRepository.save(user);
+        Assertions.assertNotNull(persistedUser.getCreatedAt());
+        Assertions.assertNotNull(persistedUser.getId());
 
     }
 
@@ -205,7 +202,7 @@ class UserRepositoryTest {
         userEntity.setUserId("1a2b3c");
         userEntity.setEncryptedPassword("xxx");
         userEntity.setEmail("test@test.com");
-        userEntity.setEmailVerificationStatus(true);
+        userEntity.setVerified(true);
 
         // Prepare User Addresses
         AddressEntity addressEntity = new AddressEntity();
@@ -227,7 +224,7 @@ class UserRepositoryTest {
         userEntity2.setUserId("1a2b3cddddd");
         userEntity2.setEncryptedPassword("xxx");
         userEntity2.setEmail("test@test.com");
-        userEntity2.setEmailVerificationStatus(true);
+        userEntity2.setVerified(true);
 
         // Prepare User Addresses
         AddressEntity addressEntity2 = new AddressEntity();

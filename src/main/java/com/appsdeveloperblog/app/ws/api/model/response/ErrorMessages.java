@@ -1,4 +1,4 @@
-package com.appsdeveloperblog.app.ws.ui.model.response;
+package com.appsdeveloperblog.app.ws.api.model.response;
 
 public enum ErrorMessages {
 
@@ -6,10 +6,13 @@ public enum ErrorMessages {
     RECORD_ALREADY_EXISTS("Record already exists"),
     INTERNAL_SERVER_ERROR("Internal server error"),
     NO_RECORD_FOUND("Record with provided id is not found"),
+    NO_RECORD_FOUND_BY_PROVIDED_PARAMETER("No matching record found by provided parameter"),
     AUTHENTICATION_FAILED("Authentication failed"),
     COULD_NOT_UPDATE_RECORD("Could not update record"),
     COULD_NOT_DELETE_RECORD("Could not delete record"),
-    EMAIL_ADDRESS_NOT_VERIFIED("Email address could not be verified");
+    EMAIL_ADDRESS_NOT_VERIFIED("Email address could not be verified"),
+    EMAIL_ADDRESS_IN_USE("Email address is in use"),
+    MULTIPLE_RESULTS_MATCH_CRITERIA_EXPECTED_ONE("Multiple matches found while expected was single result");
 
     private String errorMessage;
 

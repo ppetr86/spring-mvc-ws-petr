@@ -13,14 +13,13 @@ public class PasswordTokenServiceImpl extends AbstractIdBasedServiceImpl<Passwor
 
     private final PasswordResetTokenRepository passwordResetTokenRepository;
 
+    @Override
+    public Class<PasswordResetTokenEntity> getPojoClass() {
+        return PasswordResetTokenEntity.class;
+    }
 
     @Override
     public PasswordResetTokenRepository getRepository() {
         return this.passwordResetTokenRepository;
-    }
-
-    @Override
-    public Class<PasswordResetTokenEntity> getPojoClass() {
-        return PasswordResetTokenEntity.class;
     }
 }

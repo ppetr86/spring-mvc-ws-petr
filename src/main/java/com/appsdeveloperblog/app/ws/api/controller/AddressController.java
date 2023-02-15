@@ -1,19 +1,27 @@
-package com.appsdeveloperblog.app.ws.ui.controller;
+package com.appsdeveloperblog.app.ws.api.controller;
 
+import com.appsdeveloperblog.app.ws.api.model.request.AddressRequestModel;
+import com.appsdeveloperblog.app.ws.api.model.response.ErrorMessages;
+import com.appsdeveloperblog.app.ws.api.model.response.OperationStatusModel;
 import com.appsdeveloperblog.app.ws.exceptions.AddressServiceException;
 import com.appsdeveloperblog.app.ws.service.AddressService;
 import com.appsdeveloperblog.app.ws.service.UserService;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
 import com.appsdeveloperblog.app.ws.shared.dto.EnvelopeCollectionOut;
-import com.appsdeveloperblog.app.ws.ui.model.request.AddressRequestModel;
-import com.appsdeveloperblog.app.ws.ui.model.response.ErrorMessages;
-import com.appsdeveloperblog.app.ws.ui.model.response.OperationStatusModel;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
@@ -23,17 +31,6 @@ public class AddressController {
 
     private final UserService userService;
     private AddressService addressService;
-
-
-    //default return format is MediaType.APPLICATION_XML_VALUE or APPLICATION_JSON_VALUE. Depends on accept header
-    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public AddressDtoOut getAddressById(@PathVariable String id) {
-
-        var returnValue = new AddressDtoOut();
-        var addressDto = addressService.findByAddressId(id);
-        BeanUtils.copyProperties(addressDto, returnValue);
-        return returnValue;
-    }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -55,19 +52,6 @@ public class AddressController {
 
     }
 
-    @PutMapping(path = "/{addressId}")
-    public AddressDtoOut updateAddress(@PathVariable String addressId, @RequestBody AddressRequestModel AddressDetails) {
-
-        var returnValue = new AddressDtoOut();
-        var dto = new AddressDtoIn();
-        BeanUtils.copyProperties(AddressDetails, dto);
-
-        var updateAddress = addressService.updateAddressByAddressId(addressId, dto);
-        BeanUtils.copyProperties(updateAddress, returnValue);
-
-        return returnValue;
-    }
-
     @DeleteMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public OperationStatusModel deleteAddress(@PathVariable String addressId) {
         var model = new OperationStatusModel();
@@ -78,6 +62,16 @@ public class AddressController {
         model.setOperationResult(RequestOperationStatus.SUCCESS.name());
 
         return model;
+    }
+
+    //default return format is MediaType.APPLICATION_XML_VALUE or APPLICATION_JSON_VALUE. Depends on accept header
+    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public AddressDtoOut getAddressById(@PathVariable String id) {
+
+        var returnValue = new AddressDtoOut();
+        var addressDto = addressService.findByAddressId(id);
+        BeanUtils.copyProperties(addressDto, returnValue);
+        return returnValue;
     }
 
     @GetMapping
@@ -92,6 +86,19 @@ public class AddressController {
         var returnValue = addressService.getAddress(page, limit, addressId, city, country, streetName, postalCode);
 
         return new EnvelopeCollectionOut<>(returnValue);
+    }
+
+    @PutMapping(path = "/{addressId}")
+    public AddressDtoOut updateAddress(@PathVariable String addressId, @RequestBody AddressRequestModel AddressDetails) {
+
+        var returnValue = new AddressDtoOut();
+        var dto = new AddressDtoIn();
+        BeanUtils.copyProperties(AddressDetails, dto);
+
+        var updateAddress = addressService.updateAddressByAddressId(addressId, dto);
+        BeanUtils.copyProperties(updateAddress, returnValue);
+
+        return returnValue;
     }
 
 

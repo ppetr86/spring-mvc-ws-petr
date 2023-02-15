@@ -2,7 +2,13 @@ package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeRevisionEntity;
 import com.appsdeveloperblog.app.ws.shared.Constants;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,15 +55,15 @@ public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializab
         super();
     }
 
-    @Override
-    public String toString() {
-        return "Brand [id=" + id + ", name=" + name + ", categories=" + categories + "]";
-    }
-
     @Transient
     public String getLogoPath() {
         if (this.id == null) return "/images/image-thumbnail.png";
 
         return Constants.S3_BASE_URI + "/brand-logos/" + this.id + "/" + this.logo;
+    }
+
+    @Override
+    public String toString() {
+        return "Brand [id=" + id + ", name=" + name + ", categories=" + categories + "]";
     }
 }

@@ -21,6 +21,28 @@ class UserAddressCreditCardAsyncServiceImplTest {
         this.userAddressCreditCardAsyncService = userAddressCreditCardAsyncService;
     }
 
+    @Test
+    void getUserAddressCreditCardEntityDto() throws ExecutionException, InterruptedException {
+        var result = userAddressCreditCardAsyncService.getUserAddressCreditCardEntityDto();
+
+        System.out.println("getUserCount " + result.getUsers().size());
+        System.out.println("getAddressCount " + result.getAddresses().size());
+        System.out.println("getCreditCardCount " + result.getCreditCards().size());
+
+        assertTrue(true);
+    }
+
+    @Test
+    void getUserAddressCreditCardEntityDtoWithoutCF() {
+
+        var result = userAddressCreditCardAsyncService.getUserAddressCreditCardEntityDtoWithoutCF();
+
+        System.out.println("getUserCount " + result.getUsers().size());
+        System.out.println("getAddressCount " + result.getAddresses().size());
+        System.out.println("getCreditCardCount " + result.getCreditCards().size());
+
+        assertTrue(true);
+    }
 
     @Test
     void test_retrieveCountsOfUsersAndAddressesAndCards_WithCf() throws ExecutionException, InterruptedException {
@@ -48,16 +70,6 @@ class UserAddressCreditCardAsyncServiceImplTest {
     }
 
     @Test
-    void test_retrieveCountsOfUsersAndAddresses_WithoutCf() {
-        var result = userAddressCreditCardAsyncService.retrieveCountsOfUsersAndAddresses_WithoutCf();
-
-        System.out.println("getUserCount " + result.getUserCount());
-        System.out.println("getAddressCount " + result.getAddressCount());
-
-        assertTrue(true);
-    }
-
-    @Test
     void test_retrieveCountsOfUsersAndAddresses_WithCf() throws ExecutionException, InterruptedException {
         var result = userAddressCreditCardAsyncService.retrieveCountsOfUsersAndAddresses_WithCf();
 
@@ -68,24 +80,11 @@ class UserAddressCreditCardAsyncServiceImplTest {
     }
 
     @Test
-    void getUserAddressCreditCardEntityDto() throws ExecutionException, InterruptedException {
-        var result = userAddressCreditCardAsyncService.getUserAddressCreditCardEntityDto();
+    void test_retrieveCountsOfUsersAndAddresses_WithoutCf() {
+        var result = userAddressCreditCardAsyncService.retrieveCountsOfUsersAndAddresses_WithoutCf();
 
-        System.out.println("getUserCount " + result.getUsers().size());
-        System.out.println("getAddressCount " + result.getAddresses().size());
-        System.out.println("getCreditCardCount " + result.getCreditCards().size());
-
-        assertTrue(true);
-    }
-
-    @Test
-    void getUserAddressCreditCardEntityDtoWithoutCF() {
-
-        var result = userAddressCreditCardAsyncService.getUserAddressCreditCardEntityDtoWithoutCF();
-
-        System.out.println("getUserCount " + result.getUsers().size());
-        System.out.println("getAddressCount " + result.getAddresses().size());
-        System.out.println("getCreditCardCount " + result.getCreditCards().size());
+        System.out.println("getUserCount " + result.getUserCount());
+        System.out.println("getAddressCount " + result.getAddressCount());
 
         assertTrue(true);
     }

@@ -11,11 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserDtoOut {
+public class UserDtoOut<T> {
 
     private String userId;
     private String firstName;
     private String lastName;
     private String email;
-    private List<AddressDtoOut> addresses;
+    private List<T> addresses;
 }

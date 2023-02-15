@@ -12,12 +12,6 @@ import java.util.Date;
 @ControllerAdvice
 public class AppExceptionHandler {
 
-    @ExceptionHandler(value = {UserServiceException.class})
-    public ResponseEntity<Object> handleUserServiceException(UserServiceException ex, WebRequest req) {
-        var errorMessage = new ErrorMessage(new Date(), ex.getMessage());
-        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     @ExceptionHandler(value = {AddressServiceException.class, InvalidParameterException.class})
     public ResponseEntity<Object> handleAddressServiceException(UserServiceException ex, WebRequest req) {
         var errorMessage = new ErrorMessage(new Date(), ex.getMessage());
@@ -27,6 +21,12 @@ public class AppExceptionHandler {
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<Object> handleOtherExceptions(Exception ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(new Date(), ex.getMessage());
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = {UserServiceException.class})
+    public ResponseEntity<Object> handleUserServiceException(UserServiceException ex, WebRequest req) {
+        var errorMessage = new ErrorMessage(new Date(), ex.getMessage());
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

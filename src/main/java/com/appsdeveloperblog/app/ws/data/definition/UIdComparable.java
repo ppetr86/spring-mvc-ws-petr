@@ -5,8 +5,7 @@ import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedEntity;
 import java.util.Comparator;
 import java.util.UUID;
 
-public interface UIdComparable<T extends IdBasedEntity> extends Comparable<T>
-{
+public interface UIdComparable<T extends IdBasedEntity> extends Comparable<T> {
     Comparator<IdBasedEntity> ID_COMPARATOR = (o1, o2) -> {
         final UUID id1 = o1.getId();
         final UUID id2 = o2.getId();

@@ -16,13 +16,13 @@ public abstract class AbstractIdBasedTimeServiceImpl<T extends IdBasedTimeEntity
     }
 
     @Override
-    public List<T> findByUpdatedAt(final LocalDateTime updatedAt) {
-        return this.getRepository().findByUpdatedAt(updatedAt);
+    public List<T> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
+        return this.getRepository().findByCreatedAtBetween(start, end);
     }
 
     @Override
-    public List<T> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
-        return this.getRepository().findByCreatedAtBetween(start, end);
+    public List<T> findByUpdatedAt(final LocalDateTime updatedAt) {
+        return this.getRepository().findByUpdatedAt(updatedAt);
     }
 
     @Override

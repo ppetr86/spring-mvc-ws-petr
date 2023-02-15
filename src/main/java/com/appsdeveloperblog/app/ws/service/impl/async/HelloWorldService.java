@@ -7,16 +7,16 @@ import static com.appsdeveloperblog.app.ws.shared.Utils.delay;
 
 public class HelloWorldService {
 
-    public String helloWorld() {
-        delay(1000);
-        System.out.println("inside helloWorld");
-        return "hello world";
-    }
-
     public String hello() {
         delay(1000);
         System.out.println("inside hello");
         return "hello";
+    }
+
+    public String helloWorld() {
+        delay(1000);
+        System.out.println("inside helloWorld");
+        return "hello world";
     }
 
     public String world() {

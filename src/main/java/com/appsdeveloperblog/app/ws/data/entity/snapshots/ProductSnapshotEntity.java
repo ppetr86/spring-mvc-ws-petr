@@ -18,10 +18,10 @@ import java.util.UUID;
 @Setter
 public class ProductSnapshotEntity extends IdBasedTimeSnapshotEntity implements Serializable {
 
-    @Column(unique = true, length = 255, nullable = false)
+    @Column(length = 255, nullable = false)
     private String name;
 
-    @Column(unique = true, length = 255, nullable = false)
+    @Column(length = 255, nullable = false)
     private String alias;
 
     @Column(length = 512, nullable = false, name = "short_description")

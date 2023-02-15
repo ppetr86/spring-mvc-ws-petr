@@ -19,7 +19,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Random;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -59,11 +63,12 @@ public class InitialUsersSetup {
             if (roleAdmin == null) return;
 
             var adminUser = new UserEntity();
-            setUserProperties(adminUser, "Petr", "Novotny", "test@test.com", roleAdmin);
+            setUserProperties(adminUser, "Petr", "Novotny", "petr@test.com", roleAdmin);
 
-            UserEntity storedUserDetails = userService.findByEmail("test@test.com");
+            UserEntity storedUserDetails = userService.findByEmail("petr@test.com");
+            UserEntity storedUser = null;
             if (storedUserDetails == null) {
-                userService.save(adminUser);
+                storedUser = userService.save(adminUser);
             }
 
             var roleUser = createRole(Roles.ROLE_USER.name(), Arrays.asList(readAuthority, writeAuthority));
@@ -72,7 +77,7 @@ public class InitialUsersSetup {
 
             var storedUserUserDetails = userService.findByEmail("ivana@test.com");
             if (storedUserUserDetails == null) {
-                userService.save(userUser);
+                storedUser = userService.save(userUser);
             }
 
             createRandomUsers(50, roleUser);
@@ -81,15 +86,15 @@ public class InitialUsersSetup {
 
     }
 
-    private void setUserProperties(UserEntity adminUser, String Petr, String Novotny, String email, RoleEntity roleAdmin) {
-        adminUser.setFirstName(Petr);
-        adminUser.setLastName(Novotny);
-        adminUser.setEmail(email);
-        adminUser.setEmailVerificationStatus(true);
-        adminUser.setUserId(utils.generateUserId(userIdDefaultLength));
-        adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
-        adminUser.setRoles(Set.of(roleAdmin));
-        adminUser.setAddresses(getAddresses(adminUser));
+    @Transactional
+    AuthorityEntity createAuthority(String name) {
+
+        AuthorityEntity authority = authorityService.findByName(name);
+        if (authority == null) {
+            authority = new AuthorityEntity(name);
+            authorityService.save(authority);
+        }
+        return authority;
     }
 
     @Transactional
@@ -117,25 +122,6 @@ public class InitialUsersSetup {
         }
     }
 
-    private Set<AddressEntity> getAddresses(UserEntity userUser) {
-        AddressEntity addressEntity = new AddressEntity(utils.generateId(5),
-                "Praha", "Czech republic",
-                "Kocianova", "155 00");
-        addressEntity.setUser(userUser);
-        return Set.of(addressEntity);
-    }
-
-    @Transactional
-    AuthorityEntity createAuthority(String name) {
-
-        AuthorityEntity authority = authorityService.findByName(name);
-        if (authority == null) {
-            authority = new AuthorityEntity(name);
-            authorityService.save(authority);
-        }
-        return authority;
-    }
-
     @Transactional
     RoleEntity createRole(String name, Collection<AuthorityEntity> authorities) {
 
@@ -146,6 +132,24 @@ public class InitialUsersSetup {
             roleService.save(role);
         }
         return role;
+    }
+
+    private Set<AddressEntity> getAddresses(UserEntity user) {
+        var address = new AddressEntity(utils.generateId(5), "Praha", "Czech republic",
+                "Kocianova", "155 00");
+        address.setUser(user);
+        return Set.of(address);
+    }
+
+    private void setUserProperties(UserEntity user, String Petr, String Novotny, String email, RoleEntity roleAdmin) {
+        user.setFirstName(Petr);
+        user.setLastName(Novotny);
+        user.setEmail(email);
+        user.setVerified(true);
+        user.setUserId(utils.generateUserId(userIdDefaultLength));
+        user.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
+        user.setRoles(Set.of(roleAdmin));
+        user.setAddresses(getAddresses(user));
     }
 
 }

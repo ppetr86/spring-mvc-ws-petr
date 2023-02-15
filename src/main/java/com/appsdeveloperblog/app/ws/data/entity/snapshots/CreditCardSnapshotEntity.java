@@ -28,11 +28,6 @@ public class CreditCardSnapshotEntity extends IdBasedTimeSnapshotEntity {
         super();
     }
 
-    @PrePersist
-    public void prePersistCallback() {
-        System.out.println("JPA PrePresist CreditCardSnapshotEntity Callback was called");
-    }
-
     @Override
     public boolean equals(final Object obj) {
         return super.equalsId(obj);
@@ -41,6 +36,11 @@ public class CreditCardSnapshotEntity extends IdBasedTimeSnapshotEntity {
     @Override
     public int hashCode() {
         return hashCodeId();
+    }
+
+    @PrePersist
+    public void prePersistCallback() {
+        System.out.println("JPA PrePresist CreditCardSnapshotEntity Callback was called");
     }
 
 }

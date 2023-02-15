@@ -15,12 +15,12 @@ public class BrandSnapshotServiceImpl extends AbstractIdBasedTimeSnapshotService
     private final BrandSnapshotRepository brandSnapshotRepository;
 
     @Override
-    public IdBasedTimeSnapshotRepository<BrandSnapshotEntity> getRepository() {
-        return this.brandSnapshotRepository;
+    public Class<BrandSnapshotEntity> getPojoClass() {
+        return BrandSnapshotEntity.class;
     }
 
     @Override
-    public Class<BrandSnapshotEntity> getPojoClass() {
-        return BrandSnapshotEntity.class;
+    public IdBasedTimeSnapshotRepository<BrandSnapshotEntity> getRepository() {
+        return this.brandSnapshotRepository;
     }
 }

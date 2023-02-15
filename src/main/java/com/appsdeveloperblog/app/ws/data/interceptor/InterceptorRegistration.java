@@ -1,8 +1,6 @@
 package com.appsdeveloperblog.app.ws.data.interceptor;
 
-import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 

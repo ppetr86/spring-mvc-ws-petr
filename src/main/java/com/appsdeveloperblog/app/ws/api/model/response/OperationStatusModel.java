@@ -1,4 +1,4 @@
-package com.appsdeveloperblog.app.ws.ui.model.response;
+package com.appsdeveloperblog.app.ws.api.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

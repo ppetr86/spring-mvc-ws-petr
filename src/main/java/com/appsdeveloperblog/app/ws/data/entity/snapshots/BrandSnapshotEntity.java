@@ -19,7 +19,7 @@ public class BrandSnapshotEntity extends IdBasedTimeSnapshotEntity implements Se
     @Serial
     private static final long serialVersionUID = -4280261731794140574L;
 
-    @Column(nullable = false, length = 45, unique = true)
+    @Column(nullable = false, length = 45)
     private String name;
 
     @Column(nullable = false, length = 128)

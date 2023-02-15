@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoleRepository extends IdBasedRepository<RoleEntity> {
-	RoleEntity findByName(String name);
+    RoleEntity findByName(String name);
 }

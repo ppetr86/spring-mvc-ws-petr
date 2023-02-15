@@ -1,13 +1,10 @@
 package com.appsdeveloperblog.app.ws.service.impl;
 
 import com.appsdeveloperblog.app.ws.data.entity.ProductDetailEntity;
-import com.appsdeveloperblog.app.ws.data.entity.ProductEntity;
 import com.appsdeveloperblog.app.ws.data.entity.snapshots.ProductDetailSnapshotEntity;
-import com.appsdeveloperblog.app.ws.data.entity.snapshots.ProductSnapshotEntity;
 import com.appsdeveloperblog.app.ws.repository.ProductDetailRepository;
 import com.appsdeveloperblog.app.ws.service.ProductDetailService;
 import com.appsdeveloperblog.app.ws.service.ProductDetailSnapshotService;
-import com.appsdeveloperblog.app.ws.service.ProductSnapshotService;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdBasedTimeRevisionServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +18,16 @@ public class ProductDetailServiceImpl extends AbstractIdBasedTimeRevisionService
     private final ProductDetailSnapshotService productDetailSnapshotService;
 
     @Override
+    public Class<ProductDetailEntity> getPojoClass() {
+        return ProductDetailEntity.class;
+    }
+
+    @Override
+    public ProductDetailRepository getRepository() {
+        return this.productDetailRepository;
+    }
+
+    @Override
     public void onBeforeWrite(ProductDetailEntity dbObj) {
         super.onBeforeWrite(dbObj);
 
@@ -32,17 +39,5 @@ public class ProductDetailServiceImpl extends AbstractIdBasedTimeRevisionService
             snapshot.setName(dbObj.getName());
             this.productDetailSnapshotService.save(snapshot);
         }
-    }
-
-
-
-    @Override
-    public ProductDetailRepository getRepository() {
-        return this.productDetailRepository;
-    }
-
-    @Override
-    public Class<ProductDetailEntity> getPojoClass() {
-        return ProductDetailEntity.class;
     }
 }

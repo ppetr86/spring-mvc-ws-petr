@@ -3,7 +3,6 @@ package com.appsdeveloperblog.app.ws.data.entity.snapshots;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,10 +21,10 @@ public class CategorySnapshotEntity extends IdBasedTimeSnapshotEntity implements
     @Serial
     private static final long serialVersionUID = 3891933895421080356L;
 
-    @Column(length = 128, nullable = false, unique = true)
+    @Column(length = 128, nullable = false)
     private String name;
 
-    @Column(length = 64, nullable = false, unique = true)
+    @Column(length = 64, nullable = false)
     private String alias;
 
     @Column(length = 128, nullable = false)
@@ -46,20 +45,9 @@ public class CategorySnapshotEntity extends IdBasedTimeSnapshotEntity implements
         this.alias = alias;
     }
 
-    public static CategorySnapshotEntity copyIdAndName(CategorySnapshotEntity category) {
-        CategorySnapshotEntity copyCategory = new CategorySnapshotEntity();
-        copyCategory.setId(category.getId());
-        copyCategory.setName(category.getName());
-
-        return copyCategory;
-    }
-
-    public static CategorySnapshotEntity copyIdAndName(UUID id, String name) {
-        CategorySnapshotEntity copyCategory = new CategorySnapshotEntity();
-        copyCategory.setId(id);
-        copyCategory.setName(name);
-
-        return copyCategory;
+    @Override
+    public String toString() {
+        return this.name;
     }
 
     public static CategorySnapshotEntity copyFull(CategorySnapshotEntity category) {
@@ -79,9 +67,19 @@ public class CategorySnapshotEntity extends IdBasedTimeSnapshotEntity implements
         return copyCategory;
     }
 
+    public static CategorySnapshotEntity copyIdAndName(CategorySnapshotEntity category) {
+        CategorySnapshotEntity copyCategory = new CategorySnapshotEntity();
+        copyCategory.setId(category.getId());
+        copyCategory.setName(category.getName());
 
-    @Override
-    public String toString() {
-        return this.name;
+        return copyCategory;
+    }
+
+    public static CategorySnapshotEntity copyIdAndName(UUID id, String name) {
+        CategorySnapshotEntity copyCategory = new CategorySnapshotEntity();
+        copyCategory.setId(id);
+        copyCategory.setName(name);
+
+        return copyCategory;
     }
 }

@@ -2,7 +2,14 @@ package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeRevisionEntity;
 import com.appsdeveloperblog.app.ws.shared.Constants;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -67,20 +74,17 @@ public class CategoryEntity extends IdBasedTimeRevisionEntity implements Seriali
         this.alias = alias;
     }
 
-    public static CategoryEntity copyIdAndName(CategoryEntity category) {
-        CategoryEntity copyCategory = new CategoryEntity();
-        copyCategory.setId(category.getId());
-        copyCategory.setName(category.getName());
+    @Transient
+    public String getImagePath() {
 
-        return copyCategory;
+        if (this.id == null) return "/images/image-thumbnail.png";
+
+        return Constants.S3_BASE_URI + "/category-images/" + this.id + "/" + this.image;
     }
 
-    public static CategoryEntity copyIdAndName(UUID id, String name) {
-        CategoryEntity copyCategory = new CategoryEntity();
-        copyCategory.setId(id);
-        copyCategory.setName(name);
-
-        return copyCategory;
+    @Override
+    public String toString() {
+        return this.name;
     }
 
     public static CategoryEntity copyFull(CategoryEntity category) {
@@ -101,16 +105,19 @@ public class CategoryEntity extends IdBasedTimeRevisionEntity implements Seriali
         return copyCategory;
     }
 
-    @Transient
-    public String getImagePath() {
+    public static CategoryEntity copyIdAndName(CategoryEntity category) {
+        CategoryEntity copyCategory = new CategoryEntity();
+        copyCategory.setId(category.getId());
+        copyCategory.setName(category.getName());
 
-        if (this.id == null) return "/images/image-thumbnail.png";
-
-        return Constants.S3_BASE_URI + "/category-images/" + this.id + "/" + this.image;
+        return copyCategory;
     }
 
-    @Override
-    public String toString() {
-        return this.name;
+    public static CategoryEntity copyIdAndName(UUID id, String name) {
+        CategoryEntity copyCategory = new CategoryEntity();
+        copyCategory.setId(id);
+        copyCategory.setName(name);
+
+        return copyCategory;
     }
 }

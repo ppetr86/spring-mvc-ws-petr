@@ -39,21 +39,10 @@ class AddressRepositoryTest {
     }
 
     @Test
-    void findByAddressId() {
-    }
-
-    @Test
     void findAll() {
         var count = addressRepository.count();
         var all = addressRepository.findAll();
         Assertions.assertThat(all.size()).isEqualTo(count);
-    }
-
-    @Test
-    void testFindAll() {
-        var pageSize = 10;
-        var all = addressRepository.findAll(Pageable.ofSize(pageSize));
-        Assertions.assertThat(all.get().count()).isEqualTo(pageSize);
     }
 
     @Test
@@ -82,11 +71,21 @@ class AddressRepositoryTest {
                 .isEqualTo(futureListAddress.get(5, TimeUnit.SECONDS).size());
     }
 
+    @Test
+    void findByAddressId() {
+    }
 
     @Test
     void queryByCityEqualsIgnoreCase() throws ExecutionException, InterruptedException, TimeoutException {
         var addressFuture = addressRepository.findFirstByCityEqualsIgnoreCase("praha");
         Assertions.assertThat(addressFuture.get(5, TimeUnit.SECONDS).getCity().toLowerCase())
                 .isEqualTo("praha");
+    }
+
+    @Test
+    void testFindAll() {
+        var pageSize = 10;
+        var all = addressRepository.findAll(Pageable.ofSize(pageSize));
+        Assertions.assertThat(all.get().count()).isEqualTo(pageSize);
     }
 }

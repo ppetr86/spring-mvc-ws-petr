@@ -1,7 +1,11 @@
 package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 

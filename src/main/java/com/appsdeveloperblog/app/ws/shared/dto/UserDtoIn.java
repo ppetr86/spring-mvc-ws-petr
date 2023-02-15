@@ -25,6 +25,6 @@ public class UserDtoIn implements Serializable {
     private String password;
     private String encryptedPassword;
     private String emailVerificationToken;
-    private Boolean emailVerificationStatus = false;
+    private Boolean isVerified = false;
     private List<AddressDtoIn> addresses;
 }

@@ -24,6 +24,7 @@ public class AddressDtoOut extends RepresentationModel<AddressDtoOut> {
         this.city = each.getCity();
         this.country = each.getCountry();
         this.streetName = each.getStreetName();
-        this.postalCode = each.getPostalCode();;
+        this.postalCode = each.getPostalCode();
+        ;
     }
 }

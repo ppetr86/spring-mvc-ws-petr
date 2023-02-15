@@ -13,10 +13,9 @@ public class AuthorityServiceImpl extends AbstractIdBasedServiceImpl<AuthorityEn
 
     private final AuthorityRepository authorityRepository;
 
-
     @Override
-    public AuthorityRepository getRepository() {
-        return this.authorityRepository;
+    public AuthorityEntity findByName(String name) {
+        return authorityRepository.findByName(name);
     }
 
     @Override
@@ -25,7 +24,7 @@ public class AuthorityServiceImpl extends AbstractIdBasedServiceImpl<AuthorityEn
     }
 
     @Override
-    public AuthorityEntity findByName(String name) {
-        return authorityRepository.findByName(name);
+    public AuthorityRepository getRepository() {
+        return this.authorityRepository;
     }
 }

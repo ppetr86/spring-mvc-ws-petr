@@ -11,11 +11,15 @@ public interface IdBasedTimeService<T extends IdBasedTimeEntity> extends IdBased
 
     List<T> findByCreatedAt(LocalDateTime createAd);
 
-    List<T> findByUpdatedAt(LocalDateTime updatedAt);
 
     List<T> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
+
+    List<T> findByUpdatedAt(LocalDateTime updatedAt);
+
+
     List<T> findByUpdatedAtBetween(LocalDateTime start, LocalDateTime end);
+
 
     @Override
     IdBasedTimeRepository<T> getRepository();

@@ -15,12 +15,12 @@ public class CreditCardSnapshotServiceImpl extends AbstractIdBasedTimeSnapshotSe
     private final CreditCardSnapshotRepository creditCardSnapshotRepository;
 
     @Override
-    public IdBasedTimeSnapshotRepository<CreditCardSnapshotEntity> getRepository() {
-        return this.creditCardSnapshotRepository;
+    public Class<CreditCardSnapshotEntity> getPojoClass() {
+        return CreditCardSnapshotEntity.class;
     }
 
     @Override
-    public Class<CreditCardSnapshotEntity> getPojoClass() {
-        return CreditCardSnapshotEntity.class;
+    public IdBasedTimeSnapshotRepository<CreditCardSnapshotEntity> getRepository() {
+        return this.creditCardSnapshotRepository;
     }
 }

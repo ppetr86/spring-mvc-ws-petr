@@ -7,7 +7,9 @@ public interface IdBasedTimeRevisionService<T extends IdBasedTimeRevisionEntity>
 
     long findMaxRevision();
 
+
     Long getNewRevision();
+
 
     @Override
     IdBasedTimeRevisionRepository<T> getRepository();

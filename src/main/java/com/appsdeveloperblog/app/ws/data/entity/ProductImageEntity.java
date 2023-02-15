@@ -3,7 +3,12 @@ package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedEntity;
 import com.appsdeveloperblog.app.ws.shared.Constants;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 

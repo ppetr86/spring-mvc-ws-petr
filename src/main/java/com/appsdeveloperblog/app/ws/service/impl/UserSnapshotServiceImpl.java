@@ -1,7 +1,6 @@
 package com.appsdeveloperblog.app.ws.service.impl;
 
 import com.appsdeveloperblog.app.ws.data.entity.snapshots.UserSnapshotEntity;
-import com.appsdeveloperblog.app.ws.repository.IdBasedRepository;
 import com.appsdeveloperblog.app.ws.repository.UserSnapshotRepository;
 import com.appsdeveloperblog.app.ws.service.UserSnapshotService;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdBasedTimeSnapshotServiceImpl;
@@ -15,12 +14,12 @@ public class UserSnapshotServiceImpl extends AbstractIdBasedTimeSnapshotServiceI
     private final UserSnapshotRepository userSnapshotRepository;
 
     @Override
-    public UserSnapshotRepository getRepository() {
-        return this.userSnapshotRepository;
+    public Class<UserSnapshotEntity> getPojoClass() {
+        return UserSnapshotEntity.class;
     }
 
     @Override
-    public Class<UserSnapshotEntity> getPojoClass() {
-        return UserSnapshotEntity.class;
+    public UserSnapshotRepository getRepository() {
+        return this.userSnapshotRepository;
     }
 }

@@ -8,18 +8,24 @@ import java.util.List;
 
 public interface AddressService extends IdBasedService<AddressEntity> {
 
-    List<AddressDtoIn> getAddresses(String userId);
-
-    AddressDtoIn getAddress(String addressId);
-
-    AddressDtoOut findByAddressId(String addressId);
-
     AddressDtoOut createAddress(AddressDtoIn addressDtoIn);
 
-    AddressDtoOut updateAddressByAddressId(String addressId, AddressDtoIn dto);
 
     boolean deleteAddressByAddressId(String addressId);
 
+
+    AddressDtoOut findByAddressId(String addressId);
+
+
+    AddressDtoIn getAddress(String addressId);
+
+
     List<AddressDtoOut> getAddress(int page, int limit, String addressId, String city, String country, String streetName, String postalCode);
+
+
+    List<AddressDtoIn> getAddresses(String userId);
+
+
+    AddressDtoOut updateAddressByAddressId(String addressId, AddressDtoIn dto);
 
 }

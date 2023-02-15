@@ -1,10 +1,14 @@
 package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeRevisionEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 import java.util.UUID;
 
@@ -24,11 +28,6 @@ public class CreditCardEntity extends IdBasedTimeRevisionEntity {
     @JoinColumn(name = "user_uuid")
     private UserEntity user;
 
-    @PrePersist
-    public void prePersistCallback() {
-        System.out.println("JPA PrePresist CreditCardEntity Callback was called");
-    }
-
     protected CreditCardEntity(UUID id) {
         super(id);
     }
@@ -45,6 +44,11 @@ public class CreditCardEntity extends IdBasedTimeRevisionEntity {
     @Override
     public int hashCode() {
         return hashCodeId();
+    }
+
+    @PrePersist
+    public void prePersistCallback() {
+        System.out.println("JPA PrePresist CreditCardEntity Callback was called");
     }
 
 }

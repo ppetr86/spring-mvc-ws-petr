@@ -3,7 +3,11 @@ package com.appsdeveloperblog.app.ws.data.jpacallbackeventlisteners;
 import com.appsdeveloperblog.app.ws.SpringApplicationContext;
 import com.appsdeveloperblog.app.ws.data.entity.CreditCardEntity;
 import com.appsdeveloperblog.app.ws.service.EncryptionService;
-import jakarta.persistence.*;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 /**
  * Created by jt on 6/30/22.
@@ -25,7 +29,7 @@ public class CreditCardJPACallback {
         creditCard.setCreditCardNumber(getEncryptionService().decrypt(creditCard.getCreditCardNumber()));
     }
 
-    private EncryptionService getEncryptionService(){
+    private EncryptionService getEncryptionService() {
         return (EncryptionService) SpringApplicationContext.getBean("encryptionServiceImpl");
     }
 

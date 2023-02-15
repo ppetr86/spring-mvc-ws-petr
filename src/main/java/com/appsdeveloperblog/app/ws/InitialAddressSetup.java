@@ -1,8 +1,6 @@
 package com.appsdeveloperblog.app.ws;
 
 import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
-import com.appsdeveloperblog.app.ws.repository.AddressRepository;
-import com.appsdeveloperblog.app.ws.repository.UserRepository;
 import com.appsdeveloperblog.app.ws.service.AddressService;
 import com.appsdeveloperblog.app.ws.service.AuthorityService;
 import com.appsdeveloperblog.app.ws.shared.Utils;

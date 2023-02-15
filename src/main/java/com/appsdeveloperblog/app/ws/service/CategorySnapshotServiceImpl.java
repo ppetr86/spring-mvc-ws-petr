@@ -14,12 +14,12 @@ public class CategorySnapshotServiceImpl extends AbstractIdBasedTimeSnapshotServ
     private final CategorySnapshotRepository categorySnapshotRepository;
 
     @Override
-    public IdBasedTimeSnapshotRepository<CategorySnapshotEntity> getRepository() {
-        return this.categorySnapshotRepository;
+    public Class<CategorySnapshotEntity> getPojoClass() {
+        return CategorySnapshotEntity.class;
     }
 
     @Override
-    public Class<CategorySnapshotEntity> getPojoClass() {
-        return CategorySnapshotEntity.class;
+    public IdBasedTimeSnapshotRepository<CategorySnapshotEntity> getRepository() {
+        return this.categorySnapshotRepository;
     }
 }

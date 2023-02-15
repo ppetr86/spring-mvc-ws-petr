@@ -12,78 +12,75 @@ import java.util.HashSet;
 
 public class UserPrincipal implements UserDetails {
 
-	private static final long serialVersionUID = -7530187709860249942L;
-	
-	private UserEntity userEntity;
-	private String userId;
+    private static final long serialVersionUID = -7530187709860249942L;
 
-	public UserPrincipal(UserEntity userEntity) {
-		this.userEntity = userEntity;
-		this.userId = userEntity.getUserId();
-	}
+    private UserEntity userEntity;
+    private String userId;
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		
-		Collection<GrantedAuthority> authorities = new HashSet<>();
-		Collection<AuthorityEntity> authorityEntities = new HashSet<>();
-		
-		// Get user Roles
-		Collection<RoleEntity> roles = userEntity.getRoles();
-		
-        if(roles == null) return authorities;
-        
+    public UserPrincipal(UserEntity userEntity) {
+        this.userEntity = userEntity;
+        this.userId = userEntity.getUserId();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        Collection<GrantedAuthority> authorities = new HashSet<>();
+        Collection<AuthorityEntity> authorityEntities = new HashSet<>();
+
+        // Get user Roles
+        Collection<RoleEntity> roles = userEntity.getRoles();
+
+        if (roles == null) return authorities;
+
         roles.forEach((role) -> {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
             authorityEntities.addAll(role.getAuthorities());
-       });
-        
-        authorityEntities.forEach((authorityEntity) ->{
+        });
+
+        authorityEntities.forEach((authorityEntity) -> {
             authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
         });
-		
-		return authorities;
-	}
 
-	@Override
-	public String getPassword() {
-		return this.userEntity.getEncryptedPassword();
-	}
+        return authorities;
+    }
 
-	@Override
-	public String getUsername() {
-		return this.userEntity.getEmail();
-	}
+    @Override
+    public String getPassword() {
+        return this.userEntity.getEncryptedPassword();
+    }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Override
+    public String getUsername() {
+        return this.userEntity.getEmail();
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return this.userEntity.getEmailVerificationStatus();
-	}
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-	public String getUserId() {
-		return userId;
-	}
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.userEntity.isVerified();
+    }
 
 }

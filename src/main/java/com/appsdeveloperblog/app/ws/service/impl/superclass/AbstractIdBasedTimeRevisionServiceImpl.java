@@ -35,10 +35,8 @@ public abstract class AbstractIdBasedTimeRevisionServiceImpl<T extends IdBasedTi
 
     @Override
     public T save(T dbObj) {
-
-        dbObj.setRevision(getNewRevision());
         this.onBeforeWrite(dbObj);
-
+        dbObj.setRevision(getNewRevision());
         return super.save(dbObj);
     }
 }

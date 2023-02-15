@@ -2,6 +2,9 @@ package com.appsdeveloperblog.app.ws.service.impl.superclass;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedEntity;
 import com.appsdeveloperblog.app.ws.service.IdBasedService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -17,14 +20,14 @@ public abstract class AbstractIdBasedServiceImpl<T extends IdBasedEntity> implem
 
     @Override
     @Transactional(readOnly = true)
-    public Long getCountDelayed() {
-        delay(1000);
+    public Long getCount() {
         return this.getRepository().count();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Long getCount() {
+    public Long getCountDelayed() {
+        delay(1000);
         return this.getRepository().count();
     }
 
@@ -34,10 +37,18 @@ public abstract class AbstractIdBasedServiceImpl<T extends IdBasedEntity> implem
         return this.getRepository().findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<T> loadAll(Specification<T> specification) {
+        if (specification == null)
+            return this.getRepository().findAll();
+
+        return this.getRepository().findAll(specification);
+    }
+
     @Override
-    @Transactional(readOnly = false)
-    public List<T> saveAll(Collection<T> values) {
-        return this.getRepository().saveAll(values);
+    @Transactional(readOnly = true)
+    public Page<T> loadAll(Specification<T> specification, Pageable pageRequest) {
+        return this.getRepository().findAll(specification, pageRequest);
     }
 
     @Override
@@ -58,6 +69,11 @@ public abstract class AbstractIdBasedServiceImpl<T extends IdBasedEntity> implem
     }
 
     @Override
+    public void onBeforeWrite(T dbObj) {
+        //nothing
+    }
+
+    @Override
     @Transactional(readOnly = false)
     public T save(final T dbObj) {
         Assert.notNull(dbObj, "obj must not be null");
@@ -65,7 +81,8 @@ public abstract class AbstractIdBasedServiceImpl<T extends IdBasedEntity> implem
     }
 
     @Override
-    public void onBeforeWrite(T dbObj) {
-        //nothing
+    @Transactional(readOnly = false)
+    public List<T> saveAll(Collection<T> values) {
+        return this.getRepository().saveAll(values);
     }
 }

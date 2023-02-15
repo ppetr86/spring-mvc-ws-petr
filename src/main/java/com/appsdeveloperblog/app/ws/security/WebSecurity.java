@@ -19,10 +19,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-@EnableMethodSecurity(securedEnabled=true, prePostEnabled=true)
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
 @Configuration
-public class WebSecurity{
+public class WebSecurity {
 
     private final UserService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -75,21 +75,12 @@ public class WebSecurity{
         return http.build();
     }
 
-
-    protected AuthenticationFilter getAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
-        final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager);
-        filter.setFilterProcessesUrl("/users/login");
-        return filter;
-    }
-
-
     @Bean
-    public CorsConfigurationSource corsConfigurationSource()
-    {
+    public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("*"));
 
@@ -97,5 +88,11 @@ public class WebSecurity{
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
+    }
+
+    protected AuthenticationFilter getAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
+        final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager);
+        filter.setFilterProcessesUrl("/users/login");
+        return filter;
     }
 }

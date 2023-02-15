@@ -21,7 +21,16 @@ public class Utils {
     private final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private int defaultIdLength = 8;
 
-    public String generateUserId(int length) {
+    public String generateEmailVerificationToken(String userId) {
+        var token = Jwts.builder()
+                .setSubject(userId)
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
+                .compact();
+        return token;
+    }
+
+    public String generateId(int length) {
         return generateRandomString(length);
     }
 
@@ -29,7 +38,16 @@ public class Utils {
         return generateRandomString(defaultIdLength);
     }
 
-    public String generateId(int length) {
+    public String generatePasswordResetToken(String userId) {
+        var token = Jwts.builder()
+                .setSubject(userId)
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
+                .compact();
+        return token;
+    }
+
+    public String generateUserId(int length) {
         return generateRandomString(length);
     }
 
@@ -41,6 +59,15 @@ public class Utils {
         }
 
         return new String(returnValue);
+    }
+
+    public static void delay(long delayMilliSeconds) {
+        try {
+            sleep(delayMilliSeconds);
+        } catch (Exception e) {
+            System.out.println("Exception is :" + e.getMessage());
+        }
+
     }
 
     public static boolean hasTokenExpired(String token) {
@@ -64,53 +91,26 @@ public class Utils {
         return returnValue;
     }
 
-    public String generateEmailVerificationToken(String userId) {
-        var token = Jwts.builder()
-                .setSubject(userId)
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
-                .compact();
-        return token;
+    public static int noOfCores() {
+        return Runtime.getRuntime().availableProcessors();
     }
 
-    public String generatePasswordResetToken(String userId) {
-        var token = Jwts.builder()
-                .setSubject(userId)
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
-                .compact();
-        return token;
+    public static void startTimer() {
+        stopWatchReset();
+        stopWatch.start();
     }
 
-    public static void delay(long delayMilliSeconds)  {
-        try{
-            sleep(delayMilliSeconds);
-        }catch (Exception e){
-            System.out.println("Exception is :" + e.getMessage());
-        }
+    public static void stopWatchReset() {
+        stopWatch.reset();
+    }
 
+    public static void timeTaken() {
+        stopWatch.stop();
+        System.out.println("Total Time Taken : " + stopWatch.getTime());
     }
 
     public static String transForm(String s) {
         Utils.delay(500);
         return s.toUpperCase();
-    }
-
-    public static void startTimer(){
-        stopWatchReset();
-        stopWatch.start();
-    }
-
-    public static void timeTaken(){
-        stopWatch.stop();
-        System.out.println("Total Time Taken : " +stopWatch.getTime());
-    }
-
-    public static void stopWatchReset(){
-        stopWatch.reset();
-    }
-
-    public static  int noOfCores(){
-        return Runtime.getRuntime().availableProcessors();
     }
 }

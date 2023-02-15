@@ -9,25 +9,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 public class SpringmvcWsPetrApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SpringmvcWsPetrApplication.class, args);
-    }
-
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean(name="AppProperties")
-    public AppProperties getAppProperties()
-    {
+    @Bean(name = "AppProperties")
+    public AppProperties getAppProperties() {
         return new AppProperties();
     }
 
     @Bean
-    public SpringApplicationContext springApplicationContext()
-    {
+    public SpringApplicationContext springApplicationContext() {
         return new SpringApplicationContext();
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringmvcWsPetrApplication.class, args);
     }
 
 }

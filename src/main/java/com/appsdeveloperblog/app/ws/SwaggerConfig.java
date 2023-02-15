@@ -20,36 +20,36 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
-	Contact contact = new Contact(
-			"Sergey Kargopolov",
-			"http://www.appsdeveloperblog.com",
-			"developer@appsdeveloperblog.com"
-	);
+    Contact contact = new Contact(
+            "Sergey Kargopolov",
+            "http://www.appsdeveloperblog.com",
+            "developer@appsdeveloperblog.com"
+    );
 
-	List<VendorExtension> vendorExtensions = new ArrayList<>();
+    List<VendorExtension> vendorExtensions = new ArrayList<>();
 
-	ApiInfo apiInfo = new ApiInfo(
-			"Photo app RESTful Web Service documentation",
-			"This pages documents Photo app RESTful Web Service endpoints",
-			"1.0",
-			"http://www.appsdeveloperblog.com/service.html",
-			contact,
-			"Apache 2.0",
-			"http://www.apache.org/licenses/LICENSE-2.0",
-			vendorExtensions);
+    ApiInfo apiInfo = new ApiInfo(
+            "Photo app RESTful Web Service documentation",
+            "This pages documents Photo app RESTful Web Service endpoints",
+            "1.0",
+            "http://www.appsdeveloperblog.com/service.html",
+            contact,
+            "Apache 2.0",
+            "http://www.apache.org/licenses/LICENSE-2.0",
+            vendorExtensions);
 
-	@Bean
-	public Docket apiDocket() {
+    @Bean
+    public Docket apiDocket() {
 
-		Docket docket = new Docket(DocumentationType.SWAGGER_2)
-				.protocols(new HashSet<>(Arrays.asList("HTTP","HTTPs")))
-				.apiInfo(apiInfo)
-				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.appsdeveloperblog.app.ws")).paths(PathSelectors.any())
-				.build();
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .protocols(new HashSet<>(Arrays.asList("HTTP", "HTTPs")))
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.appsdeveloperblog.app.ws")).paths(PathSelectors.any())
+                .build();
 
-		return docket;
+        return docket;
 
-	}
+    }
 
 }

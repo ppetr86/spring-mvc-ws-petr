@@ -19,6 +19,16 @@ public class CategoryServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<
     private final CategorySnapshotService categorySnapshotService;
 
     @Override
+    public Class<CategoryEntity> getPojoClass() {
+        return CategoryEntity.class;
+    }
+
+    @Override
+    public CategoryRepository getRepository() {
+        return this.categoryRepository;
+    }
+
+    @Override
     public void onBeforeWrite(CategoryEntity dbObj) {
         super.onBeforeWrite(dbObj);
 
@@ -33,15 +43,5 @@ public class CategoryServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<
             snapshot.setEnabled(dbObj.isEnabled());
             this.categorySnapshotService.save(snapshot);
         }
-    }
-
-    @Override
-    public CategoryRepository getRepository() {
-        return this.categoryRepository;
-    }
-
-    @Override
-    public Class<CategoryEntity> getPojoClass() {
-        return CategoryEntity.class;
     }
 }

@@ -30,10 +30,6 @@ public abstract class IdBasedEntity {
         super();
     }
 
-    protected final int hashCodeId() {
-        return Objects.hashCode(this.id);
-    }
-
     protected final int compareToId(final IdBasedEntity other) {
         return UIdComparable.ID_COMPARATOR.compare(this, other);
     }
@@ -43,5 +39,9 @@ public abstract class IdBasedEntity {
         if (o == this) return true;
         if (!(o instanceof IdBasedEntity)) return false;
         return UIdComparable.ID_COMPARATOR.compare(this, (IdBasedEntity) o) == 0;
+    }
+
+    protected final int hashCodeId() {
+        return Objects.hashCode(this.id);
     }
 }

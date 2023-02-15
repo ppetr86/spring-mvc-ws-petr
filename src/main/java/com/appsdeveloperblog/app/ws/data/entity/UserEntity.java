@@ -1,16 +1,22 @@
 package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeRevisionEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -40,7 +46,7 @@ public class UserEntity extends IdBasedTimeRevisionEntity implements Serializabl
     private String emailVerificationToken;
 
     @Column(nullable = false)
-    private Boolean emailVerificationStatus = false;
+    private boolean isVerified;
 
     //persist because if I delete user I dont want to delete role
     //fetch eager so that when user is read from DB, roles will be read too
@@ -64,7 +70,7 @@ public class UserEntity extends IdBasedTimeRevisionEntity implements Serializabl
 
     public UserEntity(String userId, String firstName,
                       String lastName, String email, String encryptedPassword,
-                      String emailVerificationToken, Boolean emailVerificationStatus,
+                      String emailVerificationToken, Boolean isVerified,
                       Set<RoleEntity> roles, Set<AddressEntity> addresses, Set<CreditCardEntity> creditCards,
                       UUID id, Long revision, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(id, revision, createdAt, updatedAt);
@@ -74,7 +80,7 @@ public class UserEntity extends IdBasedTimeRevisionEntity implements Serializabl
         this.email = email;
         this.encryptedPassword = encryptedPassword;
         this.emailVerificationToken = emailVerificationToken;
-        this.emailVerificationStatus = emailVerificationStatus;
+        this.isVerified = isVerified;
         this.roles = roles;
         this.addresses = addresses;
         this.creditCards = creditCards;

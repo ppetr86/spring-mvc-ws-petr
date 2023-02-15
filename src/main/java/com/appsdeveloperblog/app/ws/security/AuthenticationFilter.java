@@ -1,9 +1,8 @@
 package com.appsdeveloperblog.app.ws.security;
 
 import com.appsdeveloperblog.app.ws.SpringApplicationContext;
+import com.appsdeveloperblog.app.ws.api.model.request.UserLoginRequestModel;
 import com.appsdeveloperblog.app.ws.service.UserService;
-import com.appsdeveloperblog.app.ws.shared.dto.UserDtoIn;
-import com.appsdeveloperblog.app.ws.ui.model.request.UserLoginRequestModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,8 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -56,16 +58,27 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         String userName = ((UserPrincipal) auth.getPrincipal()).getUsername();
 
+
+        Key hmacKey = new SecretKeySpec(Base64.getDecoder().decode(SecurityConstants.getTokenSecret().getBytes()),
+                SignatureAlgorithm.HS512.getJcaName());
+
         String token = Jwts.builder()
                 .setSubject(userName)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret() )
+                .signWith(hmacKey)
                 .compact();
-        UserService userService = (UserService)SpringApplicationContext.getBean("userServiceImpl");
-        UserDtoIn userDtoIn = userService.getUser(userName);
+
+       /* String token = Jwts.builder()
+                .setSubject(userName)
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret() )
+                .compact();*/
+
+        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
+        var user = userService.findByEmail(userName);
 
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-        res.addHeader("UserID", userDtoIn.getUserId());
+        res.addHeader("UserID", user.getUserId());
 
     }
 

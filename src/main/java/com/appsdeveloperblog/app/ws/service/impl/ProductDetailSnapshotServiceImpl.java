@@ -14,12 +14,12 @@ public class ProductDetailSnapshotServiceImpl extends AbstractIdBasedTimeSnapsho
     private final ProductDetailSnapshotRepository productDetailSnapshotRepository;
 
     @Override
-    public ProductDetailSnapshotRepository getRepository() {
-        return this.productDetailSnapshotRepository;
+    public Class<ProductDetailSnapshotEntity> getPojoClass() {
+        return ProductDetailSnapshotEntity.class;
     }
 
     @Override
-    public Class<ProductDetailSnapshotEntity> getPojoClass() {
-        return ProductDetailSnapshotEntity.class;
+    public ProductDetailSnapshotRepository getRepository() {
+        return this.productDetailSnapshotRepository;
     }
 }

@@ -1,4 +1,4 @@
-package com.appsdeveloperblog.app.ws.ui.model.request;
+package com.appsdeveloperblog.app.ws.api.model.request;
 
 
 public class PasswordResetRequestModel {

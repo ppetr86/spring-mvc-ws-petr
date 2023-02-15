@@ -12,10 +12,13 @@ public interface IdBasedTimeRepository<T extends IdBasedTimeEntity> extends IdBa
     //@Query("select * from ")
     List<T> findByCreatedAt(LocalDateTime createdAt);
 
+
+    List<T> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+
     //@Query("select * from ")
     List<T> findByUpdatedAt(LocalDateTime updatedAt);
 
-    List<T> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
     List<T> findByUpdatedAtBetween(LocalDateTime start, LocalDateTime end);
 }

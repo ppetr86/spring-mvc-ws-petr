@@ -14,10 +14,9 @@ public class RoleServiceImpl extends AbstractIdBasedServiceImpl<RoleEntity> impl
     RoleRepository roleRepository;
 
     @Override
-    public RoleRepository getRepository() {
-        return this.roleRepository;
+    public RoleEntity findByName(String name) {
+        return roleRepository.findByName(name);
     }
-
 
     @Override
     public Class<RoleEntity> getPojoClass() {
@@ -25,7 +24,7 @@ public class RoleServiceImpl extends AbstractIdBasedServiceImpl<RoleEntity> impl
     }
 
     @Override
-    public RoleEntity findByName(String name) {
-        return roleRepository.findByName(name);
+    public RoleRepository getRepository() {
+        return this.roleRepository;
     }
 }

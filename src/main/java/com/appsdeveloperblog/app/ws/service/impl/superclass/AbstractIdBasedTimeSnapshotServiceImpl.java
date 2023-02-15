@@ -9,12 +9,12 @@ public abstract class AbstractIdBasedTimeSnapshotServiceImpl<T extends IdBasedTi
 
 
     @Override
-    public Long getSmallestRevisionGreaterThanThis(Long revision) {
-        return getRepository().getSmallestRevisionGreaterThanThis(revision == null ? 0 : revision);
+    public T getDataForRevision(Long revision) {
+        return getRepository().getDataForRevision(revision == null ? 0 : revision);
     }
 
     @Override
-    public T getDataForRevision(Long revision) {
-        return getRepository().getDataForRevision(revision == null ? 0 : revision);
+    public Long getSmallestRevisionGreaterThanThis(Long revision) {
+        return getRepository().getSmallestRevisionGreaterThanThis(revision == null ? 0 : revision);
     }
 }

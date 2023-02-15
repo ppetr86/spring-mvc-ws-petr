@@ -1,8 +1,8 @@
 package com.appsdeveloperblog.app.ws.data.entitydto;
 
+import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
 import com.appsdeveloperblog.app.ws.data.entity.CreditCardEntity;
 import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
-import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

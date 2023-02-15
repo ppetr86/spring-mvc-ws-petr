@@ -15,12 +15,12 @@ public class ProductImageServiceImpl extends AbstractIdBasedServiceImpl<ProductI
     private final ProductImageRepository productImageRepository;
 
     @Override
-    public IdBasedRepository<ProductImageEntity> getRepository() {
-        return productImageRepository;
+    public Class<ProductImageEntity> getPojoClass() {
+        return ProductImageEntity.class;
     }
 
     @Override
-    public Class<ProductImageEntity> getPojoClass() {
-        return ProductImageEntity.class;
+    public IdBasedRepository<ProductImageEntity> getRepository() {
+        return productImageRepository;
     }
 }
