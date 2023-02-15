@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface IdBasedService<T extends IdBasedEntity> {
@@ -22,6 +23,9 @@ public interface IdBasedService<T extends IdBasedEntity> {
 
 
     IdBasedRepository<T> getRepository();
+
+
+    Optional<T> findOneBy(Specification<T> specification);
 
 
     List<T> loadAll();

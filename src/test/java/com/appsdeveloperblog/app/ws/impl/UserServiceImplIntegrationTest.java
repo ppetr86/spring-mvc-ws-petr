@@ -1,14 +1,16 @@
 package com.appsdeveloperblog.app.ws.impl;
 
-import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeEntity;
 import com.appsdeveloperblog.app.ws.exceptions.InvalidParameterException;
 import com.appsdeveloperblog.app.ws.service.UserSnapshotService;
 import com.appsdeveloperblog.app.ws.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -21,6 +23,7 @@ import java.util.Random;
 
 @SpringBootTest
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.Random.class)
 class UserServiceImplIntegrationTest {
 
     @Autowired
@@ -28,6 +31,12 @@ class UserServiceImplIntegrationTest {
 
     @Autowired
     UserSnapshotService userSnapshotService;
+
+    @Test
+    @DisplayName("test that when no pagination is entered that result is the same as using max page size on first page")
+    void testIterableEquals() {
+        Assertions.assertIterableEquals(userService.getUsers(1, Integer.MAX_VALUE), userService.getUsers(), "expected list should be the same as actual list");
+    }
 
     @Test
     public void testFindByCreatedAt() {
@@ -220,11 +229,6 @@ class UserServiceImplIntegrationTest {
         var count = userService.getCount();
 
         Assertions.assertEquals(all.size(), count);
-
-        all.forEach(each -> {
-            if (each != null)
-                Assertions.assertTrue(each instanceof UserEntity);
-        });
     }
 
 

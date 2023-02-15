@@ -52,9 +52,6 @@ public class CategoryEntity extends IdBasedTimeRevisionEntity implements Seriali
     @OrderBy("name asc")
     private Set<CategoryEntity> children = new HashSet<>();
 
-    @Column(name = "all_parent_ids", length = 256, nullable = true)
-    private String allParentIDs;
-
 
     public CategoryEntity(String name) {
         this.name = name;

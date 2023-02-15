@@ -6,8 +6,14 @@ import com.appsdeveloperblog.app.ws.repository.CategoryRepository;
 import com.appsdeveloperblog.app.ws.service.CategoryService;
 import com.appsdeveloperblog.app.ws.service.CategorySnapshotService;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdBasedTimeRevisionServiceImpl;
+import com.appsdeveloperblog.app.ws.service.specification.GenericSpecification;
+import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +23,26 @@ public class CategoryServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<
     private CategoryRepository categoryRepository;
 
     private final CategorySnapshotService categorySnapshotService;
+
+    @Override
+    public CategoryEntity findByName(String parentCategoryName) {
+        if (parentCategoryName == null)
+            return null;
+
+        var categorySpec = new GenericSpecificationsBuilder<CategoryEntity>();
+        categorySpec.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(parentCategoryName));
+        return this.findOneBy(categorySpec.build()).get();
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        if (!StringUtils.hasText(name))
+            return false;
+
+        var categorySpec = new GenericSpecificationsBuilder<CategoryEntity>();
+        categorySpec.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(name));
+        return this.getRepository().exists(categorySpec.build());
+    }
 
     @Override
     public Class<CategoryEntity> getPojoClass() {
@@ -29,6 +55,7 @@ public class CategoryServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void onBeforeWrite(CategoryEntity dbObj) {
         super.onBeforeWrite(dbObj);
 
@@ -36,7 +63,7 @@ public class CategoryServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<
 
         if (dbObjExists) {
             var snapshot = new CategorySnapshotEntity();
-            snapshot.setMaxRevision(this.findMaxRevision());
+            snapshot.setMaxRevision(dbObj.getRevision());
             snapshot.setName(dbObj.getName());
             snapshot.setAlias(dbObj.getAlias());
             snapshot.setImage(dbObj.getImage());

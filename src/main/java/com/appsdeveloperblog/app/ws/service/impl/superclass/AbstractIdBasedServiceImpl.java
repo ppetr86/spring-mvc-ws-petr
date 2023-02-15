@@ -11,12 +11,18 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.appsdeveloperblog.app.ws.shared.Utils.delay;
 
 @Service
 public abstract class AbstractIdBasedServiceImpl<T extends IdBasedEntity> implements IdBasedService<T> {
+
+    @Override
+    public Optional<T> findOneBy(Specification<T> specification) {
+        return this.getRepository().findOne(specification);
+    }
 
     @Override
     @Transactional(readOnly = true)

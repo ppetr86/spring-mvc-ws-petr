@@ -145,7 +145,7 @@ public class UserServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<User
 
     @Override
     public List<UserEntity> getUsers() {
-        return this.getUsers(0, Integer.MAX_VALUE);
+        return this.getUsers(1, Integer.MAX_VALUE);
     }
 
     @Override
