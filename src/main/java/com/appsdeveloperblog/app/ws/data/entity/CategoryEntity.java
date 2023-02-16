@@ -36,7 +36,7 @@ public class CategoryEntity extends IdBasedTimeRevisionEntity implements Seriali
     @Column(length = 64, nullable = false, unique = true)
     private String alias;
 
-    @Column(length = 128, nullable = false)
+    @Column(length = 128, nullable = true)
     private String image;
 
     private boolean enabled;

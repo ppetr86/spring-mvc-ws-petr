@@ -10,7 +10,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -24,13 +23,13 @@ public class InitialCategorySetup {
     @EventListener
     @Transactional
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        System.out.println("From Application ready event InitialCategorySetup...");
 
         long count = categoryService.getCount();
         int targetCount = Categories.values().length;
         if (count >= targetCount)
-            System.out.println("From Application ready event InitialCategorySetup...Will not create brands");
+            System.out.println("From Application ready event InitialCategorySetup...Will not create");
         else {
+            System.out.println("From Application ready event InitialCategorySetup...Creating");
             createCategories();
         }
     }

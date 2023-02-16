@@ -6,8 +6,14 @@ import com.appsdeveloperblog.app.ws.repository.ProductRepository;
 import com.appsdeveloperblog.app.ws.service.ProductService;
 import com.appsdeveloperblog.app.ws.service.ProductSnapshotService;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdBasedTimeRevisionServiceImpl;
+import com.appsdeveloperblog.app.ws.service.specification.GenericSpecification;
+import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +23,24 @@ public class ProductServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<P
     private ProductRepository productRepository;
 
     private final ProductSnapshotService productSnapshotService;
+
+
+    @Override
+    public boolean existsByName(String name) {
+        if (!StringUtils.hasText(name))
+            return false;
+
+        Specification<ProductEntity> spec = createNameSpecification(name);
+        return this.getRepository().exists(spec);
+    }
+
+    @Override
+    public ProductEntity findByName(String name) {
+        if (!StringUtils.hasText(name))
+            return null;
+        Specification<ProductEntity> spec = createNameSpecification(name);
+        return this.getRepository().findOne(spec).orElse(null);
+    }
 
     @Override
     public Class<ProductEntity> getPojoClass() {
@@ -44,5 +68,11 @@ public class ProductServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<P
             snapshot.setFullDescription(dbObj.getFullDescription());
             this.productSnapshotService.save(snapshot);
         }
+    }
+
+    private Specification<ProductEntity> createNameSpecification(String name) {
+        var specBuilder = new GenericSpecificationsBuilder<ProductEntity>();
+        specBuilder.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(name));
+        return specBuilder.build();
     }
 }

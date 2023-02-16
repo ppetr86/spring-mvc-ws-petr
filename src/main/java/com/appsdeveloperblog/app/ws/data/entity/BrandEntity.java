@@ -30,7 +30,7 @@ public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializab
     @Column(nullable = false, length = 45, unique = true)
     private String name;
 
-    @Column(nullable = false, length = 128)
+    @Column(length = 128)
     private String logo;
 
     @ManyToMany

@@ -48,12 +48,11 @@ public class InitialUsersSetup {
     @EventListener
     @Transactional
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        System.out.println("From Application ready event InitialUsersSetup...");
-
         long count = userService.getCount();
         if (count >= 50)
-            System.out.println("From Application ready event InitialUsersSetup...Will not create users");
+            System.out.println("From Application ready event InitialUsersSetup...Will not create");
         else {
+            System.out.println("From Application ready event InitialUsersSetup...Creating");
             var readAuthority = createAuthority("READ_AUTHORITY");
             var writeAuthority = createAuthority("WRITE_AUTHORITY");
             var deleteAuthority = createAuthority("DELETE_AUTHORITY");
@@ -68,7 +67,7 @@ public class InitialUsersSetup {
             UserEntity storedUserDetails = userService.findByEmail("petr@test.com");
             UserEntity storedUser = null;
             if (storedUserDetails == null) {
-                storedUser = userService.save(adminUser);
+                userService.save(adminUser);
             }
 
             var roleUser = createRole(Roles.ROLE_USER.name(), Arrays.asList(readAuthority, writeAuthority));
@@ -77,7 +76,7 @@ public class InitialUsersSetup {
 
             var storedUserUserDetails = userService.findByEmail("ivana@test.com");
             if (storedUserUserDetails == null) {
-                storedUser = userService.save(userUser);
+                userService.save(userUser);
             }
 
             createRandomUsers(50, roleUser);

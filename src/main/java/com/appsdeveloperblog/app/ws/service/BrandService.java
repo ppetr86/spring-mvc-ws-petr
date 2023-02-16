@@ -4,4 +4,8 @@ import com.appsdeveloperblog.app.ws.data.entity.BrandEntity;
 
 public interface BrandService extends IdBasedTimeRevisionService<BrandEntity> {
 
+    boolean existsByName(String brand);
+
+
+    BrandEntity findByName(String brand);
 }

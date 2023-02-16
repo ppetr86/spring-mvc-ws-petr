@@ -27,11 +27,11 @@ public class InitialAddressSetup {
     @EventListener
     @Transactional
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        System.out.println("From Application ready event InitialAddressSetup...");
 
         if (addressService.getCount() >= 50)
-            System.out.println("From Application ready event InitialAddressSetup...Will not create addresses");
+            System.out.println("From Application ready event InitialAddressSetup...Will not create");
         else {
+            System.out.println("From Application ready event InitialExternalApiSetup...Creating");
             var faker = new Faker();
             int size = 50;
             var allAddressses = addressService.loadAll();
@@ -57,10 +57,7 @@ public class InitialAddressSetup {
                     city = faker.address().city();
                 }
 
-                var addressEntity = new AddressEntity(utils.generateId(),
-                        city,
-                        country, streetName,
-                        zipCode.substring(0, Math.min(zipCode.length(), 7)));
+                var addressEntity = new AddressEntity(utils.generateId(), city, country, streetName, zipCode);
 
                 if (!allAddressses.contains(addressEntity)) {
                     addressService.save(addressEntity);

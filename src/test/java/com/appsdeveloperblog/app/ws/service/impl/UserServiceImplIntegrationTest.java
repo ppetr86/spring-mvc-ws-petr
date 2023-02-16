@@ -1,9 +1,8 @@
-package com.appsdeveloperblog.app.ws.impl;
+package com.appsdeveloperblog.app.ws.service.impl;
 
-import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeEntity;
+import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedNameTimeEntity;
 import com.appsdeveloperblog.app.ws.exceptions.InvalidParameterException;
 import com.appsdeveloperblog.app.ws.service.UserSnapshotService;
-import com.appsdeveloperblog.app.ws.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -44,7 +43,7 @@ class UserServiceImplIntegrationTest {
 
         var firstDate = all.stream()
                 .filter(Objects::nonNull)
-                .map(IdBasedTimeEntity::getCreatedAt)
+                .map(IdBasedNameTimeEntity::getCreatedAt)
                 .filter(Objects::nonNull)
                 .findFirst().get();
 
@@ -61,7 +60,7 @@ class UserServiceImplIntegrationTest {
         var all = userService.loadAll();
         var sortedByDate = all.stream()
                 .filter(Objects::nonNull)
-                .map(IdBasedTimeEntity::getCreatedAt)
+                .map(IdBasedNameTimeEntity::getCreatedAt)
                 .filter(Objects::nonNull)
                 .sorted()
                 .toList();

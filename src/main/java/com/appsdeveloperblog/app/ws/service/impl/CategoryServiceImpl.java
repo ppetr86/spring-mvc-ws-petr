@@ -31,7 +31,7 @@ public class CategoryServiceImpl extends AbstractIdBasedTimeRevisionServiceImpl<
 
         var categorySpec = new GenericSpecificationsBuilder<CategoryEntity>();
         categorySpec.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(parentCategoryName));
-        return this.findOneBy(categorySpec.build()).get();
+        return this.findOneBy(categorySpec.build()).orElse(null);
     }
 
     @Override

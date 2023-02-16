@@ -1,10 +1,9 @@
 package com.appsdeveloperblog.app.ws;
 
-import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
-import com.appsdeveloperblog.app.ws.data.entity.AuthorityEntity;
-import com.appsdeveloperblog.app.ws.data.entity.RoleEntity;
-import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
+import com.appsdeveloperblog.app.ws.data.Brands;
+import com.appsdeveloperblog.app.ws.data.entity.BrandEntity;
 import com.appsdeveloperblog.app.ws.service.BrandService;
+import com.appsdeveloperblog.app.ws.service.CategoryService;
 import com.github.javafaker.Faker;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -12,10 +11,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random;
-import java.util.Set;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -23,45 +20,39 @@ public class InitialBrandSetup {
 
     private BrandService brandService;
 
+    private CategoryService categoryService;
 
     @EventListener
-    @Transactional
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        System.out.println("From Application ready event InitialBrandSetup...");
 
         long count = brandService.getCount();
-        int targetCount = 20;
+        int targetCount = Brands.values().length;
         if (count >= targetCount)
-            System.out.println("From Application ready event InitialBrandSetup...Will not create brands");
+            System.out.println("From Application ready event InitialBrandSetup...Will not create");
         else {
-            createRandomBrands(targetCount);
+            System.out.println("From Application ready event InitialBrandSetup...Creating");
+            createBrands();
         }
     }
 
 
     @Transactional
-    void createRandomBrands(int quantity) {
-
-        /*var addressList = new ArrayList<>();
-        var randomObj = new Random();
+    void createBrands() {
         var faker = new Faker();
 
-        for (int i = 0; i < quantity; i++) {
-            var currentUser = new UserEntity();
-            currentUser.setUserId(utils.generateUserId(userIdDefaultLength));
-            currentUser.setFirstName(faker.name().firstName());
-            currentUser.setLastName(faker.name().lastName());
-            currentUser.setEmail(currentUser.getFirstName() + currentUser.getLastName() + "@test.com");
-            currentUser.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
-            currentUser.setRoles(Set.of(role));
-            var randomAddress = addressList.get(randomObj.nextInt(addressList.size()));
-            currentUser.setAddresses(Set.of(randomAddress));
-            if (!userService.existsByEmail(currentUser.getEmail())) {
-                userService.save(currentUser);
-                //save the user first, setUser on address later
-                randomAddress.setUser(currentUser);
-            }
-        }*/
+        for (var brand : Brands.values()) {
+            var currentBrand = new BrandEntity();
+            currentBrand.setName(brand.getDescription());
+            currentBrand.setLogo(faker.internet().image());
+
+            var categories = brand.getCategories().stream()
+                    .map(each -> categoryService.findByName(each.getDescription()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            currentBrand.setCategories(categories);
+            brandService.save(currentBrand);
+        }
     }
 
 }
