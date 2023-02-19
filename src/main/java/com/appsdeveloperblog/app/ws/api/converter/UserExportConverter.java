@@ -33,7 +33,7 @@ public class UserExportConverter {
     public UserDtoOut<ModelReference> convertToDtoOutUsingModelReference(final UserEntity user) {
 
         var result = new UserDtoOut<ModelReference>();
-        result.setUserId(user.getUserId());
+        result.setId(user.getId().toString());
         result.setFirstName(user.getFirstName());
         result.setLastName(user.getLastName());
         result.setEmail(user.getEmail());
@@ -45,7 +45,7 @@ public class UserExportConverter {
     }
 
     private static void setUserParameters(UserEntity user, UserDtoOut<AddressDtoOut> result) {
-        result.setUserId(user.getUserId());
+        result.setId(user.getId().toString());
         result.setFirstName(user.getFirstName());
         result.setLastName(user.getLastName());
         result.setEmail(user.getEmail());

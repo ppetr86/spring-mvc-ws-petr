@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 public class UserDtoOut<T> {
 
-    private String userId;
+    private String id;
     private String firstName;
     private String lastName;
     private String email;

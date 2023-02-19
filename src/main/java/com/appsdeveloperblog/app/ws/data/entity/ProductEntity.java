@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -67,11 +68,11 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
     private String mainImage;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category")
     private CategoryEntity category;
 
     @ManyToOne
-    @JoinColumn(name = "brand_id")
+    @JoinColumn(name = "brand")
     private BrandEntity brand;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -79,19 +80,23 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductDetailEntity> details = new ArrayList<>();
-
     @Transient
     private boolean customerCanReview;
-
     @Transient
     private boolean reviewedByCustomer;
 
-    public ProductEntity(UUID id) {
-        this.id = id;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return super.equalsId(o) || name.equals(that.name);
     }
 
-    public ProductEntity(String name) {
-        this.name = name;
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name);
     }
 
     public void addDetail(String name, String value) {
@@ -104,6 +109,20 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
 
     public void addExtraImage(String imageName) {
         this.images.add(new ProductImageEntity(imageName, this));
+    }
+
+    public void addImage(ProductImageEntity value) {
+        if (value != null&& !this.images.contains(value)) {
+            this.images.add(value);
+            value.setProduct(this);
+        }
+    }
+
+    public void addProductDetails(ProductDetailEntity value) {
+        if (value != null && !this.details.contains(value)) {
+            this.details.add(value);
+            value.setProduct(this);
+        }
     }
 
     public boolean containsImageName(String imageName) {
@@ -143,6 +162,20 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
     @Transient
     public String getURI() {
         return "/p/" + this.alias + "/";
+    }
+
+    public void removeImage(ProductImageEntity value) {
+        if (value != null && this.images.contains(value)) {
+            this.images.remove(value);
+            value.setProduct(null);
+        }
+    }
+
+    public void removeProductDetails(ProductDetailEntity value) {
+        if (value != null && this.details.contains(value)) {
+            this.details.remove(value);
+            value.setProduct(null);
+        }
     }
 
     @Override

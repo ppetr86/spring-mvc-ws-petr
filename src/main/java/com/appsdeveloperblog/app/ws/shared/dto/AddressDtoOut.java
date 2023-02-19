@@ -13,17 +13,17 @@ import org.springframework.hateoas.RepresentationModel;
 @Setter
 //representationmodel is for hateoas support
 public class AddressDtoOut extends RepresentationModel<AddressDtoOut> {
-    private String addressId;
+    private String id;
     private String city;
     private String country;
-    private String streetName;
+    private String street;
     private String postalCode;
 
     public AddressDtoOut(AddressEntity each) {
-        this.addressId = each.getAddressId();
+        this.id = each.getId().toString();
         this.city = each.getCity();
         this.country = each.getCountry();
-        this.streetName = each.getStreetName();
+        this.street = each.getStreet();
         this.postalCode = each.getPostalCode();
         ;
     }

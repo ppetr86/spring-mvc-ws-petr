@@ -1,8 +1,13 @@
 package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedEntity;
+import com.appsdeveloperblog.app.ws.shared.Authority;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -10,8 +15,9 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 
 @Entity
@@ -23,38 +29,29 @@ public class AuthorityEntity extends IdBasedEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -5828101164006114538L;
 
-    @Column(nullable = false, length = 20)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(unique = true)
+    private Authority name;
 
-    @ManyToMany(mappedBy = "authorities")
-    private Collection<RoleEntity> roles;
+    //TODO: consider different approach to EAGER...
+    @ManyToMany(mappedBy = "authorities", fetch = FetchType.EAGER)
+    private Set<RoleEntity> roles = new HashSet<>();
 
-    public AuthorityEntity(String name) {
-        this.name = name;
-    }
 
     public AuthorityEntity() {
         super();
     }
 
-    protected AuthorityEntity(UUID id) {
-        super(id);
-    }
-
-    public AuthorityEntity(UUID id, String name, Collection<RoleEntity> roles) {
-        super(id);
-        this.name = name;
-        this.roles = roles;
-    }
-
     @Override
-    public boolean equals(final Object obj) {
-        return super.equalsId(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AuthorityEntity that)) return false;
+        return super.equalsId(o) || name == that.name && roles.equals(that.roles);
     }
 
     @Override
     public int hashCode() {
-        return hashCodeId();
+        return hashCodeId() + Objects.hash(name, roles);
     }
 
 }

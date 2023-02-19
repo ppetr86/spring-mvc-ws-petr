@@ -18,7 +18,7 @@ public enum Categories {
     APPAREL_AND_ACCESSORIES_OTHER_WOMEN_BAGS("womens-bags"),
     APPAREL_AND_ACCESSORIES_OTHER_WOMEN_JEWELLERY("womens-jewellery"),
     APPAREL_AND_ACCESSORIES_OTHER_SUNGLASSES("sunglasses"),
-    APPAREL_AND_ACCESSORIES("Apparel and accessories", Set.of(
+    APPAREL_AND_ACCESSORIES("apparel and accessories", Set.of(
             APPAREL_AND_ACCESSORIES_CLOTHING,
             APPAREL_AND_ACCESSORIES_SHOES,
             APPAREL_AND_ACCESSORIES_OTHER,
@@ -43,11 +43,11 @@ public enum Categories {
             APPAREL_AND_ACCESSORIES_OTHER_WOMEN_BAGS,
             APPAREL_AND_ACCESSORIES_OTHER_WOMEN_JEWELLERY)),
 
-    CONSUMER_ELECTRONICS_MOBILE_PHONES("Mobile phones"),
-    CONSUMER_ELECTRONICS_MOBILE_SMARTPHONES("Smartphones"),
-    CONSUMER_ELECTRONICS_NOTEBOOKS("Notebooks"),
+    CONSUMER_ELECTRONICS_MOBILE_PHONES("mobile phones"),
+    CONSUMER_ELECTRONICS_MOBILE_SMARTPHONES("smartphones"),
+    CONSUMER_ELECTRONICS_NOTEBOOKS("notebooks"),
     CONSUMER_ELECTRONICS_LAPTOPS("laptops"),
-    CONSUMER_ELECTRONICS("Consumer Electronic", Set.of(
+    CONSUMER_ELECTRONICS("consumer electronic", Set.of(
             CONSUMER_ELECTRONICS_MOBILE_PHONES,
             CONSUMER_ELECTRONICS_NOTEBOOKS,
             CONSUMER_ELECTRONICS_MOBILE_SMARTPHONES,
@@ -55,26 +55,26 @@ public enum Categories {
 
     BEAUTY_FRAGRANCES("fragrances"),
     BEAUTY_SKIN_CARE("skincare"),
-    BEAUTY("Beauty", Set.of(BEAUTY_FRAGRANCES, BEAUTY_SKIN_CARE)),
+    BEAUTY("beauty", Set.of(BEAUTY_FRAGRANCES, BEAUTY_SKIN_CARE)),
 
     FOOD_AND_BEVERAGES_GROCERIES("groceries"),
-    FOOD_AND_BEVERAGES("Food and Beverages", Set.of(FOOD_AND_BEVERAGES_GROCERIES)),
+    FOOD_AND_BEVERAGES("food and beverages", Set.of(FOOD_AND_BEVERAGES_GROCERIES)),
 
     FURNITURE_AND_DECOR_HOME_DECORATION("home-decoration"),
     FURNITURE_AND_DECOR_FURNITURE("furniture"),
     FURNITURE_AND_DECOR_LIGHTING("lighting"),
-    FURNITURE_AND_DECOR("Furniture and decor", Set.of(FURNITURE_AND_DECOR_FURNITURE, FURNITURE_AND_DECOR_HOME_DECORATION, FURNITURE_AND_DECOR_LIGHTING)),
+    FURNITURE_AND_DECOR("furniture and decor", Set.of(FURNITURE_AND_DECOR_FURNITURE, FURNITURE_AND_DECOR_HOME_DECORATION, FURNITURE_AND_DECOR_LIGHTING)),
 
-    AUTOMOTIVE_AUTO_AND_PARTS("Auto and parts"),
+    AUTOMOTIVE_AUTO_AND_PARTS("auto and parts"),
     AUTOMOTIVE("automotive", Set.of(AUTOMOTIVE_AUTO_AND_PARTS)),
-    AUTOMOTIVE_MOTO_AND_PARTS("Moto and parts"),
+    AUTOMOTIVE_MOTO_AND_PARTS("moto and parts"),
 
-    BOOKS("Books"),
-    MOVIES("Movies"),
-    MUSIC("Music"),
-    GAMES("Games"),
-    HEALTH("Health"),
-    PERSONAL_CARE("Personal care");
+    BOOKS("books"),
+    MOVIES("movies"),
+    MUSIC("music"),
+    GAMES("games"),
+    HEALTH("health"),
+    PERSONAL_CARE("personal care");
 
     private final String description;
     private Set<Categories> children = new HashSet<>();
@@ -89,7 +89,7 @@ public enum Categories {
     }
 
     public String getDescription() {
-        return description.toLowerCase();
+        return description;
     }
 
     public Set<Categories> getChildren() {

@@ -4,7 +4,9 @@ import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeRevisionEn
 import com.appsdeveloperblog.app.ws.shared.Constants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
@@ -17,6 +19,7 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,30 +48,35 @@ public class CategoryEntity extends IdBasedTimeRevisionEntity implements Seriali
     private boolean hasChildren;
 
     @OneToOne
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent")
     private CategoryEntity parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "parent")
     @OrderBy("name asc")
     private Set<CategoryEntity> children = new HashSet<>();
 
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.EAGER)
+    Set<BrandEntity> brands;
 
-    public CategoryEntity(String name) {
-        this.name = name;
-        this.alias = name;
-        this.image = "default.png";
+
+    public void addChildCategory(CategoryEntity value) {
+        if (value != null && !this.children.contains(value)) {
+            this.children.add(value);
+            value.setParent(this);
+        }
     }
 
-    public CategoryEntity(String name, CategoryEntity parent) {
-        this(name);
-        this.parent = parent;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CategoryEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return super.equalsId(o) || name.equals(that.name);
     }
 
-    public CategoryEntity(UUID id, String name, String alias) {
-        super();
-        this.id = id;
-        this.name = name;
-        this.alias = alias;
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name);
     }
 
     @Transient
@@ -77,6 +85,13 @@ public class CategoryEntity extends IdBasedTimeRevisionEntity implements Seriali
         if (this.id == null) return "/images/image-thumbnail.png";
 
         return Constants.S3_BASE_URI + "/category-images/" + this.id + "/" + this.image;
+    }
+
+    public void removeChildCategory(CategoryEntity value) {
+        if (value != null && this.children.contains(value)) {
+            this.children.remove(value);
+            value.setParent(null);
+        }
     }
 
     @Override

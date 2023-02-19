@@ -1,8 +1,8 @@
 package com.appsdeveloperblog.app.ws.security;
 
 import com.appsdeveloperblog.app.ws.SpringApplicationContext;
-import com.appsdeveloperblog.app.ws.api.model.request.UserLoginRequestModel;
 import com.appsdeveloperblog.app.ws.service.UserService;
+import com.appsdeveloperblog.app.ws.shared.dto.LoginDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,8 +35,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                                 HttpServletResponse res) throws AuthenticationException {
         try {
 
-            UserLoginRequestModel creds = new ObjectMapper()
-                    .readValue(req.getInputStream(), UserLoginRequestModel.class);
+            var creds = new ObjectMapper()
+                    .readValue(req.getInputStream(), LoginDto.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -78,7 +78,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         var user = userService.findByEmail(userName);
 
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
-        res.addHeader("UserID", user.getUserId());
+        res.addHeader("UserID", user.getId().toString());
 
     }
 

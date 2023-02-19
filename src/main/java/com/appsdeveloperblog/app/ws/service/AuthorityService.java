@@ -1,9 +1,10 @@
 package com.appsdeveloperblog.app.ws.service;
 
 import com.appsdeveloperblog.app.ws.data.entity.AuthorityEntity;
+import com.appsdeveloperblog.app.ws.shared.Authority;
 
-public interface AuthorityService extends IdBasedService<AuthorityEntity> {
+public interface AuthorityService extends IdDao<AuthorityEntity> {
 
-    AuthorityEntity findByName(String name);
+    AuthorityEntity findByAuthority(Authority authority);
 
 }

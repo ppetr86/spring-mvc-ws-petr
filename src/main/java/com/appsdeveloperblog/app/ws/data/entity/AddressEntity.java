@@ -5,8 +5,7 @@ import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +15,9 @@ import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "addresses")
@@ -30,8 +32,6 @@ public class AddressEntity extends IdBasedEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 8145705110681795088L;
 
-    @Column(length = 30, nullable = false, unique = false, name = "address_id")
-    private String addressId;
 
     @Column(length = 15, nullable = false, unique = false)
     private String city;
@@ -40,44 +40,44 @@ public class AddressEntity extends IdBasedEntity implements Serializable {
     private String country;
 
     @Column(length = 100, nullable = false, unique = false)
-    private String streetName;
+    private String street;
 
     @Column(length = 7, nullable = false, unique = false)
     private String postalCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_uuid")
-    private UserEntity user = null;
+    @ManyToMany(mappedBy = "addresses", fetch = FetchType.EAGER)
+    private Set<UserEntity> users = new HashSet<>();
 
     public AddressEntity(AddressDtoIn addressDtoIn) {
         super();
-        this.setAddressId(addressDtoIn.getAddressId());
         this.setCity(addressDtoIn.getCity());
         this.setCountry(addressDtoIn.getCountry());
-        this.setStreetName(addressDtoIn.getStreetName());
+        this.setStreet(addressDtoIn.getStreet());
         this.setPostalCode(addressDtoIn.getPostalCode());
     }
 
-    public AddressEntity(String addressId,
-                         String city,
+    public AddressEntity(String city,
                          String country,
-                         String streetName,
+                         String street,
                          String postalCode) {
         super();
-        this.addressId = addressId;
         this.city = city;
         this.country = country;
-        this.streetName = streetName;
+        this.street = street;
         this.postalCode = postalCode;
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        return super.equalsId(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AddressEntity that))
+            return false;
+
+        return super.equalsId(o) || Objects.equals(city, that.city) && Objects.equals(country, that.country) && Objects.equals(street, that.street) && Objects.equals(postalCode, that.postalCode) && Objects.equals(users, that.users);
     }
 
     @Override
     public int hashCode() {
-        return hashCodeId();
+        return hashCodeId() + Objects.hash(city, country, street, postalCode, users);
     }
 }
