@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -28,7 +29,7 @@ public class ProductDetailEntity extends IdBasedTimeRevisionEntity implements Se
     private String value;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product")
     private ProductEntity product;
 
     public ProductDetailEntity(UUID id, String name, String value, ProductEntity product) {
@@ -45,4 +46,16 @@ public class ProductDetailEntity extends IdBasedTimeRevisionEntity implements Se
         this.product = product;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductDetailEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return super.equalsId(o) || name.equals(that.name) && value.equals(that.value) && product.equals(that.product);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name, value, product);
+    }
 }

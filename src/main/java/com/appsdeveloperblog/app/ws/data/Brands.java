@@ -66,7 +66,5 @@ public enum Brands {
 
     private final String description;
     private final Set<Categories> categories;
-
-
 }
 

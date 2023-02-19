@@ -1,15 +1,13 @@
 package com.appsdeveloperblog.app.ws.api.controller;
 
-import com.appsdeveloperblog.app.ws.api.model.request.PasswordResetModel;
-import com.appsdeveloperblog.app.ws.api.model.request.PasswordResetRequestModel;
-import com.appsdeveloperblog.app.ws.api.model.request.UserDetailsRequestModel;
+import com.appsdeveloperblog.app.ws.shared.dto.PasswordResetDto;
+import com.appsdeveloperblog.app.ws.shared.dto.PasswordResetRequestDto;
 import com.appsdeveloperblog.app.ws.api.model.response.ErrorMessages;
 import com.appsdeveloperblog.app.ws.api.model.response.OperationStatusModel;
 import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.exceptions.UserServiceException;
 import com.appsdeveloperblog.app.ws.service.AddressService;
 import com.appsdeveloperblog.app.ws.service.UserService;
-import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoOut;
@@ -35,8 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -49,18 +47,17 @@ public class UserController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public UserDtoOut createUser(@RequestBody UserDetailsRequestModel userDetails) {
+    public UserDtoOut createUser(@RequestBody UserDtoIn userDetails) {
 
         if (userDetails.getFirstName().isEmpty())
             throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
-        ModelMapper modelMapper = new ModelMapper();
+        var modelMapper = new ModelMapper();
         UserDtoIn userDtoIn = modelMapper.map(userDetails, UserDtoIn.class);
 
         var createdUser = userService.createUser(userDtoIn);
-        var returnValue = modelMapper.map(createdUser, UserDtoOut.class);
 
-        return returnValue;
+        return modelMapper.map(createdUser, UserDtoOut.class);
 
     }
 
@@ -69,7 +66,7 @@ public class UserController {
         var model = new OperationStatusModel();
         model.setOperationName(RequestOperationName.DELETE.name());
 
-        userService.deleteUser(id);
+        userService.deleteUser(UUID.fromString(id));
 
         model.setOperationResult(RequestOperationStatus.SUCCESS.name());
 
@@ -81,7 +78,7 @@ public class UserController {
     public UserDtoOut getUser(@PathVariable String id) {
 
         var returnValue = new UserDtoOut();
-        var userDto = userService.findByUserId(id);
+        var userDto = userService.loadById(UUID.fromString(id));
         BeanUtils.copyProperties(userDto, returnValue);
         return returnValue;
     }
@@ -91,7 +88,7 @@ public class UserController {
     public EntityModel<AddressDtoOut> getUserAddress(@PathVariable String userId,
                                                      @PathVariable String addressId) {
 
-        AddressDtoIn addressesDto = addressService.getAddress(addressId);
+        var addressesDto = addressService.loadById(UUID.fromString(addressId));
 
         ModelMapper modelMapper = new ModelMapper();
 
@@ -115,16 +112,17 @@ public class UserController {
     public CollectionModel<AddressDtoOut> getUserAddresses(@PathVariable String id) {
 
         var returnValue = new ArrayList<AddressDtoOut>();
-        List<AddressDtoIn> addressDto = addressService.getAddresses(id);
+        var user = userService.loadById(UUID.fromString(id));
+        var usersAddresses = user.getAddresses();
 
-        if (addressDto != null && !addressDto.isEmpty()) {
+        if (usersAddresses != null && !usersAddresses.isEmpty()) {
             Type listType = new TypeToken<List<AddressDtoOut>>() {
             }.getType();
-            returnValue = new ModelMapper().map(addressDto, listType);
+            returnValue = new ModelMapper().map(usersAddresses, listType);
 
             for (var addressRest : returnValue) {
                 Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
-                        .getUserAddress(id, addressRest.getAddressId())).withSelfRel();
+                        .getUserAddress(id, addressRest.getId())).withSelfRel();
 
                 addressRest.add(selfLink);
             }
@@ -159,10 +157,10 @@ public class UserController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
-    public OperationStatusModel requestReset(@RequestBody PasswordResetRequestModel passwordResetRequestModel) {
+    public OperationStatusModel requestReset(@RequestBody PasswordResetRequestDto passwordResetRequestDto) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
-        boolean operationResult = userService.requestPasswordReset(passwordResetRequestModel.getEmail());
+        boolean operationResult = userService.requestPasswordReset(passwordResetRequestDto.getEmail());
 
         returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
         returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
@@ -177,12 +175,12 @@ public class UserController {
     @PostMapping(path = "/password-reset",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
-    public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {
+    public OperationStatusModel resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
         boolean operationResult = userService.resetPassword(
-                passwordResetModel.getToken(),
-                passwordResetModel.getPassword());
+                passwordResetDto.getToken(),
+                passwordResetDto.getPassword());
 
         returnValue.setOperationName(RequestOperationName.PASSWORD_RESET.name());
         returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
@@ -195,13 +193,13 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}")
-    public UserDtoOut updateUser(@PathVariable String id, @RequestBody UserDetailsRequestModel userDetails) {
+    public UserDtoOut updateUser(@PathVariable String id, @RequestBody UserDtoIn userDetails) {
 
         var returnValue = new UserDtoOut();
         var dto = new UserDtoIn();
         BeanUtils.copyProperties(userDetails, dto);
 
-        var updateUser = userService.updateUser(id, dto);
+        var updateUser = userService.updateUser(UUID.fromString(id), dto);
         BeanUtils.copyProperties(updateUser, returnValue);
 
         return returnValue;
@@ -218,9 +216,6 @@ public class UserController {
         returnValue.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
 
         boolean isVerified = userService.verifyEmailToken(token);
-
-        var set = new HashSet<String>();
-
 
         if (isVerified) {
             returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());

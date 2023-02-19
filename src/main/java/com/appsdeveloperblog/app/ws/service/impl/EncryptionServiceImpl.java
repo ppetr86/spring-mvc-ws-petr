@@ -12,12 +12,12 @@ import java.util.Base64;
 @Service
 public class EncryptionServiceImpl implements EncryptionService {
     @Override
-    public String decrypt(String encryptedText) {
+    public String decrypt(final String encryptedText) {
         return new String(Base64.getDecoder().decode(encryptedText));
     }
 
     @Override
-    public String encrypt(String freeText) {
+    public String encrypt(final String freeText) {
         return Base64.getEncoder().encodeToString(freeText.getBytes(StandardCharsets.UTF_8));
     }
 }

@@ -20,15 +20,11 @@ public interface AddressRepository extends IdBasedRepository<AddressEntity> {
     Page<AddressEntity> findAll(Pageable pageable);
 
 
-    Stream<AddressEntity> findAllByAddressIdContainsIgnoreCase(String addressIdContains);
+    Stream<AddressEntity> findAllByCityLikeIgnoreCase(String city);
 
 
     @Async
-    @Query("select add from AddressEntity add where add.user=:user")
-    Future<List<AddressEntity>> findAllByUser(UserEntity user);
-
-
-    AddressEntity findByAddressId(String addressId);
+    Future<List<AddressEntity>> findAllByUsersContains(UserEntity user);
 
 
     @Async

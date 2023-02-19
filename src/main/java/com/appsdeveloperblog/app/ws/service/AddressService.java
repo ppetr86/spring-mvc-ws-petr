@@ -1,31 +1,20 @@
 package com.appsdeveloperblog.app.ws.service;
 
 import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
+import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
-import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface AddressService extends IdBasedService<AddressEntity> {
+public interface AddressService extends IdDao<AddressEntity> {
 
-    AddressDtoOut createAddress(AddressDtoIn addressDtoIn);
-
-
-    boolean deleteAddressByAddressId(String addressId);
+    AddressEntity createAddress(AddressDtoIn addressDtoIn);
 
 
-    AddressDtoOut findByAddressId(String addressId);
+    List<AddressEntity> getAddresses(int page, int limit, String city, String country, String streetName, String postalCode);
 
 
-    AddressDtoIn getAddress(String addressId);
-
-
-    List<AddressDtoOut> getAddress(int page, int limit, String addressId, String city, String country, String streetName, String postalCode);
-
-
-    List<AddressDtoIn> getAddresses(String userId);
-
-
-    AddressDtoOut updateAddressByAddressId(String addressId, AddressDtoIn dto);
+    AddressEntity updateAddressByAddressId(UUID addressId, AddressDtoIn dto);
 
 }

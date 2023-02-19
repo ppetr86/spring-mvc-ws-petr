@@ -15,7 +15,9 @@ public interface CreditCardRepository extends IdBasedTimeRevisionRepository<Cred
     List<Object[]> findAllCreditCardsNumbersAndExpirationsPartialData();
 
 
-    @Query("select new com.appsdeveloperblog.app.ws.data.entitydto.CreditCardNumberValidityDto(cce.creditCardNumber,cce.expirationDate) " + "from CreditCardSnapshotEntity cce where cce.creditCardNumber like %:creditCardNumber% and cce.expirationDate like %:expirationDate%")
+    @Query("select new com.appsdeveloperblog.app.ws.data.entitydto.CreditCardNumberValidityDto(cce.creditCardNumber,cce.expirationDate) " +
+            "from CreditCardEntity cce where cce.creditCardNumber like %:creditCardNumber% and " +
+            "cce.expirationDate like %:expirationDate%")
     List<CreditCardNumberValidityDto> findAllCreditCardsNumbersAndExpirationsToDto(String creditCardNumber, String expirationDate);
 
 

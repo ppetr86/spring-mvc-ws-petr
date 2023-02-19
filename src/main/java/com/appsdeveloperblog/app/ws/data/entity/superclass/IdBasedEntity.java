@@ -15,7 +15,7 @@ import java.util.UUID;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class IdBasedEntity {
+public abstract class IdBasedEntity implements Comparable<IdBasedEntity> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,6 +32,11 @@ public abstract class IdBasedEntity {
 
     protected final int compareToId(final IdBasedEntity other) {
         return UIdComparable.ID_COMPARATOR.compare(this, other);
+    }
+
+    @Override
+    public int compareTo(final IdBasedEntity other) {
+        return compareToId(other);
     }
 
     protected final boolean equalsId(final Object o) {

@@ -12,7 +12,7 @@ import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
+import java.util.Objects;
 
 @Entity
 @Table(name = "product_images")
@@ -24,17 +24,11 @@ public class ProductImageEntity extends IdBasedEntity {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product")
     private ProductEntity product;
 
     public ProductImageEntity() {
-
-    }
-
-    public ProductImageEntity(UUID id, String name, ProductEntity product) {
-        this.id = id;
-        this.name = name;
-        this.product = product;
+        super();
     }
 
     public ProductImageEntity(String name, ProductEntity product) {
@@ -47,4 +41,15 @@ public class ProductImageEntity extends IdBasedEntity {
         return Constants.S3_BASE_URI + "/product-images/" + product.getId() + "/extras/" + this.name;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductImageEntity that)) return false;
+        return super.equalsId(o) || name.equals(that.name) && product.equals(that.product);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name, product);
+    }
 }

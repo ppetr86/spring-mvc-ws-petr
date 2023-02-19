@@ -7,19 +7,21 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.HashSet;
 
 public class UserPrincipal implements UserDetails {
 
+    @Serial
     private static final long serialVersionUID = -7530187709860249942L;
 
-    private UserEntity userEntity;
+    private final UserEntity userEntity;
     private String userId;
 
     public UserPrincipal(UserEntity userEntity) {
         this.userEntity = userEntity;
-        this.userId = userEntity.getUserId();
+        this.userId = userEntity.getId().toString();
     }
 
     @Override
@@ -34,12 +36,12 @@ public class UserPrincipal implements UserDetails {
         if (roles == null) return authorities;
 
         roles.forEach((role) -> {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName().name()));
             authorityEntities.addAll(role.getAuthorities());
         });
 
         authorityEntities.forEach((authorityEntity) -> {
-            authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
+            authorities.add(new SimpleGrantedAuthority(authorityEntity.getName().name()));
         });
 
         return authorities;

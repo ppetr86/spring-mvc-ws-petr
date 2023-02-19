@@ -2,8 +2,10 @@ package com.appsdeveloperblog.app.ws.data.entity;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeRevisionEntity;
 import com.appsdeveloperblog.app.ws.shared.Constants;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -15,8 +17,8 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "brands")
@@ -33,26 +35,22 @@ public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializab
     @Column(length = 128)
     private String logo;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "brands_categories",
-            joinColumns = @JoinColumn(name = "brand_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
+            joinColumns = @JoinColumn(name = "brand"),
+            inverseJoinColumns = @JoinColumn(name = "category"))
     private Set<CategoryEntity> categories = new HashSet<>();
-
-    public BrandEntity(String name) {
-        super();
-        this.name = name;
-        this.logo = "brand-logo.png";
-    }
-
-    public BrandEntity(UUID id, String name) {
-        super(id);
-        this.name = name;
-    }
 
     public BrandEntity() {
         super();
+    }
+
+    public void addCategory(CategoryEntity value) {
+        if (value != null && !this.categories.contains(value)) {
+            this.categories.add(value);
+            value.getBrands().add(this);
+        }
     }
 
     @Transient
@@ -62,8 +60,28 @@ public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializab
         return Constants.S3_BASE_URI + "/brand-logos/" + this.id + "/" + this.logo;
     }
 
+    public void removeCategory(CategoryEntity value) {
+        if (value != null && this.categories.contains(value)) {
+            this.categories.remove(value);
+            value.getBrands().remove(this);
+        }
+    }
+
     @Override
     public String toString() {
         return "Brand [id=" + id + ", name=" + name + ", categories=" + categories + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BrandEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return super.equalsId(o) || name.equals(that.name) && Objects.equals(logo, that.logo) && categories.equals(that.categories);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name, logo, categories);
     }
 }

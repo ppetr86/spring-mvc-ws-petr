@@ -21,9 +21,9 @@ public class Utils {
     private final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private int defaultIdLength = 8;
 
-    public String generateEmailVerificationToken(String userId) {
+    public String generateEmailVerificationToken(String userEmail) {
         var token = Jwts.builder()
-                .setSubject(userId)
+                .setSubject(userEmail)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
                 .compact();
