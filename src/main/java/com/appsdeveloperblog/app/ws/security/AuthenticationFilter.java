@@ -1,7 +1,7 @@
 package com.appsdeveloperblog.app.ws.security;
 
 import com.appsdeveloperblog.app.ws.SpringApplicationContext;
-import com.appsdeveloperblog.app.ws.service.UserService;
+import com.appsdeveloperblog.app.ws.service.UserDao;
 import com.appsdeveloperblog.app.ws.shared.dto.LoginDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -68,14 +68,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .signWith(hmacKey)
                 .compact();
 
-       /* String token = Jwts.builder()
+        /*String token = Jwts.builder()
                 .setSubject(userName)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret() )
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
                 .compact();*/
 
-        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
-        var user = userService.findByEmail(userName);
+        UserDao userDao = (UserDao) SpringApplicationContext.getBean("userDaoImpl");
+        var user = userDao.findByEmail(userName);
 
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
         res.addHeader("UserID", user.getId().toString());

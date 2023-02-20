@@ -1,7 +1,7 @@
 package com.appsdeveloperblog.app.ws.security;
 
 import com.appsdeveloperblog.app.ws.repository.UserRepository;
-import com.appsdeveloperblog.app.ws.service.UserService;
+import com.appsdeveloperblog.app.ws.service.UserDao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,11 +24,11 @@ import java.util.Arrays;
 @Configuration
 public class WebSecurity {
 
-    private final UserService userDetailsService;
+    private final UserDao userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
 
-    public WebSecurity(UserService userDetailsService,
+    public WebSecurity(UserDao userDetailsService,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
                        UserRepository userRepository
     ) {

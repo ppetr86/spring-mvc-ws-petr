@@ -74,17 +74,17 @@ public class CategoryEntity extends IdBasedTimeRevisionEntity implements Seriali
         return super.equalsId(o) || name.equals(that.name);
     }
 
-    @Override
-    public int hashCode() {
-        return hashCodeId() + Objects.hash(name);
-    }
-
     @Transient
     public String getImagePath() {
 
         if (this.id == null) return "/images/image-thumbnail.png";
 
         return Constants.S3_BASE_URI + "/category-images/" + this.id + "/" + this.image;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name);
     }
 
     public void removeChildCategory(CategoryEntity value) {

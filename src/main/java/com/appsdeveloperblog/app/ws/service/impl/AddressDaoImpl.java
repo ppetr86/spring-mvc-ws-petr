@@ -2,7 +2,7 @@ package com.appsdeveloperblog.app.ws.service.impl;
 
 import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
 import com.appsdeveloperblog.app.ws.repository.AddressRepository;
-import com.appsdeveloperblog.app.ws.service.AddressService;
+import com.appsdeveloperblog.app.ws.service.AddressDao;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdDaoImpl;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
 import com.appsdeveloperblog.app.ws.service.specification.SpecificationFactory;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class AddressDaoImpl extends AbstractIdDaoImpl<AddressEntity> implements AddressService {
+public class AddressDaoImpl extends AbstractIdDaoImpl<AddressEntity> implements AddressDao {
 
     private AddressRepository addressRepository;
 

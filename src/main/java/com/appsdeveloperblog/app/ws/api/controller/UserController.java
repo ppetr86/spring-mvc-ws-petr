@@ -1,14 +1,15 @@
 package com.appsdeveloperblog.app.ws.api.controller;
 
-import com.appsdeveloperblog.app.ws.shared.dto.PasswordResetDto;
-import com.appsdeveloperblog.app.ws.shared.dto.PasswordResetRequestDto;
+import com.appsdeveloperblog.app.ws.api.converter.UserExportConverter;
 import com.appsdeveloperblog.app.ws.api.model.response.ErrorMessages;
 import com.appsdeveloperblog.app.ws.api.model.response.OperationStatusModel;
 import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.exceptions.UserServiceException;
-import com.appsdeveloperblog.app.ws.service.AddressService;
-import com.appsdeveloperblog.app.ws.service.UserService;
+import com.appsdeveloperblog.app.ws.service.AddressDao;
+import com.appsdeveloperblog.app.ws.service.UserDao;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
+import com.appsdeveloperblog.app.ws.shared.dto.PasswordResetDto;
+import com.appsdeveloperblog.app.ws.shared.dto.PasswordResetRequestDto;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoOut;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,8 +44,8 @@ import java.util.UUID;
 //@CrossOrigin(origins= {"http://localhost:8083", "http://localhost:8084"})
 public class UserController {
 
-    private final UserService userService;
-    private AddressService addressService;
+    private final UserDao userDao;
+    private AddressDao addressDao;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -55,7 +57,7 @@ public class UserController {
         var modelMapper = new ModelMapper();
         UserDtoIn userDtoIn = modelMapper.map(userDetails, UserDtoIn.class);
 
-        var createdUser = userService.createUser(userDtoIn);
+        var createdUser = userDao.createUser(userDtoIn);
 
         return modelMapper.map(createdUser, UserDtoOut.class);
 
@@ -66,7 +68,7 @@ public class UserController {
         var model = new OperationStatusModel();
         model.setOperationName(RequestOperationName.DELETE.name());
 
-        userService.deleteUser(UUID.fromString(id));
+        userDao.deleteUser(UUID.fromString(id));
 
         model.setOperationResult(RequestOperationStatus.SUCCESS.name());
 
@@ -78,7 +80,7 @@ public class UserController {
     public UserDtoOut getUser(@PathVariable String id) {
 
         var returnValue = new UserDtoOut();
-        var userDto = userService.loadById(UUID.fromString(id));
+        var userDto = userDao.loadById(UUID.fromString(id));
         BeanUtils.copyProperties(userDto, returnValue);
         return returnValue;
     }
@@ -88,7 +90,7 @@ public class UserController {
     public EntityModel<AddressDtoOut> getUserAddress(@PathVariable String userId,
                                                      @PathVariable String addressId) {
 
-        var addressesDto = addressService.loadById(UUID.fromString(addressId));
+        var addressesDto = addressDao.loadById(UUID.fromString(addressId));
 
         ModelMapper modelMapper = new ModelMapper();
 
@@ -112,7 +114,7 @@ public class UserController {
     public CollectionModel<AddressDtoOut> getUserAddresses(@PathVariable String id) {
 
         var returnValue = new ArrayList<AddressDtoOut>();
-        var user = userService.loadById(UUID.fromString(id));
+        var user = userDao.loadById(UUID.fromString(id));
         var usersAddresses = user.getAddresses();
 
         if (usersAddresses != null && !usersAddresses.isEmpty()) {
@@ -136,18 +138,18 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDtoOut> getUsers(@RequestParam(defaultValue = "1") int page,
-                                     @RequestParam(defaultValue = "25") int limit) {
-        List<UserDtoOut> returnValue = new ArrayList<>();
+    public ResponseEntity<List<UserDtoOut>> getUsers(@RequestParam(defaultValue = "1") int page,
+                                                     @RequestParam(defaultValue = "25") int limit) {
+        List<UserEntity> users = userDao.getUsers(page, limit);
 
-        List<UserEntity> users = userService.getUsers(page, limit);
+        var result = new UserExportConverter().convertToListDtoOut(users);
+        for(var each : result){
+            var selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
+                    .getUser(each.getId())).withSelfRel();
+            each.add(selfLink);
+        }
 
-        var mapper = new ModelMapper();
-        users.forEach(each -> {
-            returnValue.add(mapper.map(each, UserDtoOut.class));
-        });
-
-        return returnValue;
+        return ResponseEntity.ok(result);
     }
 
     /*
@@ -160,7 +162,7 @@ public class UserController {
     public OperationStatusModel requestReset(@RequestBody PasswordResetRequestDto passwordResetRequestDto) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
-        boolean operationResult = userService.requestPasswordReset(passwordResetRequestDto.getEmail());
+        boolean operationResult = userDao.requestPasswordReset(passwordResetRequestDto.getEmail());
 
         returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
         returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
@@ -178,7 +180,7 @@ public class UserController {
     public OperationStatusModel resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
-        boolean operationResult = userService.resetPassword(
+        boolean operationResult = userDao.resetPassword(
                 passwordResetDto.getToken(),
                 passwordResetDto.getPassword());
 
@@ -199,7 +201,7 @@ public class UserController {
         var dto = new UserDtoIn();
         BeanUtils.copyProperties(userDetails, dto);
 
-        var updateUser = userService.updateUser(UUID.fromString(id), dto);
+        var updateUser = userDao.updateUser(UUID.fromString(id), dto);
         BeanUtils.copyProperties(updateUser, returnValue);
 
         return returnValue;
@@ -215,7 +217,7 @@ public class UserController {
         OperationStatusModel returnValue = new OperationStatusModel();
         returnValue.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
 
-        boolean isVerified = userService.verifyEmailToken(token);
+        boolean isVerified = userDao.verifyEmailToken(token);
 
         if (isVerified) {
             returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());

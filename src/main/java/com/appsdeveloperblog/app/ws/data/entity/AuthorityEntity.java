@@ -51,7 +51,7 @@ public class AuthorityEntity extends IdBasedEntity implements Serializable {
 
     @Override
     public int hashCode() {
-        return hashCodeId() + Objects.hash(name, roles);
+        return hashCodeId() + Objects.hash(name);
     }
 
 }

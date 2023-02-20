@@ -5,9 +5,9 @@ import com.appsdeveloperblog.app.ws.data.entity.CreditCardEntity;
 import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.data.entitydto.UserAddressCreditCardEntityCounterDto;
 import com.appsdeveloperblog.app.ws.data.entitydto.UserAddressCreditCardEntityDto;
-import com.appsdeveloperblog.app.ws.service.AddressService;
-import com.appsdeveloperblog.app.ws.service.CreditCardService;
-import com.appsdeveloperblog.app.ws.service.UserService;
+import com.appsdeveloperblog.app.ws.service.AddressDao;
+import com.appsdeveloperblog.app.ws.service.CreditCardDao;
+import com.appsdeveloperblog.app.ws.service.UserDao;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,24 +17,25 @@ import java.util.concurrent.ExecutionException;
 
 import static com.appsdeveloperblog.app.ws.shared.Utils.startTimer;
 import static com.appsdeveloperblog.app.ws.shared.Utils.timeTaken;
+import static java.util.concurrent.CompletableFuture.*;
 
 @Service
 @AllArgsConstructor
 public class UserAddressCreditCardAsyncServiceImpl {
 
-    private final UserService userService;
+    private final UserDao userDao;
 
-    private final AddressService addressService;
+    private final AddressDao addressDao;
 
-    private final CreditCardService creditCardService;
+    private final CreditCardDao creditCardDao;
 
     public UserAddressCreditCardEntityDto getUserAddressCreditCardEntityDto() throws ExecutionException, InterruptedException {
         startTimer();
-        CompletableFuture<List<UserEntity>> userCountCf = CompletableFuture.supplyAsync(userService::loadAllDelayed);
-        CompletableFuture<List<AddressEntity>> addressCountCf = CompletableFuture.supplyAsync(addressService::loadAllDelayed);
-        CompletableFuture<List<CreditCardEntity>> cardCountCf = CompletableFuture.supplyAsync(creditCardService::loadAllDelayed);
+        CompletableFuture<List<UserEntity>> userCountCf = supplyAsync(userDao::loadAllDelayed);
+        CompletableFuture<List<AddressEntity>> addressCountCf = supplyAsync(addressDao::loadAllDelayed);
+        CompletableFuture<List<CreditCardEntity>> cardCountCf = supplyAsync(creditCardDao::loadAllDelayed);
 
-        var future = CompletableFuture.allOf(userCountCf, addressCountCf, cardCountCf)
+        var future = allOf(userCountCf, addressCountCf, cardCountCf)
                 .thenApply(combined ->
                         new UserAddressCreditCardEntityDto(userCountCf.join(), addressCountCf.join(), cardCountCf.join()));
 
@@ -45,9 +46,9 @@ public class UserAddressCreditCardAsyncServiceImpl {
 
     public UserAddressCreditCardEntityDto getUserAddressCreditCardEntityDtoWithoutCF() {
         startTimer();
-        var users = userService.loadAllDelayed();
-        var addresses = addressService.loadAllDelayed();
-        var cards = creditCardService.loadAllDelayed();
+        var users = userDao.loadAllDelayed();
+        var addresses = addressDao.loadAllDelayed();
+        var cards = creditCardDao.loadAllDelayed();
 
         timeTaken();
         return new UserAddressCreditCardEntityDto(users, addresses, cards);
@@ -56,11 +57,11 @@ public class UserAddressCreditCardAsyncServiceImpl {
     public UserAddressCreditCardEntityCounterDto retrieveCountsOfUsersAndAddressesAndCards_WithCf()
             throws ExecutionException, InterruptedException {
         startTimer();
-        CompletableFuture<Long> userCountCf = CompletableFuture.supplyAsync(userService::getCountDelayed);
-        CompletableFuture<Long> addressCountCf = CompletableFuture.supplyAsync(addressService::getCountDelayed);
-        CompletableFuture<Long> cardCountCf = CompletableFuture.supplyAsync(creditCardService::getCountDelayed);
+        CompletableFuture<Long> userCountCf = supplyAsync(userDao::getCountDelayed);
+        CompletableFuture<Long> addressCountCf = supplyAsync(addressDao::getCountDelayed);
+        CompletableFuture<Long> cardCountCf = supplyAsync(creditCardDao::getCountDelayed);
 
-        var future = CompletableFuture.allOf(userCountCf, addressCountCf, cardCountCf)
+        var future = allOf(userCountCf, addressCountCf, cardCountCf)
                 .thenApply(combined ->
                         new UserAddressCreditCardEntityCounterDto(userCountCf.join(), addressCountCf.join(), cardCountCf.join()));
 
@@ -71,9 +72,9 @@ public class UserAddressCreditCardAsyncServiceImpl {
 
     public UserAddressCreditCardEntityCounterDto retrieveCountsOfUsersAndAddressesAndCards_WithoutCf() {
         startTimer();
-        var userCountCf = userService.getCountDelayed();
-        var addressCountCf = addressService.getCountDelayed();
-        var cardCountCf = creditCardService.getCountDelayed();
+        var userCountCf = userDao.getCountDelayed();
+        var addressCountCf = addressDao.getCountDelayed();
+        var cardCountCf = creditCardDao.getCountDelayed();
 
         timeTaken();
         return new UserAddressCreditCardEntityCounterDto(userCountCf, addressCountCf, cardCountCf);
@@ -82,10 +83,10 @@ public class UserAddressCreditCardAsyncServiceImpl {
     public UserAddressCreditCardEntityCounterDto retrieveCountsOfUsersAndAddresses_WithCf()
             throws ExecutionException, InterruptedException {
         startTimer();
-        CompletableFuture<Long> userCountCf = CompletableFuture.supplyAsync(userService::getCountDelayed);
-        CompletableFuture<Long> addressCountCf = CompletableFuture.supplyAsync(addressService::getCountDelayed);
+        CompletableFuture<Long> userCountCf = supplyAsync(userDao::getCountDelayed);
+        CompletableFuture<Long> addressCountCf = supplyAsync(addressDao::getCountDelayed);
 
-        var future = CompletableFuture.allOf(userCountCf, addressCountCf)
+        var future = allOf(userCountCf, addressCountCf)
                 .thenApply(combined ->
                         new UserAddressCreditCardEntityCounterDto(userCountCf.join(), addressCountCf.join()));
 
@@ -96,8 +97,8 @@ public class UserAddressCreditCardAsyncServiceImpl {
 
     public UserAddressCreditCardEntityCounterDto retrieveCountsOfUsersAndAddresses_WithoutCf() {
         startTimer();
-        var userCountCf = userService.getCountDelayed();
-        var addressCountCf = addressService.getCountDelayed();
+        var userCountCf = userDao.getCountDelayed();
+        var addressCountCf = addressDao.getCountDelayed();
 
         timeTaken();
         return new UserAddressCreditCardEntityCounterDto(userCountCf, addressCountCf);

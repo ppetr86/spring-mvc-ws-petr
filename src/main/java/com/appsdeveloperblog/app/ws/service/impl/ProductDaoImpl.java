@@ -3,8 +3,8 @@ package com.appsdeveloperblog.app.ws.service.impl;
 import com.appsdeveloperblog.app.ws.data.entity.ProductEntity;
 import com.appsdeveloperblog.app.ws.data.entity.snapshots.ProductSnapshotEntity;
 import com.appsdeveloperblog.app.ws.repository.ProductRepository;
-import com.appsdeveloperblog.app.ws.service.ProductService;
-import com.appsdeveloperblog.app.ws.service.ProductSnapshotService;
+import com.appsdeveloperblog.app.ws.service.ProductDao;
+import com.appsdeveloperblog.app.ws.service.ProductSnapshotDao;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdTimeRevisionDaoImpl;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecification;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class ProductDaoImpl extends AbstractIdTimeRevisionDaoImpl<ProductEntity> implements ProductService {
+public class ProductDaoImpl extends AbstractIdTimeRevisionDaoImpl<ProductEntity> implements ProductDao {
 
 
     private ProductRepository productRepository;
 
-    private final ProductSnapshotService productSnapshotService;
+    private final ProductSnapshotDao productSnapshotDao;
 
 
     @Override
@@ -66,7 +66,7 @@ public class ProductDaoImpl extends AbstractIdTimeRevisionDaoImpl<ProductEntity>
             snapshot.setAlias(dbObj.getAlias());
             snapshot.setShortDescription(dbObj.getShortDescription());
             snapshot.setFullDescription(dbObj.getFullDescription());
-            this.productSnapshotService.save(snapshot);
+            this.productSnapshotDao.save(snapshot);
         }
     }
 

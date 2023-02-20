@@ -3,19 +3,19 @@ package com.appsdeveloperblog.app.ws.service.impl;
 import com.appsdeveloperblog.app.ws.data.entity.ProductDetailEntity;
 import com.appsdeveloperblog.app.ws.data.entity.snapshots.ProductDetailSnapshotEntity;
 import com.appsdeveloperblog.app.ws.repository.ProductDetailRepository;
-import com.appsdeveloperblog.app.ws.service.ProductDetailService;
-import com.appsdeveloperblog.app.ws.service.ProductDetailSnapshotService;
+import com.appsdeveloperblog.app.ws.service.ProductDetailDao;
+import com.appsdeveloperblog.app.ws.service.ProductDetailSnapshotDao;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdTimeRevisionDaoImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class ProductDetailDaoImpl extends AbstractIdTimeRevisionDaoImpl<ProductDetailEntity> implements ProductDetailService {
+public class ProductDetailDaoImpl extends AbstractIdTimeRevisionDaoImpl<ProductDetailEntity> implements ProductDetailDao {
 
     private final ProductDetailRepository productDetailRepository;
 
-    private final ProductDetailSnapshotService productDetailSnapshotService;
+    private final ProductDetailSnapshotDao productDetailSnapshotDao;
 
     @Override
     public Class<ProductDetailEntity> getPojoClass() {
@@ -37,7 +37,7 @@ public class ProductDetailDaoImpl extends AbstractIdTimeRevisionDaoImpl<ProductD
             var snapshot = new ProductDetailSnapshotEntity();
             snapshot.setMaxRevision(this.findMaxRevision());
             snapshot.setName(dbObj.getName());
-            this.productDetailSnapshotService.save(snapshot);
+            this.productDetailSnapshotDao.save(snapshot);
         }
     }
 }

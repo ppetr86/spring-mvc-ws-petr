@@ -9,8 +9,8 @@ import com.appsdeveloperblog.app.ws.exceptions.UserServiceException;
 import com.appsdeveloperblog.app.ws.repository.PasswordResetTokenRepository;
 import com.appsdeveloperblog.app.ws.repository.UserRepository;
 import com.appsdeveloperblog.app.ws.security.UserPrincipal;
-import com.appsdeveloperblog.app.ws.service.UserService;
-import com.appsdeveloperblog.app.ws.service.UserSnapshotService;
+import com.appsdeveloperblog.app.ws.service.UserDao;
+import com.appsdeveloperblog.app.ws.service.UserSnapshotDao;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdTimeRevisionDaoImpl;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
 import com.appsdeveloperblog.app.ws.shared.AmazonSES;
@@ -39,7 +39,7 @@ import static com.appsdeveloperblog.app.ws.service.specification.GenericSpecific
 
 @Service
 @AllArgsConstructor
-public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> implements UserService {
+public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> implements UserDao {
 
     private UserRepository userRepository;
 
@@ -49,7 +49,7 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
 
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
-    private final UserSnapshotService userSnapshotService;
+    private final UserSnapshotDao userSnapshotDao;
 
     @Override
     public UserEntity createUser(UserDtoIn user) {
@@ -204,7 +204,6 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
     @Override
     public void onBeforeWrite(UserEntity dbObj) {
         super.onBeforeWrite(dbObj);
-
         final boolean dbObjExists = dbObj != null && dbObj.getId() != null && loadById(dbObj.getId()) != null;
 
         if (dbObjExists) {
@@ -217,7 +216,7 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
             snapshot.setEncryptedPassword(dbStateOfObj.getEncryptedPassword());
             snapshot.setFirstName(dbStateOfObj.getFirstName());
             snapshot.setLastName(dbStateOfObj.getLastName());
-            this.userSnapshotService.save(snapshot);
+            this.userSnapshotDao.save(snapshot);
         }
     }
 

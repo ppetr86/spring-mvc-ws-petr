@@ -45,7 +45,7 @@ public class AddressEntity extends IdBasedEntity implements Serializable {
     @Column(length = 7, nullable = false, unique = false)
     private String postalCode;
 
-    @ManyToMany(mappedBy = "addresses", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "addresses", fetch = FetchType.LAZY)
     private Set<UserEntity> users = new HashSet<>();
 
     public AddressEntity(AddressDtoIn addressDtoIn) {
@@ -78,6 +78,6 @@ public class AddressEntity extends IdBasedEntity implements Serializable {
 
     @Override
     public int hashCode() {
-        return hashCodeId() + Objects.hash(city, country, street, postalCode, users);
+        return hashCodeId() + Objects.hash(city, country, street, postalCode);
     }
 }

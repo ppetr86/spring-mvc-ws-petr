@@ -82,6 +82,6 @@ public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializab
 
     @Override
     public int hashCode() {
-        return hashCodeId() + Objects.hash(name, logo, categories);
+        return hashCodeId() + Objects.hash(name, logo);
     }
 }

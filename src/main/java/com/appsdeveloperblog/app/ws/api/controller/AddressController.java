@@ -4,7 +4,7 @@ import com.appsdeveloperblog.app.ws.api.model.response.ErrorMessages;
 import com.appsdeveloperblog.app.ws.api.model.response.OperationStatusModel;
 import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
 import com.appsdeveloperblog.app.ws.exceptions.AddressServiceException;
-import com.appsdeveloperblog.app.ws.service.AddressService;
+import com.appsdeveloperblog.app.ws.service.AddressDao;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.AddressDtoOut;
 import com.appsdeveloperblog.app.ws.shared.dto.EnvelopeCollectionOut;
@@ -30,7 +30,7 @@ import java.util.UUID;
 //@CrossOrigin(origins= {"http://localhost:8083", "http://localhost:8084"})
 public class AddressController {
 
-    private AddressService addressService;
+    private AddressDao addressDao;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -43,7 +43,7 @@ public class AddressController {
             throw new AddressServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
         }
 
-        var createdAddress = addressService.createAddress(addressDetails);
+        var createdAddress = addressDao.createAddress(addressDetails);
         var modelMapper = new ModelMapper();
 
         return modelMapper.map(createdAddress, AddressDtoOut.class);
@@ -55,7 +55,7 @@ public class AddressController {
         var model = new OperationStatusModel();
         model.setOperationName(RequestOperationName.DELETE.name());
 
-        addressService.delete(UUID.fromString(id));
+        addressDao.delete(UUID.fromString(id));
 
         model.setOperationResult(RequestOperationStatus.SUCCESS.name());
 
@@ -67,7 +67,7 @@ public class AddressController {
     public AddressDtoOut getAddressById(@PathVariable String id) {
 
         var returnValue = new AddressDtoOut();
-        var addressDto = addressService.loadById(UUID.fromString(id));
+        var addressDto = addressDao.loadById(UUID.fromString(id));
         BeanUtils.copyProperties(addressDto, returnValue);
         return returnValue;
     }
@@ -80,7 +80,7 @@ public class AddressController {
                                                              @RequestParam(defaultValue = "", required = false) String streetName,
                                                              @RequestParam(defaultValue = "", required = false) String postalCode) {
 
-        var returnValue = addressService.getAddresses(page, limit, city, country, streetName, postalCode);
+        var returnValue = addressDao.getAddresses(page, limit, city, country, streetName, postalCode);
 
         return new EnvelopeCollectionOut<>(returnValue);
     }
@@ -92,7 +92,7 @@ public class AddressController {
         var dto = new AddressDtoIn();
         BeanUtils.copyProperties(AddressDetails, dto);
 
-        var updateAddress = addressService.updateAddressByAddressId(UUID.fromString(id), dto);
+        var updateAddress = addressDao.updateAddressByAddressId(UUID.fromString(id), dto);
         BeanUtils.copyProperties(updateAddress, returnValue);
 
         return returnValue;

@@ -3,8 +3,8 @@ package com.appsdeveloperblog.app.ws.service.impl;
 import com.appsdeveloperblog.app.ws.data.entity.CategoryEntity;
 import com.appsdeveloperblog.app.ws.data.entity.snapshots.CategorySnapshotEntity;
 import com.appsdeveloperblog.app.ws.repository.CategoryRepository;
-import com.appsdeveloperblog.app.ws.service.CategoryService;
-import com.appsdeveloperblog.app.ws.service.CategorySnapshotService;
+import com.appsdeveloperblog.app.ws.service.CategoryDao;
+import com.appsdeveloperblog.app.ws.service.CategorySnapshotDao;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdTimeRevisionDaoImpl;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecification;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class CategoryDaoImpl extends AbstractIdTimeRevisionDaoImpl<CategoryEntity> implements CategoryService {
+public class CategoryDaoImpl extends AbstractIdTimeRevisionDaoImpl<CategoryEntity> implements CategoryDao {
 
 
     private CategoryRepository categoryRepository;
 
-    private final CategorySnapshotService categorySnapshotService;
+    private final CategorySnapshotDao categorySnapshotDao;
 
     @Override
     public CategoryEntity findByName(String categoryName) {
@@ -68,7 +68,7 @@ public class CategoryDaoImpl extends AbstractIdTimeRevisionDaoImpl<CategoryEntit
             snapshot.setAlias(dbObj.getAlias());
             snapshot.setImage(dbObj.getImage());
             snapshot.setEnabled(dbObj.isEnabled());
-            this.categorySnapshotService.save(snapshot);
+            this.categorySnapshotDao.save(snapshot);
         }
     }
 }

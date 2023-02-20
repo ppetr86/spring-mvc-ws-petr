@@ -3,8 +3,8 @@ package com.appsdeveloperblog.app.ws.service.impl;
 import com.appsdeveloperblog.app.ws.data.entity.BrandEntity;
 import com.appsdeveloperblog.app.ws.data.entity.snapshots.BrandSnapshotEntity;
 import com.appsdeveloperblog.app.ws.repository.BrandRepository;
-import com.appsdeveloperblog.app.ws.service.BrandService;
-import com.appsdeveloperblog.app.ws.service.BrandSnapshotService;
+import com.appsdeveloperblog.app.ws.service.BrandDao;
+import com.appsdeveloperblog.app.ws.service.BrandSnapshotDao;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdTimeRevisionDaoImpl;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecification;
 import com.appsdeveloperblog.app.ws.service.specification.GenericSpecificationsBuilder;
@@ -17,11 +17,11 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class BrandDaoImpl extends AbstractIdTimeRevisionDaoImpl<BrandEntity> implements BrandService {
+public class BrandDaoImpl extends AbstractIdTimeRevisionDaoImpl<BrandEntity> implements BrandDao {
 
     private final BrandRepository brandRepository;
 
-    private final BrandSnapshotService brandSnapshotService;
+    private final BrandSnapshotDao brandSnapshotDao;
 
     @Override
     public boolean existsByName(String name) {
@@ -61,7 +61,7 @@ public class BrandDaoImpl extends AbstractIdTimeRevisionDaoImpl<BrandEntity> imp
             snapshot.setMaxRevision(this.findMaxRevision());
             snapshot.setName(dbObj.getName());
             snapshot.setLogo(dbObj.getLogo());
-            this.brandSnapshotService.save(snapshot);
+            this.brandSnapshotDao.save(snapshot);
         }
     }
 

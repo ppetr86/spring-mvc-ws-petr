@@ -2,7 +2,7 @@ package com.appsdeveloperblog.app.ws.service.impl;
 
 import com.appsdeveloperblog.app.ws.data.entity.superclass.IdBasedTimeEntity;
 import com.appsdeveloperblog.app.ws.exceptions.InvalidParameterException;
-import com.appsdeveloperblog.app.ws.service.UserSnapshotService;
+import com.appsdeveloperblog.app.ws.service.UserSnapshotDao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -29,7 +29,7 @@ class UserDaoImplIntegrationTest {
     UserDaoImpl userService;
 
     @Autowired
-    UserSnapshotService userSnapshotService;
+    UserSnapshotDao userSnapshotDao;
 
     @Test
     @DisplayName("test that when no pagination is entered that result is the same as using max page size on first page")
@@ -108,7 +108,7 @@ class UserDaoImplIntegrationTest {
         userService.save(ivanaUser);
 
         var ivanaRevision = ivanaUser.getRevision();
-        var ivanaObjForRevision = userSnapshotService.getDataForRevision(ivanaRevision-1);
+        var ivanaObjForRevision = userSnapshotDao.getDataForRevision(ivanaRevision-1);
 
         Assertions.assertNotNull(ivanaObjForRevision);
 

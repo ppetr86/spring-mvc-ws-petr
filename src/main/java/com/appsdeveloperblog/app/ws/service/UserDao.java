@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
-public interface UserService extends UserDetailsService, IdTimeRevisionDao<UserEntity> {
+public interface UserDao extends UserDetailsService, IdTimeRevisionDao<UserEntity> {
 
     UserEntity createUser(UserDtoIn user);
 
