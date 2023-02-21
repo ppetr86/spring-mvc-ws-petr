@@ -30,13 +30,13 @@ public abstract class IdBasedEntity implements Comparable<IdBasedEntity> {
         super();
     }
 
-    protected final int compareToId(final IdBasedEntity other) {
-        return UIdComparable.ID_COMPARATOR.compare(this, other);
-    }
-
     @Override
     public int compareTo(final IdBasedEntity other) {
         return compareToId(other);
+    }
+
+    protected final int compareToId(final IdBasedEntity other) {
+        return UIdComparable.ID_COMPARATOR.compare(this, other);
     }
 
     protected final boolean equalsId(final Object o) {

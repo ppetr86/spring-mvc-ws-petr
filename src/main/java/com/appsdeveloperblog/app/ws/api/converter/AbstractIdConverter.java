@@ -53,14 +53,6 @@ public abstract class AbstractIdConverter<S extends IdBasedEntity, T extends IdB
                 .collect(Collectors.toList()));
     }
 
-    private Consumer<T> createSelfLinkConsumer() {
-        return each -> {
-            Optional.ofNullable(this.getConverter()
-                            .createSelfLink(each.getId()))
-                    .ifPresent(each::add);
-        };
-    }
-
     public final ListEnvelope<T> convertToDtoOutEnvelopeUsingModelReference(final List<S> source) {
         if (source == null || source.isEmpty()) {
             return new ListEnvelope<>();
@@ -85,5 +77,13 @@ public abstract class AbstractIdConverter<S extends IdBasedEntity, T extends IdB
     public Link createSelfLink(UUID id) {
         //nothing
         return null;
+    }
+
+    private Consumer<T> createSelfLinkConsumer() {
+        return each -> {
+            Optional.ofNullable(this.getConverter()
+                            .createSelfLink(each.getId()))
+                    .ifPresent(each::add);
+        };
     }
 }

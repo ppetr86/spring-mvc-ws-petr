@@ -1,12 +1,10 @@
 package com.appsdeveloperblog.app.ws.shared.dto;
 
 import com.appsdeveloperblog.app.ws.api.converter.IdBasedResource;
-import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
 
 @AllArgsConstructor
 @NoArgsConstructor

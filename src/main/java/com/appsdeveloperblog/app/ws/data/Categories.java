@@ -88,12 +88,12 @@ public enum Categories {
         this.children = children;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public Set<Categories> getChildren() {
         return children;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
 

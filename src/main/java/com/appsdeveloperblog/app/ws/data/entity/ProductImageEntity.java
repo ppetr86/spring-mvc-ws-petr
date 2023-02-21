@@ -36,16 +36,16 @@ public class ProductImageEntity extends IdBasedEntity {
         this.product = product;
     }
 
-    @Transient
-    public String getImagePath() {
-        return Constants.S3_BASE_URI + "/product-images/" + product.getId() + "/extras/" + this.name;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ProductImageEntity that)) return false;
         return super.equalsId(o) || name.equals(that.name) && product.equals(that.product);
+    }
+
+    @Transient
+    public String getImagePath() {
+        return Constants.S3_BASE_URI + "/product-images/" + product.getId() + "/extras/" + this.name;
     }
 
     @Override

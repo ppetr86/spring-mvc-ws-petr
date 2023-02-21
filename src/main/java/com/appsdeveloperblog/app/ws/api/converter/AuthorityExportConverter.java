@@ -1,6 +1,5 @@
 package com.appsdeveloperblog.app.ws.api.converter;
 
-import com.appsdeveloperblog.app.ws.api.controller.AddressController;
 import com.appsdeveloperblog.app.ws.api.controller.AuthorityController;
 import com.appsdeveloperblog.app.ws.data.entity.AuthorityEntity;
 import com.appsdeveloperblog.app.ws.shared.dto.AuthorityDtoOut;
@@ -13,7 +12,7 @@ public class AuthorityExportConverter extends AbstractIdConverter<AuthorityEntit
     @Override
     public AuthorityDtoOut convertToDtoOut(AuthorityEntity source) {
         var target = new AuthorityDtoOut();
-        setSourcePropertiesToTarget(source,target);
+        setSourcePropertiesToTarget(source, target);
         return target;
     }
 
@@ -41,7 +40,7 @@ public class AuthorityExportConverter extends AbstractIdConverter<AuthorityEntit
 
     @Override
     public void setSourcePropertiesToTarget(AuthorityEntity source, AuthorityDtoOut target) {
-        if(source.getId()!=null) target.setId(source.getId().toString());
-        if(source.getName()!=null) target.setName(source.getName().name());
+        if (source.getId() != null) target.setId(source.getId().toString());
+        if (source.getName() != null) target.setName(source.getName().name());
     }
 }

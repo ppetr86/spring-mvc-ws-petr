@@ -25,16 +25,6 @@ public class CategoryDaoImpl extends AbstractIdTimeRevisionDaoImpl<CategoryEntit
     private final CategorySnapshotDao categorySnapshotDao;
 
     @Override
-    public CategoryEntity findByName(String categoryName) {
-        if (categoryName == null || categoryName.isBlank())
-            return null;
-
-        var categorySpec = new GenericSpecificationsBuilder<CategoryEntity>();
-        categorySpec.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(categoryName));
-        return this.findOneBy(categorySpec.build()).orElse(null);
-    }
-
-    @Override
     public boolean existsByName(String name) {
         if (!StringUtils.hasText(name))
             return false;
@@ -42,6 +32,16 @@ public class CategoryDaoImpl extends AbstractIdTimeRevisionDaoImpl<CategoryEntit
         var categorySpec = new GenericSpecificationsBuilder<CategoryEntity>();
         categorySpec.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(name));
         return this.getRepository().exists(categorySpec.build());
+    }
+
+    @Override
+    public CategoryEntity findByName(String categoryName) {
+        if (categoryName == null || categoryName.isBlank())
+            return null;
+
+        var categorySpec = new GenericSpecificationsBuilder<CategoryEntity>();
+        categorySpec.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(categoryName));
+        return this.findOneBy(categorySpec.build()).orElse(null);
     }
 
     @Override

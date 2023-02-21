@@ -172,34 +172,6 @@ public class InitialSetup {
     }
 
     @Transactional
-    void setCreditCardsOnUsers() {
-        var cards = creditCardDao.loadAll();
-        var users = userDao.loadAll();
-        var cardCounter = 0;
-        for (UserEntity each : users) {
-            each.addCreditCard(cards.get(cardCounter));
-            each.addCreditCard(cards.get(cardCounter + 1));
-            cardCounter += 2;
-            userDao.save(each);
-        }
-    }
-
-    private void createCreditCards(int targetCountOfCreditCards) {
-        var setOfCards = new HashSet<CreditCardEntity>(targetCountOfCreditCards);
-        var cc = 12345678900000L;
-        var random = new Random();
-        for (int i = 0; i < targetCountOfCreditCards; i++) {
-            var current = new CreditCardEntity();
-            var month = i % 12 < 10 ? "0" + i % 12 : "" + i;
-            current.setCreditCardNumber(String.valueOf(cc++));
-            current.setExpirationDate(month + "/" + "23");
-            current.setCvv(String.valueOf(random.nextInt(900) + 100));
-            setOfCards.add(current);
-        }
-        creditCardDao.saveAll(setOfCards);
-    }
-
-    @Transactional
     void createBrands() {
         var faker = new Faker();
 
@@ -258,18 +230,6 @@ public class InitialSetup {
         }
     }
 
-
-    private void createRandomUsers(int quantity, RoleEntity role) {
-
-        var addressList = new ArrayList<>(addressDao.loadAll());
-        var randomObj = new Random();
-        var faker = new Faker();
-
-        for (int i = 0; i < quantity; i++) {
-            createUser(role, addressList, randomObj, faker);
-        }
-    }
-
     @Transactional
     void createUser(RoleEntity role, ArrayList<AddressEntity> addressList, Random randomObj, Faker faker) {
         var currentUser = new UserEntity();
@@ -285,6 +245,19 @@ public class InitialSetup {
 
         if (!userDao.existsByEmail(currentUser.getEmail())) {
             userDao.save(currentUser);
+        }
+    }
+
+    @Transactional
+    void setCreditCardsOnUsers() {
+        var cards = creditCardDao.loadAll();
+        var users = userDao.loadAll();
+        var cardCounter = 0;
+        for (UserEntity each : users) {
+            each.addCreditCard(cards.get(cardCounter));
+            each.addCreditCard(cards.get(cardCounter + 1));
+            cardCounter += 2;
+            userDao.save(each);
         }
     }
 
@@ -339,6 +312,21 @@ public class InitialSetup {
         entity.setName(value);
         entity = authorityDao.save(entity);
         return entity;
+    }
+
+    private void createCreditCards(int targetCountOfCreditCards) {
+        var setOfCards = new HashSet<CreditCardEntity>(targetCountOfCreditCards);
+        var cc = 12345678900000L;
+        var random = new Random();
+        for (int i = 0; i < targetCountOfCreditCards; i++) {
+            var current = new CreditCardEntity();
+            var month = i % 12 < 10 ? "0" + i % 12 : "" + i;
+            current.setCreditCardNumber(String.valueOf(cc++));
+            current.setExpirationDate(month + "/" + "23");
+            current.setCvv(String.valueOf(random.nextInt(900) + 100));
+            setOfCards.add(current);
+        }
+        creditCardDao.saveAll(setOfCards);
     }
 
     private void createProductsFromExternalApi() {
@@ -401,6 +389,17 @@ public class InitialSetup {
 
                     productDao.save(product);
                 });
+    }
+
+    private void createRandomUsers(int quantity, RoleEntity role) {
+
+        var addressList = new ArrayList<>(addressDao.loadAll());
+        var randomObj = new Random();
+        var faker = new Faker();
+
+        for (int i = 0; i < quantity; i++) {
+            createUser(role, addressList, randomObj, faker);
+        }
     }
 
     private RoleEntity createRole(Roles name, Set<AuthorityEntity> authorities) {

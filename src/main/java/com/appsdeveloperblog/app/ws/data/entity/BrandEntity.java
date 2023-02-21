@@ -53,11 +53,24 @@ public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializab
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BrandEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return super.equalsId(o) || name.equals(that.name);
+    }
+
     @Transient
     public String getLogoPath() {
         if (this.id == null) return "/images/image-thumbnail.png";
 
         return Constants.S3_BASE_URI + "/brand-logos/" + this.id + "/" + this.logo;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name);
     }
 
     public void removeCategory(CategoryEntity value) {
@@ -70,18 +83,5 @@ public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializab
     @Override
     public String toString() {
         return "Brand [id=" + id + ", name=" + name + ", categories=" + categories + "]";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BrandEntity that)) return false;
-        if (!super.equals(o)) return false;
-        return super.equalsId(o) || name.equals(that.name) && Objects.equals(logo, that.logo) && categories.equals(that.categories);
-    }
-
-    @Override
-    public int hashCode() {
-        return hashCodeId() + Objects.hash(name, logo);
     }
 }

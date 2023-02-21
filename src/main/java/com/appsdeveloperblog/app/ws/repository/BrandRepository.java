@@ -12,5 +12,5 @@ public interface BrandRepository extends IdBasedTimeRevisionRepository<BrandEnti
 
 
     @Query("select c.brands from CategoryEntity c where c.name =:categoryName")
-    List<BrandEntity> findBrandEntitiesByCategoryName(@Param("categoryName")String categoryName);
+    List<BrandEntity> findBrandEntitiesByCategoryName(@Param("categoryName") String categoryName);
 }

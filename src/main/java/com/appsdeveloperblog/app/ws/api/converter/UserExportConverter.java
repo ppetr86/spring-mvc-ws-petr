@@ -2,14 +2,11 @@ package com.appsdeveloperblog.app.ws.api.converter;
 
 import com.appsdeveloperblog.app.ws.api.controller.UserController;
 import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
-import com.appsdeveloperblog.app.ws.data.entitydto.ModelReference;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoOut;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
-import java.util.ArrayList;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class UserExportConverter extends AbstractIdConverter<UserEntity, UserDtoOut> {
 
@@ -39,22 +36,6 @@ public class UserExportConverter extends AbstractIdConverter<UserEntity, UserDto
         return target;
     }
 
-
-    @Override
-    public void setSourcePropertiesToTarget(final UserEntity source, final UserDtoOut target) {
-        if (source.getId() != null)
-            target.setId(source.getId().toString());
-
-        if (source.getFirstName() != null)
-            target.setFirstName(source.getFirstName());
-
-        if (source.getLastName() != null)
-            target.setLastName(source.getLastName());
-
-        if (source.getEmail() != null)
-            target.setEmail(source.getEmail());
-    }
-
     @Override
     public Link createSelfLink(final UUID id) {
         return createSelfLink(id.toString());
@@ -69,5 +50,20 @@ public class UserExportConverter extends AbstractIdConverter<UserEntity, UserDto
     @Override
     public AbstractIdConverter<UserEntity, UserDtoOut> getConverter() {
         return this;
+    }
+
+    @Override
+    public void setSourcePropertiesToTarget(final UserEntity source, final UserDtoOut target) {
+        if (source.getId() != null)
+            target.setId(source.getId().toString());
+
+        if (source.getFirstName() != null)
+            target.setFirstName(source.getFirstName());
+
+        if (source.getLastName() != null)
+            target.setLastName(source.getLastName());
+
+        if (source.getEmail() != null)
+            target.setEmail(source.getEmail());
     }
 }

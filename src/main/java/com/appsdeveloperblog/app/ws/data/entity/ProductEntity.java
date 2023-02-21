@@ -85,20 +85,6 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
     @Transient
     private boolean reviewedByCustomer;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ProductEntity that)) return false;
-        if (!super.equals(o)) return false;
-        return super.equalsId(o) || name.equals(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return hashCodeId() + Objects.hash(name);
-    }
-
     public void addDetail(String name, String value) {
         this.details.add(new ProductDetailEntity(name, value, this));
     }
@@ -112,7 +98,7 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
     }
 
     public void addImage(ProductImageEntity value) {
-        if (value != null&& !this.images.contains(value)) {
+        if (value != null && !this.images.contains(value)) {
             this.images.add(value);
             value.setProduct(this);
         }
@@ -134,6 +120,14 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
         }
 
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return super.equalsId(o) || name.equals(that.name);
     }
 
     @Transient
@@ -162,6 +156,11 @@ public class ProductEntity extends IdBasedTimeRevisionEntity implements Serializ
     @Transient
     public String getURI() {
         return "/p/" + this.alias + "/";
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name);
     }
 
     public void removeImage(ProductImageEntity value) {

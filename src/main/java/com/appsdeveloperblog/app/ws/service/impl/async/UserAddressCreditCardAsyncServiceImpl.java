@@ -17,7 +17,8 @@ import java.util.concurrent.ExecutionException;
 
 import static com.appsdeveloperblog.app.ws.shared.Utils.startTimer;
 import static com.appsdeveloperblog.app.ws.shared.Utils.timeTaken;
-import static java.util.concurrent.CompletableFuture.*;
+import static java.util.concurrent.CompletableFuture.allOf;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Service
 @AllArgsConstructor

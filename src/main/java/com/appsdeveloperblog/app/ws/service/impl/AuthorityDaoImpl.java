@@ -16,7 +16,7 @@ public class AuthorityDaoImpl extends AbstractIdDaoImpl<AuthorityEntity> impleme
 
     @Override
     public AuthorityEntity findByAuthority(Authority authority) {
-        if(authority==null) return null;
+        if (authority == null) return null;
         return getRepository().findByName(authority);
     }
 
