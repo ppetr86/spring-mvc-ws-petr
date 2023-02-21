@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class RoleDaoImpl extends AbstractIdDaoImpl<RoleEntity> implements RoleDao<RoleEntity> {
+public class RoleDaoImpl extends AbstractIdDaoImpl<RoleEntity> implements RoleDao {
 
     RoleRepository roleRepository;
 

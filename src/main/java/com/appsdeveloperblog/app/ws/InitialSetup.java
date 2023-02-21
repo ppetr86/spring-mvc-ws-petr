@@ -88,7 +88,7 @@ public class InitialSetup {
     private CategoryDao categoryDao;
     private ProductDao productDao;
     private ProductDetailDao productDetailDao;
-    private RoleDao<RoleEntity> roleDao;
+    private RoleDao roleDao;
     private UserDao userDao;
     private CreditCardDao creditCardDao;
 

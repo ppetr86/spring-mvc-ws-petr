@@ -1,5 +1,6 @@
 package com.appsdeveloperblog.app.ws.api.controller;
 
+import com.appsdeveloperblog.app.ws.api.converter.AddressExportConverter;
 import com.appsdeveloperblog.app.ws.api.model.response.ErrorMessages;
 import com.appsdeveloperblog.app.ws.api.model.response.OperationStatusModel;
 import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
@@ -66,10 +67,7 @@ public class AddressController {
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public AddressDtoOut getAddressById(@PathVariable String id) {
 
-        var returnValue = new AddressDtoOut();
-        var addressDto = addressDao.loadById(UUID.fromString(id));
-        BeanUtils.copyProperties(addressDto, returnValue);
-        return returnValue;
+        return new AddressExportConverter().convertToDtoOut(addressDao.loadById(UUID.fromString(id)));
     }
 
     @GetMapping

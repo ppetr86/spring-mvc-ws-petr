@@ -1,9 +1,14 @@
 package com.appsdeveloperblog.app.ws.api.converter;
 
+import com.appsdeveloperblog.app.ws.api.controller.UserController;
 import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.data.entitydto.ModelReference;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoOut;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
+import java.util.ArrayList;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class UserExportConverter extends AbstractIdConverter<UserEntity, UserDtoOut> {
@@ -13,18 +18,22 @@ public class UserExportConverter extends AbstractIdConverter<UserEntity, UserDto
     public UserDtoOut convertToDtoOut(final UserEntity source) {
         var target = new UserDtoOut();
         setSourcePropertiesToTarget(source, target);
-        target.setAddresses(source.getAddresses().stream()
-                .map(ModelReference::new)
-                .collect(Collectors.toSet()));
+        target.add(createSelfLink(source.getId()));
+
+        target.setAddresses(new AddressExportConverter()
+                .convertIdBasedEntitiesToModelReference(source.getAddresses()));
+
+        target.setRoles(new RoleExportConverter()
+                .convertIdBasedEntitiesToModelReference(source.getRoles()));
 
         return target;
     }
 
 
     @Override
-    public UserDtoOut convertToDtoOutUsingModelReference(final UserEntity source) {
-        var target = new UserDtoOut();
-        setSourcePropertiesToTarget(source, target);
+    public UserDtoOut convertToDtoOutUsingModelReferenceForChildEntities(final UserEntity source) {
+        var target = convertToDtoOut(source);
+
         var addressConverter = new AddressExportConverter();
         target.setAddresses(addressConverter.convertIdBasedEntitiesToModelReference(source.getAddresses()));
         return target;
@@ -39,10 +48,26 @@ public class UserExportConverter extends AbstractIdConverter<UserEntity, UserDto
         if (source.getFirstName() != null)
             target.setFirstName(source.getFirstName());
 
-        if (target.getLastName() != null)
+        if (source.getLastName() != null)
             target.setLastName(source.getLastName());
 
-        if (target.getEmail() != null)
+        if (source.getEmail() != null)
             target.setEmail(source.getEmail());
+    }
+
+    @Override
+    public Link createSelfLink(final UUID id) {
+        return createSelfLink(id.toString());
+    }
+
+    @Override
+    public Link createSelfLink(final String id) {
+        if (id == null) return null;
+        return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getUser(id)).withSelfRel();
+    }
+
+    @Override
+    public AbstractIdConverter<UserEntity, UserDtoOut> getConverter() {
+        return this;
     }
 }

@@ -143,11 +143,6 @@ public class UserController {
         List<UserEntity> users = userDao.getUsers(page, limit);
 
         var result = new UserExportConverter().convertToListDtoOut(users);
-        for(var each : result){
-            var selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
-                    .getUser(each.getId())).withSelfRel();
-            each.add(selfLink);
-        }
 
         return ResponseEntity.ok(result);
     }
@@ -157,8 +152,7 @@ public class UserController {
      * */
     @PostMapping(path = "/password-reset-request",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-    )
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public OperationStatusModel requestReset(@RequestBody PasswordResetRequestDto passwordResetRequestDto) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
@@ -175,8 +169,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/password-reset",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-    )
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public OperationStatusModel resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
