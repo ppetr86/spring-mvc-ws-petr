@@ -1,6 +1,7 @@
 package com.appsdeveloperblog.app.ws.service.impl;
 
 import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
+import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import com.appsdeveloperblog.app.ws.repository.AddressRepository;
 import com.appsdeveloperblog.app.ws.service.AddressDao;
 import com.appsdeveloperblog.app.ws.service.impl.superclass.AbstractIdDaoImpl;
@@ -13,8 +14,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Service
 @AllArgsConstructor
@@ -71,6 +76,14 @@ public class AddressDaoImpl extends AbstractIdDaoImpl<AddressEntity> implements 
     @Override
     public AddressRepository getRepository() {
         return this.addressRepository;
+    }
+
+    @Override
+    public List<AddressEntity> loadAddressesByUser(UserEntity user) throws ExecutionException, InterruptedException, TimeoutException {
+        if (user == null)
+            return Collections.emptyList();
+
+        return getRepository().findAllByUsersContains(user).get(5, TimeUnit.SECONDS);
     }
 
     @Transactional

@@ -50,14 +50,14 @@ public class UserEntity extends IdBasedTimeRevisionEntity implements Serializabl
     private boolean isVerified;
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
     private Set<RoleEntity> roles = new HashSet<>();
 
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinTable(name = "users_addresses",
             joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "address", referencedColumnName = "id"))

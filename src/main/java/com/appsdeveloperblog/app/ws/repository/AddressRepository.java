@@ -4,7 +4,6 @@ import com.appsdeveloperblog.app.ws.data.entity.AddressEntity;
 import com.appsdeveloperblog.app.ws.data.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
@@ -29,5 +28,6 @@ public interface AddressRepository extends IdBasedRepository<AddressEntity> {
 
     @Async
     Future<AddressEntity> findFirstByCityEqualsIgnoreCase(String cityName);
+
 
 }

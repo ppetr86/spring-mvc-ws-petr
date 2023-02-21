@@ -1,5 +1,6 @@
 package com.appsdeveloperblog.app.ws.api.controller;
 
+import com.appsdeveloperblog.app.ws.api.converter.AddressExportConverter;
 import com.appsdeveloperblog.app.ws.api.converter.UserExportConverter;
 import com.appsdeveloperblog.app.ws.api.model.response.ErrorMessages;
 import com.appsdeveloperblog.app.ws.api.model.response.OperationStatusModel;
@@ -14,11 +15,9 @@ import com.appsdeveloperblog.app.ws.shared.dto.UserDtoIn;
 import com.appsdeveloperblog.app.ws.shared.dto.UserDtoOut;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,11 +31,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @RestController
 @AllArgsConstructor
@@ -88,7 +87,8 @@ public class UserController {
     @GetMapping(path = "/{userId}/addresses/{addressId}", produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE})
     public EntityModel<AddressDtoOut> getUserAddress(@PathVariable String userId,
-                                                     @PathVariable String addressId) {
+                                                     @PathVariable String addressId)
+            throws ExecutionException, InterruptedException, TimeoutException {
 
         var addressesDto = addressDao.loadById(UUID.fromString(addressId));
 
@@ -111,30 +111,19 @@ public class UserController {
 
     @GetMapping(path = "/{id}/addresses", produces = {MediaType.APPLICATION_XML_VALUE,
             MediaType.APPLICATION_JSON_VALUE})
-    public CollectionModel<AddressDtoOut> getUserAddresses(@PathVariable String id) {
+    public CollectionModel<AddressDtoOut> getUserAddresses(@PathVariable String id)
+            throws ExecutionException, InterruptedException, TimeoutException {
 
-        var returnValue = new ArrayList<AddressDtoOut>();
         var user = userDao.loadById(UUID.fromString(id));
-        var usersAddresses = user.getAddresses();
+        var usersAddresses = addressDao.loadAddressesByUser(user);
+        var addresses = new AddressExportConverter().convertToListDtoOut(usersAddresses);
 
-        if (usersAddresses != null && !usersAddresses.isEmpty()) {
-            Type listType = new TypeToken<List<AddressDtoOut>>() {
-            }.getType();
-            returnValue = new ModelMapper().map(usersAddresses, listType);
-
-            for (var addressRest : returnValue) {
-                Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
-                        .getUserAddress(id, addressRest.getId())).withSelfRel();
-
-                addressRest.add(selfLink);
-            }
-        }
-
-        var userLink = WebMvcLinkBuilder.linkTo(UserController.class).slash(id).withRel("user");
+        var userLink = new UserExportConverter().createSelfLink(UUID.fromString(id));
+        //WebMvcLinkBuilder.linkTo(UserController.class).slash(id).withRel("user");
         var selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
                 .getUserAddresses(id)).withSelfRel();
 
-        return CollectionModel.of(returnValue, userLink, selfLink);
+        return CollectionModel.of(addresses, userLink, selfLink);
     }
 
     @GetMapping
