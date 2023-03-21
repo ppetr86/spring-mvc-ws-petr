@@ -1,7 +1,7 @@
 package com.shopapp.api.controller;
 
 import com.shopapp.api.converter.AddressExportConverter;
-import com.shopapp.api.converter.CustomerExportConverter;
+import com.shopapp.api.converter.CustomerExportExportConverter;
 import com.shopapp.api.model.response.OperationStatusModel;
 import com.shopapp.data.entity.AddressEntity;
 import com.shopapp.data.entity.CustomerEntity;
@@ -70,7 +70,7 @@ public class CustomerController {
                                                              @RequestParam(defaultValue = "25") int limit) {
         List<CustomerEntity> customer = customerDao.getCustomers(page, limit);
 
-        var result = new CustomerExportConverter().convertToListDtoOut(customer);
+        var result = new CustomerExportExportConverter().convertToListDtoOut(customer);
 
         return ResponseEntity.ok(result);
     }

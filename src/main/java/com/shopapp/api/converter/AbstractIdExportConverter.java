@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
-public abstract class AbstractIdConverter<S extends IdBasedEntity, T extends IdBasedResource> implements Convertable<S, T> {
+public abstract class AbstractIdExportConverter<S extends IdBasedEntity, T extends IdBasedResource> implements ExportConvertable<S, T> {
 
     @Override
     public final Set<ModelReference> convertIdBasedEntitiesToModelReference(final Collection<S> source) {

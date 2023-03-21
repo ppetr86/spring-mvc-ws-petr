@@ -3,7 +3,6 @@ package com.shopapp.service.impl;
 import com.shopapp.data.entity.AddressEntity;
 import com.shopapp.repository.AddressRepository;
 import com.shopapp.service.AddressDao;
-import com.shopapp.service.CountryDao;
 import com.shopapp.service.impl.superclass.AbstractIdDaoImpl;
 import com.shopapp.service.specification.GenericSpecificationsBuilder;
 import com.shopapp.service.specification.SpecificationFactory;
@@ -24,8 +23,6 @@ public class AddressDaoImpl extends AbstractIdDaoImpl<AddressEntity> implements 
     private AddressRepository addressRepository;
 
     private SpecificationFactory<AddressEntity> addressSpecificationFactory;
-
-    private CountryDao countryDao;
 
     @Override
     public AddressEntity createAddress(final AddressDtoIn addressDtoIn) {

@@ -30,8 +30,27 @@ public class AbstractAddress extends IdBasedEntity {
 	protected String city;
 
 	@Column(nullable = false, length = 45)
-	protected String state;
+	protected String country;
 
 	@Column(name = "postal_code", nullable = false, length = 10)
 	protected String postalCode;
+
+	@Override
+	public String toString() {
+
+		String address = firstName;
+
+		if (lastName != null && !lastName.isEmpty()) address += " " + lastName;
+
+		if (!addressLine1.isEmpty()) address += ", " + addressLine1;
+
+		if (addressLine2 != null && !addressLine2.isEmpty()) address += ", " + addressLine2;
+
+		if (!city.isEmpty()) address += ", " + city;
+
+		if (!postalCode.isEmpty()) address += ". Postal Code: " + postalCode;
+		if (!phoneNumber.isEmpty()) address += ". Phone Number: " + phoneNumber;
+
+		return address;
+	}
 }

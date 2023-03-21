@@ -1,5 +1,6 @@
 package com.shopapp.data.entity;
 
+import com.shopapp.data.definition.AddressDefinition;
 import com.shopapp.shared.dto.AddressDtoIn;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddressEntity extends AbstractAddressWithCountry implements Serializable{
+public class AddressEntity extends AbstractAddress implements Serializable, AddressDefinition {
 
 	/*@ManyToMany(mappedBy = "addresses", fetch = FetchType.LAZY)
 	private Set<CustomerEntity> customers = new HashSet<>();*/
@@ -32,11 +33,7 @@ public class AddressEntity extends AbstractAddressWithCountry implements Seriali
 		this.addressLine1=in.getAddressLine1();
 		this.addressLine2=in.getAddressLine2();
 		this.city=in.getCity();
-		this.state=in.getState();
 		this.postalCode=in.getPostalCode();
 		this.defaultForShipping=in.isDefaultForShipping();
-
-		//TODO: create some import converter
-		//this.country=new CountryEntity(in.getCountry());
 	}
 }

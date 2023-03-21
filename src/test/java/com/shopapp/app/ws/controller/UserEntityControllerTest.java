@@ -2,7 +2,6 @@ package com.shopapp.app.ws.controller;
 
 import com.shopapp.api.controller.UserController;
 import com.shopapp.data.entity.AddressEntity;
-import com.shopapp.data.entity.CountryEntity;
 import com.shopapp.data.entity.UserEntity;
 import com.shopapp.service.impl.UserDaoImpl;
 import org.junit.jupiter.api.BeforeEach;

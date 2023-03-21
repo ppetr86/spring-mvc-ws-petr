@@ -39,15 +39,12 @@ public class AddressDtoIn {
 
     @NotNull
     @Min(3)
-    protected String state;
-
-    @NotNull
-    @Min(3)
     protected String postalCode;
 
     protected boolean defaultForShipping;
 
     @NotNull
-    protected CountryDtoIn country;
+    @Min(3)
+    protected String country;
 
 }

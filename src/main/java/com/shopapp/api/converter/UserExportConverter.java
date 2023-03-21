@@ -8,7 +8,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.UUID;
 
-public class UserExportConverter extends AbstractIdConverter<UserEntity, UserDtoOut> {
+public class UserExportConverter extends AbstractIdExportConverter<UserEntity, UserDtoOut> {
 
 
     @Override
@@ -44,7 +44,7 @@ public class UserExportConverter extends AbstractIdConverter<UserEntity, UserDto
     }
 
     @Override
-    public AbstractIdConverter<UserEntity, UserDtoOut> getConverter() {
+    public AbstractIdExportConverter<UserEntity, UserDtoOut> getConverter() {
         return this;
     }
 

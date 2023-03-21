@@ -22,6 +22,6 @@ public class AddressDtoOut extends IdBasedResource {
     protected String state;
     protected String postalCode;
     protected boolean defaultForShipping;
-    protected CountryDtoOut country;
+    protected String country;
 
 }

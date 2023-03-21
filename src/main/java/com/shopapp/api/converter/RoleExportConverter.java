@@ -6,7 +6,7 @@ import com.shopapp.shared.dto.RoleDtoOut;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
-public class RoleExportConverter extends AbstractIdConverter<RoleEntity, RoleDtoOut> {
+public class RoleExportConverter extends AbstractIdExportConverter<RoleEntity, RoleDtoOut> {
     @Override
     public RoleDtoOut convertToDtoOut(final RoleEntity source) {
         var target = new RoleDtoOut();
@@ -30,7 +30,7 @@ public class RoleExportConverter extends AbstractIdConverter<RoleEntity, RoleDto
     }
 
     @Override
-    public AbstractIdConverter<RoleEntity, RoleDtoOut> getConverter() {
+    public AbstractIdExportConverter<RoleEntity, RoleDtoOut> getConverter() {
         return this;
     }
 

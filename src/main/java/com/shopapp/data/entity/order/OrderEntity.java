@@ -71,9 +71,8 @@ public class OrderEntity extends AbstractAddress implements Serializable{
 		setAddressLine1(customer.getAddress().getAddressLine1());
 		setAddressLine2(customer.getAddress().getAddressLine2());
 		setCity(customer.getAddress().getCity());
-		setCountry(customer.getAddress().getCountry().getName());
+		setCountry(customer.getAddress().getCountry());
 		setPostalCode(customer.getAddress().getPostalCode());
-		setState(customer.getAddress().getState());
 	}
 	
 	public void copyShippingAddress(AddressEntity address) {
@@ -83,15 +82,13 @@ public class OrderEntity extends AbstractAddress implements Serializable{
 		setAddressLine1(address.getAddressLine1());
 		setAddressLine2(address.getAddressLine2());
 		setCity(address.getCity());
-		setCountry(address.getCountry().getName());
+		setCountry(address.getCountry());
 		setPostalCode(address.getPostalCode());
-		setState(address.getState());			
 	}
 	
 	@Transient
 	public String getDestination() {
 		String destination =  city + ", ";
-		if (state != null && !state.isEmpty()) destination += state + ", ";
 		destination += country;
 
 		return destination;
@@ -114,8 +111,6 @@ public class OrderEntity extends AbstractAddress implements Serializable{
 		if (addressLine2 != null && !addressLine2.isEmpty()) address += ", " + addressLine2;
 
 		if (!city.isEmpty()) address += ", " + city;
-
-		if (state != null && !state.isEmpty()) address += ", " + state;
 
 		address += ", " + country;
 
@@ -156,8 +151,6 @@ public class OrderEntity extends AbstractAddress implements Serializable{
 		if (addressLine2 != null && !addressLine2.isEmpty()) address += ", " + addressLine2;
 
 		if (!city.isEmpty()) address += ", " + city;
-
-		if (state != null && !state.isEmpty()) address += ", " + state;
 
 		address += ", " + country;
 

@@ -8,7 +8,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.UUID;
 
-public class AuthorityExportConverter extends AbstractIdConverter<AuthorityEntity, AuthorityDtoOut> {
+public class AuthorityExportConverter extends AbstractIdExportConverter<AuthorityEntity, AuthorityDtoOut> {
     @Override
     public AuthorityDtoOut convertToDtoOut(AuthorityEntity source) {
         var target = new AuthorityDtoOut();
@@ -34,7 +34,7 @@ public class AuthorityExportConverter extends AbstractIdConverter<AuthorityEntit
     }
 
     @Override
-    public AbstractIdConverter<AuthorityEntity, AuthorityDtoOut> getConverter() {
+    public AbstractIdExportConverter<AuthorityEntity, AuthorityDtoOut> getConverter() {
         return this;
     }
 

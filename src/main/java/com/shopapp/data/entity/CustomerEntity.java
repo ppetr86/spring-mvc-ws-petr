@@ -97,9 +97,7 @@ public class CustomerEntity extends IdBasedTimeRevisionEntity implements Seriali
 
 		if (!this.address.city.isEmpty()) address += ", " + this.address.city;
 
-		if (this.address.state != null && !this.address.state.isEmpty()) address += ", " + this.address.state;
-
-		address += ", " + this.address.country.getName();
+		address += ", " + this.address.country;
 
 		if (!this.address.postalCode.isEmpty()) address += ". Postal Code: " + this.address.postalCode;
 		if (!this.address.phoneNumber.isEmpty()) address += ". Phone Number: " + this.address.phoneNumber;

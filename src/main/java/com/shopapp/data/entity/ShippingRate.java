@@ -22,9 +22,8 @@ public class ShippingRate extends IdBasedEntity implements Serializable{
 	@Column(name = "cod_supported")
 	private boolean codSupported;
 
-	@ManyToOne
-	@JoinColumn(name = "country_id")
-	private CountryEntity country;
+	@Column(unique = true, length = 45)
+	private String country;
 
 	@Column(nullable = false, length = 45)
 	private String state;

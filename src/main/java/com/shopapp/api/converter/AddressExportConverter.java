@@ -3,13 +3,12 @@ package com.shopapp.api.converter;
 import com.shopapp.api.controller.CustomerController;
 import com.shopapp.data.entity.AddressEntity;
 import com.shopapp.shared.dto.AddressDtoOut;
-import com.shopapp.shared.dto.CountryDtoOut;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.UUID;
 
-public class AddressExportConverter extends AbstractIdConverter<AddressEntity, AddressDtoOut> {
+public class AddressExportConverter extends AbstractIdExportConverter<AddressEntity, AddressDtoOut> {
 
 
     @Override
@@ -39,7 +38,7 @@ public class AddressExportConverter extends AbstractIdConverter<AddressEntity, A
     }
 
     @Override
-    public AbstractIdConverter<AddressEntity, AddressDtoOut> getConverter() {
+    public AbstractIdExportConverter<AddressEntity, AddressDtoOut> getConverter() {
         return this;
     }
 
@@ -50,7 +49,7 @@ public class AddressExportConverter extends AbstractIdConverter<AddressEntity, A
         if (source.getCity() != null)
             target.setCity(source.getCity());
         if (source.getCountry() != null)
-            target.setCountry(new CountryDtoOut(source.getCountry()));
+            target.setCountry(source.getCountry());
         if (source.getAddressLine1() != null)
             target.setAddressLine1(source.getAddressLine1());
         if (source.getPostalCode() != null)

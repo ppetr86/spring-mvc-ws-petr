@@ -75,7 +75,6 @@ public class InitialSetup {
         }
 
 
-
         //create addresses which I will set on users...
         int targetCountOfCustomers = 50;
         if (customerDao.getCount() >= targetCountOfCustomers)
@@ -85,7 +84,6 @@ public class InitialSetup {
             Set<AddressEntity> addressEntities = createAddresses(faker, targetCountOfCustomers);
             //CompletableFuture.runAsync(() -> createAddresses(faker, targetCountOfAddresses));
         }
-
 
 
         int targetCountOfCategories = Categories.values().length;
@@ -212,7 +210,7 @@ public class InitialSetup {
         var kocianovaAddress = new AddressEntity();
         kocianovaAddress.setAddressLine1("Kocianova 1583/3");
         kocianovaAddress.setCity("Praha");
-        kocianovaAddress.setCountry(new CountryEntity("Czech republic", "CZ"));
+        kocianovaAddress.setCountry("Czech republic");
         addresses.add(kocianovaAddress);
 
         for (int i = 0; i < addressCount; i++) {
@@ -221,11 +219,9 @@ public class InitialSetup {
                 zipCode = faker.address().zipCode();
             }
 
-            var country = new CountryEntity();
-            country.setName(faker.address().country());
-            country.setCode(faker.address().countryCode());
-            while (country.getName().length() > 15) {
-                country.setName(faker.address().country());
+            var country = faker.address().country();
+            while (country.length() > 15) {
+                country = faker.address().country();
             }
 
             var streetName = faker.address().streetName();

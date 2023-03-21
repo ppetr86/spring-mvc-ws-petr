@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public interface Convertable<S extends IdBasedEntity, T extends IdBasedResource> {
+public interface ExportConvertable<S extends IdBasedEntity, T extends IdBasedResource> {
 
     Set<ModelReference> convertIdBasedEntitiesToModelReference(final Collection<S> source);
 
@@ -39,7 +39,7 @@ public interface Convertable<S extends IdBasedEntity, T extends IdBasedResource>
     Link createSelfLink(final String id);
 
 
-    AbstractIdConverter<S, T> getConverter();
+    AbstractIdExportConverter<S, T> getConverter();
 
 
     void setSourcePropertiesToTarget(final S source, final T target);
