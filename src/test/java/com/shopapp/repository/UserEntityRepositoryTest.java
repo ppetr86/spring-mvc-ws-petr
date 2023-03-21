@@ -113,7 +113,6 @@ class UserEntityRepositoryTest {
 
     @Test
     final void testGetUserEntityFullNameById() {
-        String userId = "1a2b3c";
         List<Object[]> records = userRepository.getUserEntityFullNameById(testedUser.getId());
 
         assertNotNull(records);
@@ -136,7 +135,7 @@ class UserEntityRepositoryTest {
 
         List<UserEntity> userEntities = page.getContent();
         assertNotNull(userEntities);
-        assertTrue(userEntities.size() == 1);
+        assertEquals(1, userEntities.size());
     }
 
     @Test
