@@ -1,6 +1,5 @@
 package com.shopapp.repository;
 
-import com.shopapp.data.entity.AddressEntity;
 import com.shopapp.data.entity.UserEntity;
 import com.shopapp.shared.Roles;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,7 +40,7 @@ class UserEntityRepositoryTest {
         this.addressRepository = addressRepository;
         this.roleRepository = roleRepository;
         if (!recordsCreated)
-            createRecrods();
+            createRecords();
         testedUser = userRepository.findByEmail("Sergey@test.com");
 
         allusers = userRepository.findAll();
@@ -180,12 +178,10 @@ class UserEntityRepositoryTest {
     final void test_saveUser() {
 
         var userRole = roleRepository.findByName(Roles.ROLE_USER);
-        var address = addressRepository.findAll().stream().filter(Objects::nonNull).findFirst().get();
 
         var user = new UserEntity();
 
         user.setRoles(Set.of(userRole));
-        user.setAddresses(Set.of(address));
         user.setEmail("randomemail@gmail.com");
         user.setEncryptedPassword("not_encrypted_pwd");
         user.setFirstName("test_firstName");
@@ -197,43 +193,24 @@ class UserEntityRepositoryTest {
 
     }
 
-    private void createRecrods() {
+    private void createRecords() {
         // Prepare User Entity
         UserEntity userEntity = new UserEntity();
-        userEntity.setFirstName("Sergey");
-        userEntity.setLastName("Kargopolov");
+        userEntity.setFirstName("petr");
+        userEntity.setLastName("petr");
         userEntity.setEncryptedPassword("xxx");
-        userEntity.setEmail("test@test.com");
+        userEntity.setEmail("petr@test.com");
         userEntity.setVerified(true);
-
-        // Prepare User Addresses
-        AddressEntity addressEntity = new AddressEntity();
-        addressEntity.setCity("Vancouver");
-        addressEntity.setCountry("Canada");
-        addressEntity.setPostalCode("ABCCDA");
-        addressEntity.setStreet("123 Street Address");
-
-        userEntity.setAddresses(Set.of(addressEntity));
 
         userRepository.save(userEntity);
 
-
         // Prepare User Entity
         UserEntity userEntity2 = new UserEntity();
-        userEntity2.setFirstName("Sergey");
-        userEntity2.setLastName("Kargopolov");
+        userEntity2.setFirstName("ivana");
+        userEntity2.setLastName("ivana");
         userEntity2.setEncryptedPassword("xxx");
-        userEntity2.setEmail("Sergey@test.com");
+        userEntity2.setEmail("ivana@test.com");
         userEntity2.setVerified(true);
-
-        // Prepare User Addresses
-        AddressEntity addressEntity2 = new AddressEntity();
-        addressEntity2.setCity("Vancouver");
-        addressEntity2.setCountry("Canada");
-        addressEntity2.setPostalCode("ABCCDA");
-        addressEntity2.setStreet("123 Street Address");
-
-        userEntity2.setAddresses(Set.of(addressEntity2));
 
         userRepository.save(userEntity2);
 

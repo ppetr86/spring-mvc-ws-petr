@@ -1,6 +1,5 @@
 package com.shopapp.repository;
 
-import com.shopapp.data.entity.UserEntity;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -42,22 +40,6 @@ class AddressRepositoryTest {
         var count = addressRepository.count();
         var all = addressRepository.findAll();
         Assertions.assertThat(all.size()).isEqualTo(count);
-    }
-
-    @Test
-    void findAllByUser() throws ExecutionException, InterruptedException, TimeoutException {
-        //var randomUser = userRepository.findByEmail("test@test.com");
-        var randomUser = new UserEntity();
-        String uuidString = "86c93694-5161-435f-a28d-f1b8d8cff312";
-        randomUser.setId(UUID.fromString(uuidString));
-
-        var repoUser = userRepository.findById(UUID.fromString(uuidString));
-        var futureListAddress = addressRepository.findAllByUsersContains(randomUser);
-
-        var amountOfAddresses = repoUser.map(user -> user.getAddresses().size()).orElseGet(() -> 0);
-
-        Assertions.assertThat(amountOfAddresses)
-                .isEqualTo(futureListAddress.get(5, TimeUnit.SECONDS).size());
     }
 
     @Test

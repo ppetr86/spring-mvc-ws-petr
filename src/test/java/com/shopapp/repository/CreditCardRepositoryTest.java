@@ -1,5 +1,6 @@
 package com.shopapp.repository;
 
+import com.shopapp.data.entity.CreditCardEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
