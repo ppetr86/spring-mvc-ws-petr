@@ -5,12 +5,12 @@ import com.shopapp.api.model.response.ErrorMessages;
 import com.shopapp.api.model.response.OperationStatusModel;
 import com.shopapp.data.entity.UserEntity;
 import com.shopapp.exceptions.UserServiceException;
-import com.shopapp.service.AddressDao;
 import com.shopapp.service.UserDao;
 import com.shopapp.shared.dto.PasswordResetDto;
 import com.shopapp.shared.dto.PasswordResetRequestDto;
 import com.shopapp.shared.dto.UserDtoIn;
 import com.shopapp.shared.dto.UserDtoOut;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -28,11 +28,10 @@ import java.util.UUID;
 public class UserController {
 
     private final UserDao userDao;
-    private AddressDao addressDao;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public UserDtoOut createUser(@RequestBody UserDtoIn userDetails) {
+    public UserDtoOut createUser(@RequestBody @Valid UserDtoIn userDetails) {
 
         if (userDetails.getFirstName().isEmpty())
             throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
@@ -84,7 +83,7 @@ public class UserController {
     @PostMapping(path = "/password-reset-request",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public OperationStatusModel requestReset(@RequestBody PasswordResetRequestDto passwordResetRequestDto) {
+    public OperationStatusModel requestReset(@RequestBody @Valid PasswordResetRequestDto passwordResetRequestDto) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
         boolean operationResult = userDao.requestPasswordReset(passwordResetRequestDto.getEmail());
@@ -101,7 +100,7 @@ public class UserController {
 
     @PostMapping(path = "/password-reset",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public OperationStatusModel resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
+    public OperationStatusModel resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto) {
         OperationStatusModel returnValue = new OperationStatusModel();
 
         boolean operationResult = userDao.resetPassword(
@@ -119,7 +118,7 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}")
-    public UserDtoOut updateUser(@PathVariable String id, @RequestBody UserDtoIn userDetails) {
+    public UserDtoOut updateUser(@PathVariable String id, @RequestBody @Valid UserDtoIn userDetails) {
 
         var returnValue = new UserDtoOut();
         var dto = new UserDtoIn();
