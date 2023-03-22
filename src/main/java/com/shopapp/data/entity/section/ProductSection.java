@@ -16,11 +16,11 @@ import lombok.Setter;
 @Setter
 public class ProductSection extends IdBasedEntity {
 
-	@Column(name = "product_order")
-	private int productOrder;
+    @Column(name = "product_order")
+    private int productOrder;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id")	
-	private ProductEntity product;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private ProductEntity product;
 
 }

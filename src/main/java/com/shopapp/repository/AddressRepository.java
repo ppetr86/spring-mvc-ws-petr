@@ -14,15 +14,11 @@ import java.util.stream.Stream;
 public interface AddressRepository extends IdBasedRepository<AddressEntity> {
     List<AddressEntity> findAll();
 
-
     Page<AddressEntity> findAll(Pageable pageable);
-
 
     Stream<AddressEntity> findAllByCityLikeIgnoreCase(String city);
 
-
     @Async
     Future<AddressEntity> findFirstByCityEqualsIgnoreCase(String cityName);
-
 
 }

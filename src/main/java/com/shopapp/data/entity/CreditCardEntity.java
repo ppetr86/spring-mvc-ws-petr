@@ -24,17 +24,17 @@ public class CreditCardEntity extends IdBasedTimeRevisionEntity {
     private String expirationDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer")
-    private CustomerEntity customer;
+    @JoinColumn(name = "user")
+    private UserEntity user;
 
     public CreditCardEntity() {
         super();
     }
 
-    public CreditCardEntity(CreditCardDtoIn each, CustomerEntity customer) {
+    public CreditCardEntity(CreditCardDtoIn each, UserEntity user) {
         this.setCvv(each.getCvv());
         this.setCreditCardNumber(each.getCreditCardNumber());
-        this.setCustomer(customer);
+        this.setUser(user);
         this.setExpirationDate(each.getExpirationDate());
     }
 
@@ -43,12 +43,12 @@ public class CreditCardEntity extends IdBasedTimeRevisionEntity {
         if (this == o) return true;
         if (!(o instanceof CreditCardEntity that)) return false;
         if (!super.equals(o)) return false;
-        return super.equalsId(o) || creditCardNumber.equals(that.creditCardNumber) && cvv.equals(that.cvv) && expirationDate.equals(that.expirationDate) && Objects.equals(customer, that.customer);
+        return super.equalsId(o) || creditCardNumber.equals(that.creditCardNumber) && cvv.equals(that.cvv) && expirationDate.equals(that.expirationDate) && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return hashCodeId() + Objects.hash(creditCardNumber, cvv, expirationDate, customer);
+        return hashCodeId() + Objects.hash(creditCardNumber, cvv, expirationDate, user);
     }
 
     @PrePersist

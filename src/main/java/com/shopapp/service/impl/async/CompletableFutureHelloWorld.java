@@ -5,17 +5,29 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.shopapp.shared.Utils.delay;
-import static com.shopapp.shared.Utils.startTimer;
-import static com.shopapp.shared.Utils.timeTaken;
+import static com.shopapp.shared.Utils.*;
 import static java.util.stream.Collectors.joining;
 
 public class CompletableFutureHelloWorld {
 
-    private HelloWorldService hws;
+    private final HelloWorldService hws;
 
     public CompletableFutureHelloWorld(HelloWorldService helloWorldService) {
         this.hws = helloWorldService;
+    }
+
+    public static void main(String[] args) {
+
+        HelloWorldService helloWorldService = new HelloWorldService();
+        CompletableFuture.supplyAsync(() -> helloWorldService.helloWorld()) //  runs this in a common fork-join pool
+                .thenApply(String::toUpperCase)
+                .thenAccept((result) -> {
+                    System.out.println("result " + result);
+                })
+                .join();
+
+        System.out.println("Done!");
+        delay(2000);
     }
 
     public String allOf() {
@@ -280,7 +292,6 @@ public class CompletableFutureHelloWorld {
             return " Bye!";
         });
 
-
         String hw = hello
                 .thenCombine(world, (h, w) -> h + w) // (first,second)
                 .thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
@@ -324,19 +335,5 @@ public class CompletableFutureHelloWorld {
         return CompletableFuture.supplyAsync(() -> hws.helloWorld())//  runs this in a common fork-join pool
                 .thenApply(String::toUpperCase)
                 .thenApply((s) -> s.length() + " - " + s);
-    }
-
-    public static void main(String[] args) {
-
-        HelloWorldService helloWorldService = new HelloWorldService();
-        CompletableFuture.supplyAsync(() -> helloWorldService.helloWorld()) //  runs this in a common fork-join pool
-                .thenApply(String::toUpperCase)
-                .thenAccept((result) -> {
-                    System.out.println("result " + result);
-                })
-                .join();
-
-        System.out.println("Done!");
-        delay(2000);
     }
 }

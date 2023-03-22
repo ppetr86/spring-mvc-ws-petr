@@ -12,6 +12,16 @@ import java.util.Objects;
 //@Component
 public class UserEntityInterceptor implements Interceptor {
 
+    private List<String> getAnnotationFields(Object entity) {
+        List<String> annotatedFields = new ArrayList<>();
+        for (var field : entity.getClass().getDeclaredFields()) {
+            if (!Objects.isNull(field.getAnnotation(LoadCounter.class))) {
+                annotatedFields.add(field.getName());
+            }
+        }
+        return annotatedFields;
+    }
+
     @Override
     public boolean onLoad(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         System.out.println("Hibernate interceptor intercepted load method");
@@ -26,16 +36,6 @@ public class UserEntityInterceptor implements Interceptor {
         System.out.println("Hibernate interceptor intercepted save method");
         //Object[] newState = processFields(entity, state, propertyNames, "onSave");
         return Interceptor.super.onSave(entity, id, state, propertyNames, types);
-    }
-
-    private List<String> getAnnotationFields(Object entity) {
-        List<String> annotatedFields = new ArrayList<>();
-        for (var field : entity.getClass().getDeclaredFields()) {
-            if (!Objects.isNull(field.getAnnotation(LoadCounter.class))) {
-                annotatedFields.add(field.getName());
-            }
-        }
-        return annotatedFields;
     }
 
     private Object[] processFields(Object entity, Object[] state, String[] propertyNames, String type) {

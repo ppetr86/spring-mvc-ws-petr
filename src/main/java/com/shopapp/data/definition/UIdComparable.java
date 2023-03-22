@@ -14,10 +14,8 @@ public interface UIdComparable<T extends IdBasedEntity> extends Comparable<T> {
         return id1.compareTo(id2);
     };
 
-
     @Override
     boolean equals(Object o);
-
 
     @Override
     int hashCode();

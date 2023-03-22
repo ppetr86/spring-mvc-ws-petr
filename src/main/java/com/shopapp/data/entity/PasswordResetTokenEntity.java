@@ -24,10 +24,6 @@ public class PasswordResetTokenEntity extends IdBasedEntity implements Serializa
     @JoinColumn(name = "user")
     private UserEntity userDetails;
 
-    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer")
-    private CustomerEntity customerDetails;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

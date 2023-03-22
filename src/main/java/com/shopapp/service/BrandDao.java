@@ -6,6 +6,5 @@ public interface BrandDao extends IdTimeRevisionDao<BrandEntity> {
 
     boolean existsByName(String brand);
 
-
     BrandEntity findByName(String brand);
 }

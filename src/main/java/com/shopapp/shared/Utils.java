@@ -19,47 +19,7 @@ public class Utils {
     public static StopWatch stopWatch = new StopWatch();
     private final Random RANDOM = new SecureRandom();
     private final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    private int defaultIdLength = 8;
-
-    public String generateEmailVerificationToken(String userEmail) {
-        var token = Jwts.builder()
-                .setSubject(userEmail)
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
-                .compact();
-        return token;
-    }
-
-    public String generateId(int length) {
-        return generateRandomString(length);
-    }
-
-    public String generateId() {
-        return generateRandomString(defaultIdLength);
-    }
-
-    public String generatePasswordResetToken(String userId) {
-        var token = Jwts.builder()
-                .setSubject(userId)
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
-                .compact();
-        return token;
-    }
-
-    public String generateUserId(int length) {
-        return generateRandomString(length);
-    }
-
-    private String generateRandomString(int length) {
-        StringBuilder returnValue = new StringBuilder(length);
-
-        for (int i = 0; i < length; i++) {
-            returnValue.append(ALPHABET.charAt(RANDOM.nextInt(ALPHABET.length())));
-        }
-
-        return new String(returnValue);
-    }
+    private final int defaultIdLength = 8;
 
     public static void delay(long delayMilliSeconds) {
         try {
@@ -112,5 +72,45 @@ public class Utils {
     public static String transForm(String s) {
         Utils.delay(500);
         return s.toUpperCase();
+    }
+
+    public String generateEmailVerificationToken(String userEmail) {
+        var token = Jwts.builder()
+                .setSubject(userEmail)
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
+                .compact();
+        return token;
+    }
+
+    public String generateId(int length) {
+        return generateRandomString(length);
+    }
+
+    public String generateId() {
+        return generateRandomString(defaultIdLength);
+    }
+
+    public String generatePasswordResetToken(String userId) {
+        var token = Jwts.builder()
+                .setSubject(userId)
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
+                .compact();
+        return token;
+    }
+
+    private String generateRandomString(int length) {
+        StringBuilder returnValue = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            returnValue.append(ALPHABET.charAt(RANDOM.nextInt(ALPHABET.length())));
+        }
+
+        return new String(returnValue);
+    }
+
+    public String generateUserId(int length) {
+        return generateRandomString(length);
     }
 }

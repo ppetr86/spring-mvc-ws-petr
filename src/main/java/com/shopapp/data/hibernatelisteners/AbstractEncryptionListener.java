@@ -17,8 +17,20 @@ public abstract class AbstractEncryptionListener {
         ReflectionUtils.doWithFields(entity.getClass(), field -> decryptField(field, entity), this::isFieldEncrypted);
     }
 
+    private void decryptField(Field field, Object entity) {
+        field.setAccessible(true);
+        Object value = ReflectionUtils.getField(field, entity);
+        ReflectionUtils.setField(field, entity, encryptionService.decrypt(value.toString()));
+    }
+
     public void encrypt(Object[] state, String[] propertyNames, Object entity) {
         ReflectionUtils.doWithFields(entity.getClass(), field -> encryptField(field, state, propertyNames), this::isFieldEncrypted);
+    }
+
+    private void encryptField(Field field, Object[] state, String[] propertyNames) {
+        int idx = getPropertyIndex(field.getName(), propertyNames);
+        Object currentValue = state[idx];
+        state[idx] = encryptionService.encrypt(currentValue.toString());
     }
 
     public int getPropertyIndex(String name, String[] properties) {
@@ -34,17 +46,5 @@ public abstract class AbstractEncryptionListener {
 
     public boolean isFieldEncrypted(Field field) {
         return AnnotationUtils.findAnnotation(field, EncryptedString.class) != null;
-    }
-
-    private void decryptField(Field field, Object entity) {
-        field.setAccessible(true);
-        Object value = ReflectionUtils.getField(field, entity);
-        ReflectionUtils.setField(field, entity, encryptionService.decrypt(value.toString()));
-    }
-
-    private void encryptField(Field field, Object[] state, String[] propertyNames) {
-        int idx = getPropertyIndex(field.getName(), propertyNames);
-        Object currentValue = state[idx];
-        state[idx] = encryptionService.encrypt(currentValue.toString());
     }
 }

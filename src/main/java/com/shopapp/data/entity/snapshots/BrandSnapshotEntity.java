@@ -25,7 +25,6 @@ public class BrandSnapshotEntity extends IdBasedTimeSnapshotEntity implements Se
     @Column(nullable = false, length = 128)
     private String logo;
 
-
     public BrandSnapshotEntity(String name) {
         super();
         this.name = name;

@@ -76,14 +76,6 @@ create table shop_app_monolith.categories_snapshots
     name         varchar(128) not null
 );
 
-create table shop_app_monolith.countries
-(
-    id   binary(16)  not null
-        primary key,
-    code varchar(5)  not null,
-    name varchar(45) not null
-);
-
 create table shop_app_monolith.credit_cards_snapshots
 (
     id                 binary(16)   not null
@@ -103,98 +95,6 @@ create table shop_app_monolith.currencies
     code   varchar(4)  not null,
     name   varchar(64) not null,
     symbol varchar(3)  not null
-);
-
-create table shop_app_monolith.customers
-(
-    id                       binary(16)   not null
-        primary key,
-    created_at               datetime(6)  not null,
-    updated_at               datetime(6)  null,
-    revision                 bigint       null,
-    authentication_type      varchar(10)  null,
-    created_time             datetime(6)  null,
-    email                    varchar(45)  not null,
-    email_verification_token varchar(255) null,
-    encrypted_password       varchar(255) not null,
-    is_verified              bit          not null,
-    constraint UK_rfbvkrffamfql7cjmen8v976v
-        unique (email)
-);
-
-create table shop_app_monolith.addresses
-(
-    address_line_1  varchar(64) not null,
-    address_line_2  varchar(64) null,
-    city            varchar(45) not null,
-    first_name      varchar(45) not null,
-    last_name       varchar(45) not null,
-    phone_number    varchar(15) not null,
-    postal_code     varchar(10) not null,
-    state           varchar(45) not null,
-    default_address bit         null,
-    customer_id     binary(16)  not null
-        primary key,
-    country_id      binary(16)  null,
-    constraint FKhrpf5e8dwasvdc5cticysrt2k
-        foreign key (customer_id) references shop_app_monolith.customers (id),
-    constraint FKn3sth7s3kur1rafwbbrqqnswt
-        foreign key (country_id) references shop_app_monolith.countries (id)
-);
-
-create table shop_app_monolith.credit_cards
-(
-    id                 binary(16)   not null
-        primary key,
-    created_at         datetime(6)  not null,
-    updated_at         datetime(6)  null,
-    revision           bigint       null,
-    credit_card_number varchar(255) not null,
-    cvv                varchar(255) not null,
-    expiration_date    varchar(255) not null,
-    customer           binary(16)   null,
-    constraint FK6t4qw9vv0hhe7iw3lmxy5u8qo
-        foreign key (customer) references shop_app_monolith.customers (id)
-);
-
-create table shop_app_monolith.orders
-(
-    id             binary(16)   not null
-        primary key,
-    address_line_1 varchar(64)  not null,
-    address_line_2 varchar(64)  null,
-    city           varchar(45)  not null,
-    first_name     varchar(45)  not null,
-    last_name      varchar(45)  not null,
-    phone_number   varchar(15)  not null,
-    postal_code    varchar(10)  not null,
-    state          varchar(45)  not null,
-    country        varchar(45)  not null,
-    deliver_date   datetime(6)  null,
-    deliver_days   int          not null,
-    order_time     datetime(6)  null,
-    payment_method varchar(255) null,
-    product_cost   float        not null,
-    shipping_cost  float        not null,
-    status         varchar(255) null,
-    subtotal       float        not null,
-    tax            float        not null,
-    total          float        not null,
-    customer_id    binary(16)   null,
-    constraint FKpxtb8awmi0dk6smoh2vp1litg
-        foreign key (customer_id) references shop_app_monolith.customers (id)
-);
-
-create table shop_app_monolith.order_track
-(
-    id           binary(16)   not null
-        primary key,
-    notes        varchar(256) null,
-    status       varchar(45)  not null,
-    updated_time datetime(6)  null,
-    order_id     binary(16)   null,
-    constraint FK31jv1s212kajfn3kk1ksmnyfl
-        foreign key (order_id) references shop_app_monolith.orders (id)
 );
 
 create table shop_app_monolith.product_details_snapshots
@@ -243,36 +143,6 @@ create table shop_app_monolith.products
         foreign key (category_id) references shop_app_monolith.categories (id)
 );
 
-create table shop_app_monolith.cart_items
-(
-    id          binary(16) not null
-        primary key,
-    quantity    int        not null,
-    customer_id binary(16) null,
-    product_id  binary(16) null,
-    constraint FK1re40cjegsfvw58xrkdp6bac6
-        foreign key (product_id) references shop_app_monolith.products (id),
-    constraint FKdagcsk6v6x4n1kxw3rkp57921
-        foreign key (customer_id) references shop_app_monolith.customers (id)
-);
-
-create table shop_app_monolith.order_details
-(
-    id            binary(16) not null
-        primary key,
-    product_cost  float      not null,
-    quantity      int        not null,
-    shipping_cost float      not null,
-    subtotal      float      not null,
-    unit_price    float      not null,
-    order_id      binary(16) null,
-    product_id    binary(16) null,
-    constraint FK4q98utpd73imf4yhttm3w0eax
-        foreign key (product_id) references shop_app_monolith.products (id),
-    constraint FKjyu2qbqt8gnvno9oe9j2s2ldk
-        foreign key (order_id) references shop_app_monolith.orders (id)
-);
-
 create table shop_app_monolith.product_details
 (
     id         binary(16)   not null
@@ -308,36 +178,6 @@ create table shop_app_monolith.products_snapshots
     full_description  varchar(4096) not null,
     name              varchar(255)  not null,
     short_description varchar(512)  not null
-);
-
-create table shop_app_monolith.reviews
-(
-    id          binary(16)   not null
-        primary key,
-    comment     varchar(300) not null,
-    headline    varchar(128) not null,
-    rating      bigint       not null,
-    review_time datetime(6)  not null,
-    votes       bigint       not null,
-    customer_id binary(16)   null,
-    product_id  binary(16)   null,
-    constraint FK4sm0k8kw740iyuex3vwwv1etu
-        foreign key (customer_id) references shop_app_monolith.customers (id),
-    constraint FKpl51cejpw4gy5swfar8br9ngi
-        foreign key (product_id) references shop_app_monolith.products (id)
-);
-
-create table shop_app_monolith.reviews_votes
-(
-    id          binary(16) not null
-        primary key,
-    votes       bigint     not null,
-    customer_id binary(16) null,
-    review_id   binary(16) null,
-    constraint FKckuygkph4k9llo624gn30lxvy
-        foreign key (customer_id) references shop_app_monolith.customers (id),
-    constraint FKosupda11xqkvo80r77evmwrey
-        foreign key (review_id) references shop_app_monolith.reviews (id)
 );
 
 create table shop_app_monolith.roles
@@ -425,22 +265,12 @@ create table shop_app_monolith.shipping_rates
     id            binary(16)  not null
         primary key,
     cod_supported bit         null,
+    country       varchar(45) null,
     days          int         not null,
     rate          float       not null,
     state         varchar(45) not null,
-    country_id    binary(16)  null,
-    constraint FKef7sfgeybt3xn13nlt2j6sljw
-        foreign key (country_id) references shop_app_monolith.countries (id)
-);
-
-create table shop_app_monolith.states
-(
-    id         binary(16)  not null
-        primary key,
-    name       varchar(45) not null,
-    country_id binary(16)  null,
-    constraint FKskkdphjml9vjlrqn4m5hi251y
-        foreign key (country_id) references shop_app_monolith.countries (id)
+    constraint UK_p847mx3nf68mbgpsi6ndsuml1
+        unique (country)
 );
 
 create table shop_app_monolith.users
@@ -453,12 +283,27 @@ create table shop_app_monolith.users
     email                    varchar(120) not null,
     email_verification_token varchar(255) null,
     encrypted_password       varchar(255) not null,
-    first_name               varchar(50)  not null,
     is_verified              bit          not null,
-    last_name                varchar(50)  not null,
     photos                   varchar(64)  null,
     constraint UK_6dotkott2kjsp8vw4d0m25fb7
         unique (email)
+);
+
+create table shop_app_monolith.addresses
+(
+    address_line_1  varchar(64) not null,
+    address_line_2  varchar(64) null,
+    city            varchar(45) not null,
+    country         varchar(45) not null,
+    first_name      varchar(45) not null,
+    last_name       varchar(45) not null,
+    phone_number    varchar(15) not null,
+    postal_code     varchar(10) not null,
+    default_address bit         null,
+    user_id         binary(16)  not null
+        primary key,
+    constraint FK1fa36y2oqhao3wgg2rw1pi459
+        foreign key (user_id) references shop_app_monolith.users (id)
 );
 
 create table shop_app_monolith.articles
@@ -474,6 +319,34 @@ create table shop_app_monolith.articles
     user_id      binary(16)   null,
     constraint FKlc3sm3utetrj1sx4v9ahwopnr
         foreign key (user_id) references shop_app_monolith.users (id)
+);
+
+create table shop_app_monolith.cart_items
+(
+    id         binary(16) not null
+        primary key,
+    quantity   int        not null,
+    product_id binary(16) null,
+    user_id    binary(16) null,
+    constraint FK1re40cjegsfvw58xrkdp6bac6
+        foreign key (product_id) references shop_app_monolith.products (id),
+    constraint FK709eickf3kc0dujx3ub9i7btf
+        foreign key (user_id) references shop_app_monolith.users (id)
+);
+
+create table shop_app_monolith.credit_cards
+(
+    id                 binary(16)   not null
+        primary key,
+    created_at         datetime(6)  not null,
+    updated_at         datetime(6)  null,
+    revision           bigint       null,
+    credit_card_number varchar(255) not null,
+    cvv                varchar(255) not null,
+    expiration_date    varchar(255) not null,
+    user               binary(16)   null,
+    constraint FK1316uon7dnxmwwmxq4cvh5qbd
+        foreign key (user) references shop_app_monolith.users (id)
 );
 
 create table shop_app_monolith.menus
@@ -494,17 +367,70 @@ create table shop_app_monolith.menus
         foreign key (article_id) references shop_app_monolith.articles (id)
 );
 
+create table shop_app_monolith.orders
+(
+    id             binary(16)   not null
+        primary key,
+    address_line_1 varchar(64)  not null,
+    address_line_2 varchar(64)  null,
+    city           varchar(45)  not null,
+    country        varchar(45)  not null,
+    first_name     varchar(45)  not null,
+    last_name      varchar(45)  not null,
+    phone_number   varchar(15)  not null,
+    postal_code    varchar(10)  not null,
+    deliver_date   datetime(6)  null,
+    deliver_days   int          not null,
+    order_time     datetime(6)  null,
+    payment_method varchar(255) null,
+    product_cost   float        not null,
+    shipping_cost  float        not null,
+    status         varchar(255) null,
+    subtotal       float        not null,
+    tax            float        not null,
+    total          float        not null,
+    user_id        binary(16)   null,
+    constraint FK32ql8ubntj5uh44ph9659tiih
+        foreign key (user_id) references shop_app_monolith.users (id)
+);
+
+create table shop_app_monolith.order_details
+(
+    id            binary(16) not null
+        primary key,
+    product_cost  float      not null,
+    quantity      int        not null,
+    shipping_cost float      not null,
+    subtotal      float      not null,
+    unit_price    float      not null,
+    order_id      binary(16) null,
+    product_id    binary(16) null,
+    constraint FK4q98utpd73imf4yhttm3w0eax
+        foreign key (product_id) references shop_app_monolith.products (id),
+    constraint FKjyu2qbqt8gnvno9oe9j2s2ldk
+        foreign key (order_id) references shop_app_monolith.orders (id)
+);
+
+create table shop_app_monolith.order_track
+(
+    id           binary(16)   not null
+        primary key,
+    notes        varchar(256) null,
+    status       varchar(45)  not null,
+    updated_time datetime(6)  null,
+    order_id     binary(16)   null,
+    constraint FK31jv1s212kajfn3kk1ksmnyfl
+        foreign key (order_id) references shop_app_monolith.orders (id)
+);
+
 create table shop_app_monolith.password_reset_tokens
 (
-    id       binary(16)   not null
+    id    binary(16)   not null
         primary key,
-    token    varchar(255) not null,
-    customer binary(16)   null,
-    user     binary(16)   null,
+    token varchar(255) not null,
+    user  binary(16)   null,
     constraint FK9cu5fq6ng9b0xhkicslddfoma
-        foreign key (user) references shop_app_monolith.users (id),
-    constraint FKinaexysqahcc0h49trbva2hrb
-        foreign key (customer) references shop_app_monolith.customers (id)
+        foreign key (user) references shop_app_monolith.users (id)
 );
 
 create table shop_app_monolith.questions
@@ -522,10 +448,10 @@ create table shop_app_monolith.questions
     product_id  binary(16)   null,
     constraint FKdnt39hlm1bcye9ivenccipd5s
         foreign key (product_id) references shop_app_monolith.products (id),
-    constraint FKfujdy3kc9esehjrifstaahivi
-        foreign key (asker_id) references shop_app_monolith.customers (id),
     constraint FKm993xs48yltdhr0qws3s1mpdn
-        foreign key (answerer_id) references shop_app_monolith.users (id)
+        foreign key (answerer_id) references shop_app_monolith.users (id),
+    constraint FKsat5fmui2uw8nnhan1dx817q1
+        foreign key (asker_id) references shop_app_monolith.users (id)
 );
 
 create table shop_app_monolith.questions_votes
@@ -533,12 +459,42 @@ create table shop_app_monolith.questions_votes
     id          binary(16) not null
         primary key,
     votes       bigint     not null,
-    customer_id binary(16) null,
     question_id binary(16) null,
-    constraint FK2er6vquw4ya7cl6ovtcx9vvm9
-        foreign key (customer_id) references shop_app_monolith.customers (id),
+    user_id     binary(16) null,
+    constraint FK2xrl5kkgbdraix1mqr90elvdf
+        foreign key (user_id) references shop_app_monolith.users (id),
     constraint FKehqtpwaad8w20qfxc8aqj0uiy
         foreign key (question_id) references shop_app_monolith.questions (id)
+);
+
+create table shop_app_monolith.reviews
+(
+    id          binary(16)   not null
+        primary key,
+    comment     varchar(300) not null,
+    headline    varchar(128) not null,
+    rating      bigint       not null,
+    review_time datetime(6)  not null,
+    votes       bigint       not null,
+    product_id  binary(16)   null,
+    user_id     binary(16)   null,
+    constraint FKcgy7qjc1r99dp117y9en6lxye
+        foreign key (user_id) references shop_app_monolith.users (id),
+    constraint FKpl51cejpw4gy5swfar8br9ngi
+        foreign key (product_id) references shop_app_monolith.products (id)
+);
+
+create table shop_app_monolith.reviews_votes
+(
+    id        binary(16) not null
+        primary key,
+    votes     bigint     not null,
+    review_id binary(16) null,
+    user_id   binary(16) null,
+    constraint FK504qx90s9fupgf7982xnajla2
+        foreign key (user_id) references shop_app_monolith.users (id),
+    constraint FKosupda11xqkvo80r77evmwrey
+        foreign key (review_id) references shop_app_monolith.reviews (id)
 );
 
 create table shop_app_monolith.sections_articles
@@ -577,4 +533,3 @@ create table shop_app_monolith.users_snapshots
     first_name         varchar(50)  not null,
     last_name          varchar(50)  not null
 );
-

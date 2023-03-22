@@ -7,13 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.hateoas.Link;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 

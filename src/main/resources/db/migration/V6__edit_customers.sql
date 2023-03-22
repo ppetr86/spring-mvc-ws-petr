@@ -1,1 +1,0 @@
-alter table customers drop column created_time;

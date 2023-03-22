@@ -4,7 +4,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.shopapp.shared.Utils.delay;
 
-
 public class HelloWorldService {
 
     public String hello() {

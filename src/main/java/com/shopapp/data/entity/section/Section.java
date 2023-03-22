@@ -18,105 +18,102 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Section extends IdBasedEntity {
-	
-	@Column(length = 256, nullable = false, unique = true)
-	private String heading;
 
-	@Column(length = 2048, nullable = false)
-	private String description;
+    @Column(length = 256, nullable = false, unique = true)
+    private String heading;
 
-	private boolean enabled;
+    @Column(length = 2048, nullable = false)
+    private String description;
 
-	@Column(name = "section_order")
-	private int sectionOrder;
+    private boolean enabled;
 
-	@Enumerated(EnumType.STRING)
-	private SectionType type;
+    @Column(name = "section_order")
+    private int sectionOrder;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "section_id")
-	@OrderBy("productOrder ASC")
-	private List<ProductSection> productSections = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private SectionType type;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "section_id")
-	@OrderBy("categoryOrder ASC")
-	private List<CategorySection> categorySections = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "section_id")
+    @OrderBy("productOrder ASC")
+    private List<ProductSection> productSections = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "section_id")
-	@OrderBy("brandOrder ASC")
-	private List<BrandSection> brandSections = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "section_id")
+    @OrderBy("categoryOrder ASC")
+    private List<CategorySection> categorySections = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "section_id")
-	@OrderBy("articleOrder ASC")
-	private List<ArticleSection> articleSections = new ArrayList<>();
-	
-	public Section(boolean enabled, SectionType type) {
-		this.enabled = enabled;
-		this.type = type;
-	}
-	
-	public Section(UUID id, String heading, SectionType type, int order, boolean enabled) {
-		this.id = id;
-		this.heading = heading;
-		this.type = type;
-		this.sectionOrder = order;
-		this.enabled = enabled;
-	}
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "section_id")
+    @OrderBy("brandOrder ASC")
+    private List<BrandSection> brandSections = new ArrayList<>();
 
-	public Section(UUID id) {
-		this.id = id;
-	}
-	
-	public void addProductSection(ProductSection productSection) {
-		this.productSections.add(productSection);
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "section_id")
+    @OrderBy("articleOrder ASC")
+    private List<ArticleSection> articleSections = new ArrayList<>();
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Section other = (Section) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
-	
-	@Override
-	public String toString() {
-		return "Section [id=" + id + ", heading=" + heading + ", enabled=" + enabled + ", sectionOrder=" + sectionOrder + ", type="
-				+ type + "]";
-	}
+    public Section(boolean enabled, SectionType type) {
+        this.enabled = enabled;
+        this.type = type;
+    }
 
-	public void addArticleSection(ArticleSection articleSection) {
-		// TODO Auto-generated method stub
-		this.articleSections.add(articleSection);
-	}
+    public Section(UUID id, String heading, SectionType type, int order, boolean enabled) {
+        this.id = id;
+        this.heading = heading;
+        this.type = type;
+        this.sectionOrder = order;
+        this.enabled = enabled;
+    }
 
-	public void addBrandSection(BrandSection brandSection) {
-		// TODO Auto-generated method stub
-		this.brandSections.add(brandSection);
-	}
+    public Section(UUID id) {
+        this.id = id;
+    }
 
-	public void addCategorySection(CategorySection categorySection) {
-		// TODO Auto-generated method stub
-		this.categorySections.add(categorySection);
-	}
+    public void addArticleSection(ArticleSection articleSection) {
+        // TODO Auto-generated method stub
+        this.articleSections.add(articleSection);
+    }
+
+    public void addBrandSection(BrandSection brandSection) {
+        // TODO Auto-generated method stub
+        this.brandSections.add(brandSection);
+    }
+
+    public void addCategorySection(CategorySection categorySection) {
+        // TODO Auto-generated method stub
+        this.categorySections.add(categorySection);
+    }
+
+    public void addProductSection(ProductSection productSection) {
+        this.productSections.add(productSection);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Section other = (Section) obj;
+        if (id == null) {
+            return other.id == null;
+        } else return id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Section [id=" + id + ", heading=" + heading + ", enabled=" + enabled + ", sectionOrder=" + sectionOrder + ", type="
+                + type + "]";
+    }
 }

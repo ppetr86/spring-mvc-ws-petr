@@ -19,11 +19,14 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductDaoImpl extends AbstractIdTimeRevisionDaoImpl<ProductEntity> implements ProductDao {
 
-
+    private final ProductSnapshotDao productSnapshotDao;
     private ProductRepository productRepository;
 
-    private final ProductSnapshotDao productSnapshotDao;
-
+    private Specification<ProductEntity> createNameSpecification(String name) {
+        var specBuilder = new GenericSpecificationsBuilder<ProductEntity>();
+        specBuilder.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(name));
+        return specBuilder.build();
+    }
 
     @Override
     public boolean existsByName(String name) {
@@ -68,11 +71,5 @@ public class ProductDaoImpl extends AbstractIdTimeRevisionDaoImpl<ProductEntity>
             snapshot.setFullDescription(dbObj.getFullDescription());
             this.productSnapshotDao.save(snapshot);
         }
-    }
-
-    private Specification<ProductEntity> createNameSpecification(String name) {
-        var specBuilder = new GenericSpecificationsBuilder<ProductEntity>();
-        specBuilder.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(name));
-        return specBuilder.build();
     }
 }

@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 
 public class Constants {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Constants.class);
-
     public static final String S3_BASE_URI;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Constants.class);
 
     static {
         String bucketName = System.getenv("AWS_BUCKET_NAME");

@@ -2,46 +2,46 @@ package com.shopapp.data.entity;
 
 public class VoteResultDTO {
 
-	private boolean successful;
-	private String message;
-	private int voteCount;
-	
-	public VoteResultDTO(boolean successful, String message, int voteCount) {
-		super();
-		this.successful = successful;
-		this.message = message;
-		this.voteCount = voteCount;
-	}
+    private boolean successful;
+    private String message;
+    private int voteCount;
 
-	public boolean isSuccessful() {
-		return successful;
-	}
+    public VoteResultDTO(boolean successful, String message, int voteCount) {
+        super();
+        this.successful = successful;
+        this.message = message;
+        this.voteCount = voteCount;
+    }
 
-	public void setSuccessful(boolean successful) {
-		this.successful = successful;
-	}
+    public static VoteResultDTO fail(String message) {
+        return new VoteResultDTO(false, message, 0);
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public static VoteResultDTO success(String message, int voteCount) {
+        return new VoteResultDTO(true, message, voteCount);
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public int getVoteCount() {
-		return voteCount;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public void setVoteCount(int voteCount) {
-		this.voteCount = voteCount;
-	}
-	
-	public static VoteResultDTO fail(String message) {
-		return new VoteResultDTO(false, message, 0);
-	}
-	
-	public static VoteResultDTO success(String message, int voteCount) {
-		return new VoteResultDTO(true, message, voteCount);
-	}
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    public boolean isSuccessful() {
+        return successful;
+    }
+
+    public void setSuccessful(boolean successful) {
+        this.successful = successful;
+    }
 }

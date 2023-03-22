@@ -23,6 +23,12 @@ public class BrandDaoImpl extends AbstractIdTimeRevisionDaoImpl<BrandEntity> imp
 
     private final BrandSnapshotDao brandSnapshotDao;
 
+    private Specification<BrandEntity> createNameSpecification(String name) {
+        var specBuilder = new GenericSpecificationsBuilder<BrandEntity>();
+        specBuilder.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(name));
+        return specBuilder.build();
+    }
+
     @Override
     public boolean existsByName(String name) {
         if (!StringUtils.hasText(name))
@@ -63,11 +69,5 @@ public class BrandDaoImpl extends AbstractIdTimeRevisionDaoImpl<BrandEntity> imp
             snapshot.setLogo(dbObj.getLogo());
             this.brandSnapshotDao.save(snapshot);
         }
-    }
-
-    private Specification<BrandEntity> createNameSpecification(String name) {
-        var specBuilder = new GenericSpecificationsBuilder<BrandEntity>();
-        specBuilder.with("name", GenericSpecification.SearchOperation.EQUALITY, false, List.of(name));
-        return specBuilder.build();
     }
 }

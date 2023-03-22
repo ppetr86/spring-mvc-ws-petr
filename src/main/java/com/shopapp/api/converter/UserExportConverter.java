@@ -2,6 +2,7 @@ package com.shopapp.api.converter;
 
 import com.shopapp.api.controller.UserController;
 import com.shopapp.data.entity.UserEntity;
+import com.shopapp.shared.dto.AddressDtoOut;
 import com.shopapp.shared.dto.UserDtoOut;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -9,7 +10,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import java.util.UUID;
 
 public class UserExportConverter extends AbstractIdExportConverter<UserEntity, UserDtoOut> {
-
 
     @Override
     public UserDtoOut convertToDtoOut(final UserEntity source) {
@@ -22,7 +22,6 @@ public class UserExportConverter extends AbstractIdExportConverter<UserEntity, U
 
         return target;
     }
-
 
     @Override
     public UserDtoOut convertToDtoOutUsingModelReferenceForChildEntities(final UserEntity source) {
@@ -53,11 +52,8 @@ public class UserExportConverter extends AbstractIdExportConverter<UserEntity, U
         if (source.getId() != null)
             target.setId(source.getId().toString());
 
-        if (source.getFirstName() != null)
-            target.setFirstName(source.getFirstName());
-
-        if (source.getLastName() != null)
-            target.setLastName(source.getLastName());
+        if (source.getAddress() != null)
+            target.setAddress(new AddressDtoOut(source.getAddress()));
 
         if (source.getEmail() != null)
             target.setEmail(source.getEmail());

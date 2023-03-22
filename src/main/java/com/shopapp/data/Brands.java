@@ -5,13 +5,7 @@ import lombok.Getter;
 
 import java.util.Set;
 
-import static com.shopapp.data.Categories.APPAREL_AND_ACCESSORIES;
-import static com.shopapp.data.Categories.AUTOMOTIVE;
-import static com.shopapp.data.Categories.CONSUMER_ELECTRONICS;
-import static com.shopapp.data.Categories.FOOD_AND_BEVERAGES;
-import static com.shopapp.data.Categories.FURNITURE_AND_DECOR;
-import static com.shopapp.data.Categories.PERSONAL_CARE;
-
+import static com.shopapp.data.Categories.*;
 
 @Getter
 @AllArgsConstructor

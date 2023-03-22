@@ -1,6 +1,5 @@
 package com.shopapp.data.entity.snapshots;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -30,7 +29,6 @@ public class ProductSnapshotEntity extends IdBasedTimeSnapshotEntity implements 
     @Column(length = 4096, nullable = false, name = "full_description")
     private String fullDescription;
 
-
     public ProductSnapshotEntity(UUID id) {
         this.id = id;
     }
@@ -43,6 +41,5 @@ public class ProductSnapshotEntity extends IdBasedTimeSnapshotEntity implements 
     public String toString() {
         return "Product [id=" + id + ", name=" + name + "]";
     }
-
 
 }

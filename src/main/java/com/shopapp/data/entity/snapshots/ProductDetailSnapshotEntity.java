@@ -23,7 +23,6 @@ public class ProductDetailSnapshotEntity extends IdBasedTimeSnapshotEntity imple
     @Column(nullable = false, length = 255)
     private String value;
 
-
     public ProductDetailSnapshotEntity(UUID id, String name, String value) {
         super();
         this.id = id;

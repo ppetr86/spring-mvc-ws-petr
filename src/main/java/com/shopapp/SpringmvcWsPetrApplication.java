@@ -9,6 +9,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 public class SpringmvcWsPetrApplication {
 
+    public static void main(String[] args) {
+        SpringApplication.run(SpringmvcWsPetrApplication.class, args);
+    }
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -22,10 +26,6 @@ public class SpringmvcWsPetrApplication {
     @Bean
     public SpringApplicationContext springApplicationContext() {
         return new SpringApplicationContext();
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(SpringmvcWsPetrApplication.class, args);
     }
 
 }

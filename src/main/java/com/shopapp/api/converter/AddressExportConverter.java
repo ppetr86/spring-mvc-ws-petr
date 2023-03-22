@@ -1,6 +1,6 @@
 package com.shopapp.api.converter;
 
-import com.shopapp.api.controller.CustomerController;
+import com.shopapp.api.controller.UserController;
 import com.shopapp.data.entity.AddressEntity;
 import com.shopapp.shared.dto.AddressDtoOut;
 import org.springframework.hateoas.Link;
@@ -9,7 +9,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import java.util.UUID;
 
 public class AddressExportConverter extends AbstractIdExportConverter<AddressEntity, AddressDtoOut> {
-
 
     @Override
     public AddressDtoOut convertToDtoOut(final AddressEntity source) {
@@ -34,7 +33,7 @@ public class AddressExportConverter extends AbstractIdExportConverter<AddressEnt
     @Override
     public Link createSelfLink(final String id) {
         if (id == null) return null;
-        return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CustomerController.class).getCustomerAddress(id)).withSelfRel();
+        return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).getUserAddress(id)).withSelfRel();
     }
 
     @Override

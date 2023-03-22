@@ -14,8 +14,6 @@ public interface DataServiceProvider {
 
     CreditCardDao creditCardDao();
 
-    CustomerDao customerDao();
-
     ProductDao productDao();
 
     ProductDetailDao productDetailDao();

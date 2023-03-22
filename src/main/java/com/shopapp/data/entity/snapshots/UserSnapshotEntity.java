@@ -47,11 +47,9 @@ public class UserSnapshotEntity extends IdBasedTimeSnapshotEntity implements Ser
         this.encryptedPassword = encryptedPassword;
     }
 
-
     public int compareTo(final UserSnapshotEntity o) {
         return compareToId(o);
     }
-
 
     @Override
     public boolean equals(final Object obj) {

@@ -16,5 +16,4 @@ public class RoleDtoOut extends IdBasedResource {
 
     private Set<ModelReference> authorities = new HashSet<>();
 
-
 }

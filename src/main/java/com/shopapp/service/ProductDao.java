@@ -6,6 +6,5 @@ public interface ProductDao extends IdTimeRevisionDao<ProductEntity> {
 
     boolean existsByName(String name);
 
-
     ProductEntity findByName(String name);
 }

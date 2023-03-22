@@ -1,15 +1,10 @@
 package com.shopapp.api.controller;
 
 import com.shopapp.api.converter.UserExportConverter;
-import com.shopapp.api.model.response.ErrorMessages;
 import com.shopapp.api.model.response.OperationStatusModel;
 import com.shopapp.data.entity.UserEntity;
-import com.shopapp.exceptions.UserServiceException;
 import com.shopapp.service.UserDao;
-import com.shopapp.shared.dto.PasswordResetDto;
-import com.shopapp.shared.dto.PasswordResetRequestDto;
-import com.shopapp.shared.dto.UserDtoIn;
-import com.shopapp.shared.dto.UserDtoOut;
+import com.shopapp.shared.dto.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -32,9 +27,6 @@ public class UserController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserDtoOut createUser(@RequestBody @Valid UserDtoIn userDtoIn) {
-
-        if (userDtoIn.getFirstName().isEmpty())
-            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
         var modelMapper = new ModelMapper();
         var createdUser = userDao.createUser(userDtoIn);
@@ -62,6 +54,16 @@ public class UserController {
         var returnValue = new UserDtoOut();
         var userDto = userDao.loadById(UUID.fromString(id));
         BeanUtils.copyProperties(userDto, returnValue);
+        return returnValue;
+    }
+
+    //default return format is MediaType.APPLICATION_XML_VALUE or APPLICATION_JSON_VALUE. Depends on accept header
+    @GetMapping(path = "/{id}/addresses", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public AddressDtoOut getUserAddress(@PathVariable String id) {
+
+        var returnValue = new AddressDtoOut();
+        var user = userDao.loadById(UUID.fromString(id));
+        BeanUtils.copyProperties(user.getAddress(), returnValue);
         return returnValue;
     }
 

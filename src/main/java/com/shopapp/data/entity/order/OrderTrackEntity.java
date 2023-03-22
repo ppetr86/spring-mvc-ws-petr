@@ -17,35 +17,35 @@ import java.util.Date;
 @Getter
 @Setter
 public class OrderTrackEntity extends IdBasedEntity {
-	
-	@Column(length = 256)
-	private String notes;
 
-	private Date updatedTime;
+    @Column(length = 256)
+    private String notes;
 
-	@Enumerated(EnumType.STRING)
-	@Column(length = 45, nullable = false)
-	private OrderStatusEntity status;
+    private Date updatedTime;
 
-	@ManyToOne
-	@JoinColumn(name = "order_id")
-	private OrderEntity order;
-	
-	@Transient
-	public String getUpdatedTimeOnForm() {
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-		//dateFormatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Istanbul"));
-		return dateFormatter.format(this.updatedTime);
-	}
-	
-	public void setUpdatedTimeOnForm(String dateString) throws ParseException {
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-		//dateFormatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Istanbul"));
-		try {
-			this.updatedTime = dateFormatter.parse(dateString);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} 
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(length = 45, nullable = false)
+    private OrderStatusEntity status;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
+
+    @Transient
+    public String getUpdatedTimeOnForm() {
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        //dateFormatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Istanbul"));
+        return dateFormatter.format(this.updatedTime);
+    }
+
+    public void setUpdatedTimeOnForm(String dateString) throws ParseException {
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        //dateFormatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Istanbul"));
+        try {
+            this.updatedTime = dateFormatter.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

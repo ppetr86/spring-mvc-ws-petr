@@ -17,8 +17,7 @@ import java.util.Set;
 public class UserDtoOut extends IdBasedResource {
 
     private String id;
-    private String firstName;
-    private String lastName;
     private String email;
+    private AddressDtoOut address;
     private Set<ModelReference> roles = new HashSet<>();
 }

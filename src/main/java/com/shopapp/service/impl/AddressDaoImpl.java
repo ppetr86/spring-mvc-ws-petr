@@ -30,7 +30,6 @@ public class AddressDaoImpl extends AbstractIdDaoImpl<AddressEntity> implements 
         return addressRepository.save(addressEntity);
     }
 
-
     @Override
     public List<AddressEntity> getAddresses(final int page, final int limit, final String city,
                                             final String country, final String streetName,
@@ -62,7 +61,6 @@ public class AddressDaoImpl extends AbstractIdDaoImpl<AddressEntity> implements 
         return foundBySpec.getContent();
     }
 
-
     @Override
     public Class<AddressEntity> getPojoClass() {
         return AddressEntity.class;
@@ -85,7 +83,6 @@ public class AddressDaoImpl extends AbstractIdDaoImpl<AddressEntity> implements 
         if (!dto.getPostalCode().isBlank())
             address.setPostalCode(dto.getPostalCode());
 
-
         //TODO
         /*if (dto.getCountry()!=null)
             address.setCountry(dto.getCountry());*/
@@ -95,6 +92,5 @@ public class AddressDaoImpl extends AbstractIdDaoImpl<AddressEntity> implements 
 
         return addressRepository.save(address);
     }
-
 
 }

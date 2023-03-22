@@ -3,12 +3,7 @@ package com.shopapp.shared;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.Body;
-import com.amazonaws.services.simpleemail.model.Content;
-import com.amazonaws.services.simpleemail.model.Destination;
-import com.amazonaws.services.simpleemail.model.Message;
-import com.amazonaws.services.simpleemail.model.SendEmailRequest;
-import com.amazonaws.services.simpleemail.model.SendEmailResult;
+import com.amazonaws.services.simpleemail.model.*;
 import com.shopapp.shared.dto.UserDtoIn;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +31,6 @@ public class AmazonSES {
             + " open then the following URL in your browser window: "
             + " http://ec2-35-173-238-100.compute-1.amazonaws.com:8080/verification-service/email-verification.html?token=$tokenValue"
             + " Thank you! And we are waiting for you inside!";
-
 
     final String PASSWORD_RESET_HTMLBODY = "<h1>A request to reset your password</h1>"
             + "<p>Hi, $firstName!</p> "
@@ -67,7 +61,6 @@ public class AmazonSES {
 
         String textBodyWithToken = PASSWORD_RESET_TEXTBODY.replace("$tokenValue", token);
         textBodyWithToken = textBodyWithToken.replace("$firstName", firstName);
-
 
         SendEmailRequest request = new SendEmailRequest()
                 .withDestination(

@@ -11,7 +11,6 @@ import lombok.Setter;
 import java.util.Objects;
 import java.util.UUID;
 
-
 @MappedSuperclass
 @Getter
 @Setter
@@ -24,7 +23,6 @@ public abstract class IdBasedEntity implements Comparable<IdBasedEntity> {
     public IdBasedEntity(UUID id) {
         this.id = id;
     }
-
 
     public IdBasedEntity() {
         super();

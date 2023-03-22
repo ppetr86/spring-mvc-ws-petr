@@ -1,27 +1,39 @@
 package com.shopapp.data.entity.section;
 
 public enum SectionType {
-	PRODUCT {
-		public String toString() { return "Product"; }
-	}, 
+    PRODUCT {
+        public String toString() {
+            return "Product";
+        }
+    },
 
-	CATEGORY {
-		public String toString() { return "Category"; }
-	},
+    CATEGORY {
+        public String toString() {
+            return "Category";
+        }
+    },
 
-	BRAND {
-		public String toString() { return "Brand"; }
-	}, 
+    BRAND {
+        public String toString() {
+            return "Brand";
+        }
+    },
 
-	ARTICLE {
-		public String toString() { return "Article"; }
-	}, 
+    ARTICLE {
+        public String toString() {
+            return "Article";
+        }
+    },
 
-	TEXT {
-		public String toString() { return "Text"; }
-	},
+    TEXT {
+        public String toString() {
+            return "Text";
+        }
+    },
 
-	ALL_CATEGORIES {
-		public String toString() { return "All_Categories"; }
-	}	
+    ALL_CATEGORIES {
+        public String toString() {
+            return "All_Categories";
+        }
+    }
 }

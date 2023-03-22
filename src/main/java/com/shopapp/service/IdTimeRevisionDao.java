@@ -7,12 +7,9 @@ public interface IdTimeRevisionDao<T extends IdBasedTimeRevisionEntity> extends 
 
     long findMaxRevision();
 
-
     Long getNewRevision();
-
 
     @Override
     IdBasedTimeRevisionRepository<T> getRepository();
-
 
 }

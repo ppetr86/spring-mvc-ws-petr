@@ -14,7 +14,6 @@ public class RoleDaoImpl extends AbstractIdDaoImpl<RoleEntity> implements RoleDa
 
     RoleRepository roleRepository;
 
-
     @Override
     public RoleEntity findByName(Roles name) {
         if (name == null)

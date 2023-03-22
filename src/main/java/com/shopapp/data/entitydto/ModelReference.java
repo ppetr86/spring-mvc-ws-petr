@@ -5,9 +5,7 @@ import com.shopapp.data.entity.superclass.IdBasedEntity;
 
 import java.util.Objects;
 
-
 public class ModelReference extends IdBasedResource {
-
 
     public ModelReference(IdBasedEntity obj) {
         if (obj.getId() != null)

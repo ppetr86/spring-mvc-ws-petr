@@ -1,12 +1,14 @@
 package com.shopapp.data.definition;
 
-import com.shopapp.data.entity.CustomerEntity;
+import com.shopapp.data.entity.UserEntity;
 
 public interface AddressReadable {
 
-    CustomerEntity getCustomer();
+    String getAddressLine1();
 
-    boolean isDefaultForShipping();
+    String getAddressLine2();
+
+    String getCity();
 
     String getCountry();
 
@@ -16,11 +18,9 @@ public interface AddressReadable {
 
     String getPhoneNumber();
 
-    String getAddressLine1();
-
-    String getAddressLine2();
-
-    String getCity();
-
     String getPostalCode();
+
+    UserEntity getUser();
+
+    boolean isDefaultForShipping();
 }

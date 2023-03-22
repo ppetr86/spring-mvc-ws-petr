@@ -18,8 +18,6 @@ public class DataServiceProviderImpl implements DataServiceProvider {
 
     private CreditCardDao creditCardDao;
 
-    private CustomerDao customerDao;
-
     private ProductDao productDao;
 
     private ProductDetailDao productDetailDao;
@@ -48,15 +46,9 @@ public class DataServiceProviderImpl implements DataServiceProvider {
         return categoryDao;
     }
 
-
     @Override
     public CreditCardDao creditCardDao() {
         return creditCardDao;
-    }
-
-    @Override
-    public CustomerDao customerDao() {
-        return customerDao;
     }
 
     @Override

@@ -45,11 +45,6 @@ public class CategorySnapshotEntity extends IdBasedTimeSnapshotEntity implements
         this.alias = alias;
     }
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
     public static CategorySnapshotEntity copyFull(CategorySnapshotEntity category) {
         CategorySnapshotEntity copyCategory = new CategorySnapshotEntity();
         copyCategory.setId(category.getId());
@@ -81,5 +76,10 @@ public class CategorySnapshotEntity extends IdBasedTimeSnapshotEntity implements
         copyCategory.setName(name);
 
         return copyCategory;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

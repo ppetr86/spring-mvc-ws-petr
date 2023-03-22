@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
@@ -30,13 +31,12 @@ public class WebSecurity {
 
     public WebSecurity(UserDao userDetailsService,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
-                       UserRepository userRepository
-    ) {
+                       UserRepository userRepository) {
+
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
     }
-
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -52,8 +52,6 @@ public class WebSecurity {
                 .csrf().disable().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
                 .permitAll()
-                .requestMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL_CUSTOMER)
-                .permitAll()
                 .requestMatchers(HttpMethod.GET, SecurityConstants.VERIFICATION_EMAIL_URL)
                 .permitAll()
                 .requestMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_REQUEST_URL)
@@ -66,8 +64,10 @@ public class WebSecurity {
                 .permitAll()
                 //.antMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                 .anyRequest().authenticated().and()
+
                 .addFilter(getAuthenticationFilter(authenticationManager))
                 .addFilter(new AuthorizationFilter(authenticationManager, userRepository))
+
                 .authenticationManager(authenticationManager)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -81,10 +81,10 @@ public class WebSecurity {
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("*"));
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -94,7 +94,7 @@ public class WebSecurity {
 
     protected AuthenticationFilter getAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
         final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager);
-        filter.setFilterProcessesUrl("/users/login");
+        filter.setFilterProcessesUrl("/login");
         return filter;
     }
 }

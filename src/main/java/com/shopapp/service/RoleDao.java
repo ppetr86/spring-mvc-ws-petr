@@ -7,5 +7,4 @@ public interface RoleDao extends IdDao<RoleEntity> {
 
     RoleEntity findByName(Roles name);
 
-
 }

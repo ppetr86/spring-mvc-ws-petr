@@ -19,10 +19,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoryDaoImpl extends AbstractIdTimeRevisionDaoImpl<CategoryEntity> implements CategoryDao {
 
-
-    private CategoryRepository categoryRepository;
-
     private final CategorySnapshotDao categorySnapshotDao;
+    private CategoryRepository categoryRepository;
 
     @Override
     public boolean existsByName(String name) {

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public abstract class AbstractIdTimeSnapshotDaoImpl<T extends IdBasedTimeSnapshotEntity> extends AbstractIdTimeDaoImpl<T> implements IdTimeSnapshotDao<T> {
 
-
     @Override
     public T getDataForRevision(final Long revision) {
         return getRepository().getDataForRevision(revision == null ? 0 : revision);

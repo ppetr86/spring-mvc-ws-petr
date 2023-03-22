@@ -21,14 +21,7 @@ public class UserDtoIn implements Serializable {
     private static final long serialVersionUID = 6835192601898364280L;
 
     @NotNull
-    @Size(min = 2, message = "{validation.firstName.size.too_short}")
-    @Size(max = 50, message = "{validation.firstName.size.too_long}")
-    private String firstName;
-
-    @NotNull
-    @Size(min = 2, message = "{validation.lastName.size.too_short}")
-    @Size(max = 50, message = "{validation.lastName.size.too_long}")
-    private String lastName;
+    private AddressDtoIn address;
 
     @Email
     @Size(max = 120, message = "{validation.name.size.too_long}")

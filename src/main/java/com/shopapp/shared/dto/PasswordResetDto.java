@@ -1,6 +1,5 @@
 package com.shopapp.shared.dto;
 
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

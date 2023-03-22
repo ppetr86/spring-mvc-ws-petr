@@ -1,84 +1,84 @@
 package com.shopapp.data.entity.order;
 
 public enum OrderStatusEntity {
-	
-	NEW {
-		@Override
-		public String defaultDescription() {
-			return "Order was placed by the customer";
-		}
 
-	}, 
+    NEW {
+        @Override
+        public String defaultDescription() {
+            return "Order was placed by the customer";
+        }
 
-	CANCELLED {
-		@Override
-		public String defaultDescription() {
-			return "Order was rejected";
-		}
-	}, 
+    },
 
-	PROCESSING {
-		@Override
-		public String defaultDescription() {
-			return "Order is being processed";
-		}
-	},
+    CANCELLED {
+        @Override
+        public String defaultDescription() {
+            return "Order was rejected";
+        }
+    },
 
-	PACKAGED {
-		@Override
-		public String defaultDescription() {
-			return "Products were packaged";
-		}		
-	}, 
+    PROCESSING {
+        @Override
+        public String defaultDescription() {
+            return "Order is being processed";
+        }
+    },
 
-	PICKED {
-		@Override
-		public String defaultDescription() {
-			return "Shipper picked the package";
-		}		
-	}, 
+    PACKAGED {
+        @Override
+        public String defaultDescription() {
+            return "Products were packaged";
+        }
+    },
 
-	SHIPPING {
-		@Override
-		public String defaultDescription() {
-			return "Shipper is delivering the package";
-		}		
-	},
+    PICKED {
+        @Override
+        public String defaultDescription() {
+            return "Shipper picked the package";
+        }
+    },
 
-	DELIVERED {
-		@Override
-		public String defaultDescription() {
-			return "Customer received products";
-		}		
-	}, 
+    SHIPPING {
+        @Override
+        public String defaultDescription() {
+            return "Shipper is delivering the package";
+        }
+    },
 
-	RETURNED {
-		@Override
-		public String defaultDescription() {
-			return "Products were returned";
-		}		
-	}, 
+    DELIVERED {
+        @Override
+        public String defaultDescription() {
+            return "Customer received products";
+        }
+    },
 
-	PAID {
-		@Override
-		public String defaultDescription() {
-			return "Customer has paid this order";
-		}		
-	}, 
+    RETURNED {
+        @Override
+        public String defaultDescription() {
+            return "Products were returned";
+        }
+    },
 
-	REFUNDED {
-		@Override
-		public String defaultDescription() {
-			return "Customer has been refunded";
-		}		
-	},
-	
-	RETURN_REQUESTED {
-		@Override
-		public String defaultDescription() {
-			return "Customer sent request to return purchase";
-		}		
-	};
+    PAID {
+        @Override
+        public String defaultDescription() {
+            return "Customer has paid this order";
+        }
+    },
 
-	public abstract String defaultDescription();
+    REFUNDED {
+        @Override
+        public String defaultDescription() {
+            return "Customer has been refunded";
+        }
+    },
+
+    RETURN_REQUESTED {
+        @Override
+        public String defaultDescription() {
+            return "Customer sent request to return purchase";
+        }
+    };
+
+    public abstract String defaultDescription();
 }

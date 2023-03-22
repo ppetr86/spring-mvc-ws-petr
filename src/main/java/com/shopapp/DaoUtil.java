@@ -10,5 +10,4 @@ public final class DaoUtil {
         return UUID.randomUUID();
     }
 
-
 }

@@ -18,36 +18,36 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderDetailEntity extends IdBasedEntity implements Serializable{
+public class OrderDetailEntity extends IdBasedEntity implements Serializable {
 
-	private int quantity;
-	private float productCost;
-	private float shippingCost;
-	private float unitPrice;
-	private float subtotal;
+    private int quantity;
+    private float productCost;
+    private float shippingCost;
+    private float unitPrice;
+    private float subtotal;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id")
-	private ProductEntity product;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private ProductEntity product;
 
-	@ManyToOne
-	@JoinColumn(name = "order_id")
-	private OrderEntity order;
-	
-	public OrderDetailEntity(String categoryName, int quantity, float productCost, float shippingCost, float subtotal) {
-		this.product = new ProductEntity();
-		this.product.setCategory(new CategoryEntity(categoryName));
-		this.quantity = quantity;
-		this.productCost = productCost * quantity;
-		this.shippingCost = shippingCost;
-		this.subtotal = subtotal;
-	}
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
 
-	public OrderDetailEntity(int quantity, String productName, float productCost, float shippingCost, float subtotal) {
-		this.product = new ProductEntity(productName);
-		this.quantity = quantity;
-		this.productCost = productCost * quantity;
-		this.shippingCost = shippingCost;
-		this.subtotal = subtotal;
-	}
+    public OrderDetailEntity(String categoryName, int quantity, float productCost, float shippingCost, float subtotal) {
+        this.product = new ProductEntity();
+        this.product.setCategory(new CategoryEntity(categoryName));
+        this.quantity = quantity;
+        this.productCost = productCost * quantity;
+        this.shippingCost = shippingCost;
+        this.subtotal = subtotal;
+    }
+
+    public OrderDetailEntity(int quantity, String productName, float productCost, float shippingCost, float subtotal) {
+        this.product = new ProductEntity(productName);
+        this.quantity = quantity;
+        this.productCost = productCost * quantity;
+        this.shippingCost = shippingCost;
+        this.subtotal = subtotal;
+    }
 }

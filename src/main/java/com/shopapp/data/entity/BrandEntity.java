@@ -17,68 +17,68 @@ import java.util.UUID;
 @Table(name = "brands")
 @Getter
 @Setter
-public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializable{
+public class BrandEntity extends IdBasedTimeRevisionEntity implements Serializable {
 
-	@Serial
-	private static final long serialVersionUID = -4280261731794140574L;
+    @Serial
+    private static final long serialVersionUID = -4280261731794140574L;
 
-	@Column(nullable = false, length = 45, unique = true)
-	private String name;
+    @Column(nullable = false, length = 45, unique = true)
+    private String name;
 
-	@Column(nullable = false, length = 128)
-	private String logo;
+    @Column(nullable = false, length = 128)
+    private String logo;
 
-	@ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-	@JoinTable(
-			name = "brands_categories",
-			joinColumns = @JoinColumn(name = "brand_id"),
-			inverseJoinColumns = @JoinColumn(name = "category_id"))
-	private Set<CategoryEntity> categories = new HashSet<>();
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "brands_categories",
+            joinColumns = @JoinColumn(name = "brand_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<CategoryEntity> categories = new HashSet<>();
 
-	public BrandEntity() {
-		super();
-	}
-	
-	public BrandEntity(UUID id) {
-		this.id = id;
-	}
+    public BrandEntity() {
+        super();
+    }
 
-	@Override
-	public String toString() {
-		return "Brand [id=" + id + ", name=" + name + ", categories=" + categories + "]";
-	}
-	
-	@Transient
-	public String getLogoPath() {
-		if (this.id == null) return "/images/image-thumbnail.png";
+    public BrandEntity(UUID id) {
+        this.id = id;
+    }
 
-		return Constants.S3_BASE_URI + "/brand-logos/" + this.id + "/" + this.logo;
-	}
+    public void addCategory(CategoryEntity value) {
+        if (value != null && !this.categories.contains(value)) {
+            this.categories.add(value);
+            value.getBrands().add(this);
+        }
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof BrandEntity that)) return false;
-		if (!super.equals(o)) return false;
-		return super.equalsId(o) || name.equals(that.name);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BrandEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return super.equalsId(o) || name.equals(that.name);
+    }
 
-	@Override
-	public int hashCode() {
-		return hashCodeId() + Objects.hash(name);
-	}
+    @Transient
+    public String getLogoPath() {
+        if (this.id == null) return "/images/image-thumbnail.png";
 
-	public void addCategory(CategoryEntity value) {
-		if (value != null && !this.categories.contains(value)) {
-			this.categories.add(value);
-			value.getBrands().add(this);
-		}
-	}
+        return Constants.S3_BASE_URI + "/brand-logos/" + this.id + "/" + this.logo;
+    }
 
-	public void removeCategory(CategoryEntity value) {
-		if (value != null && this.categories.contains(value)) {
-			this.categories.remove(value);
-			value.getBrands().remove(this);
-		}
-	}
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(name);
+    }
+
+    public void removeCategory(CategoryEntity value) {
+        if (value != null && this.categories.contains(value)) {
+            this.categories.remove(value);
+            value.getBrands().remove(this);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Brand [id=" + id + ", name=" + name + ", categories=" + categories + "]";
+    }
 }

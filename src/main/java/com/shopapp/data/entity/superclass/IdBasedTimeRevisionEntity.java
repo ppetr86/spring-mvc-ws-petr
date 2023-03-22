@@ -7,7 +7,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
 @MappedSuperclass
 @Getter
 @Setter

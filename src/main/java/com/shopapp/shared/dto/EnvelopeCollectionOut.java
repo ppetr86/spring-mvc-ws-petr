@@ -12,8 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 public class EnvelopeCollectionOut<T> {
 
-    private int size;
     private final List<T> values = new ArrayList<>();
+    private int size;
 
     public EnvelopeCollectionOut(final List<T> values) {
         this.values.addAll(values);

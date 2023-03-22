@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class InitialSetup {
 
+    private final String password = "1234";
+    private final String emailPostFix = "@test.com";
     private AuthorityDao authorityDao;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private BrandDao brandDao;
@@ -42,7 +44,6 @@ public class InitialSetup {
     private RoleDao roleDao;
     private UserDao userDao;
     private CreditCardDao creditCardDao;
-    private CustomerDao customerDao;
 
     private AuthorityEntity createAuthority(Authority value) {
         var entity = authorityDao.findByAuthority(value);
@@ -115,53 +116,7 @@ public class InitialSetup {
     }
 
     private void createCreditCards(int targetCountOfCreditCards) {
-        var setOfCards = new HashSet<CreditCardEntity>(targetCountOfCreditCards);
-        var cc = 12345678900000L;
-        var random = new Random();
-        for (int i = 0; i < targetCountOfCreditCards; i++) {
-            var current = new CreditCardEntity();
-            var month = i % 12 < 10 ? "0" + i % 12 : "" + i;
-            current.setCreditCardNumber(String.valueOf(cc++));
-            current.setExpirationDate(month + "/" + "23");
-            current.setCvv(String.valueOf(random.nextInt(900) + 100));
-            setOfCards.add(current);
-        }
-        creditCardDao.saveAll(setOfCards);
-    }
 
-    private Set<CustomerEntity> createCustomers(int targetCountOfCustomers) {
-
-        Set<CustomerEntity> customerEntities = new HashSet<>(targetCountOfCustomers);
-        var faker = new Faker();
-
-        for (int i = 0; i < targetCountOfCustomers; i++) {
-            var customer = new CustomerEntity();
-            customer.setId(UUID.randomUUID());
-
-            var address = new AddressEntity();
-            address.setFirstName(faker.name().firstName());
-            address.setLastName(faker.name().lastName());
-            address.setCustomer(customer);
-            address.setDefaultForShipping(true);
-
-            String phoneNumber = faker.phoneNumber().phoneNumber();
-            address.setPhoneNumber(phoneNumber.substring(0, Math.min(phoneNumber.length(), 15)));
-
-            address.setAddressLine1(faker.address().streetAddress());
-            address.setCity(faker.address().city());
-            address.setCountry(faker.address().country());
-            address.setPostalCode(faker.address().zipCode());
-
-            customer.setAddress(address);
-            customer.setEmail(customer.getAddress().getFirstName() + customer.getAddress().getLastName() + "@test.com");
-            customer.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
-            customer.setVerified(true);
-            customer.setAuthenticationType(AuthenticationType.DATABASE);
-
-            customerEntities.add(customer);
-        }
-
-        return new HashSet<>(customerDao.saveAll(customerEntities));
     }
 
     private void createProductsFromExternalApi() {
@@ -253,26 +208,31 @@ public class InitialSetup {
 
     private void createUsers() {
 
+        var faker = new Faker();
+        var userSet = new HashSet<UserEntity>();
+
         var roleAdmin = roleDao.findByName(Roles.ROLE_ADMIN);
         var petr = new UserEntity();
-
-        setUserProperties(petr, "Petr", "Novotny", "petr@test.com", roleAdmin);
-        if (!userDao.existsByEmail("petr@test.com")) {
-            userDao.save(petr);
-        }
+        setUserProperties(petr, "Petr", "Novotny", "petr" + emailPostFix, roleAdmin, faker);
+        userSet.add(petr);
 
         var roleUser = roleDao.findByName(Roles.ROLE_USER);
         var ivana = new UserEntity();
-        setUserProperties(ivana, "Ivana", "Michalova", "ivana@test.com", roleUser);
-        if (!userDao.existsByEmail("ivana@test.com")) {
-            userDao.save(ivana);
-        }
+        setUserProperties(ivana, "Ivana", "Michalova", "ivana" + emailPostFix, roleUser, faker);
+
+        userSet.add(ivana);
 
         var test = new UserEntity();
-        setUserProperties(test, "test_name", "test_name", "test_email@test.com", roleUser);
-        if (!userDao.existsByEmail("test_email@test.com")) {
-            userDao.save(test);
-        }
+        setUserProperties(test, "test_name", "test_name", "test_email" + emailPostFix, roleUser, faker);
+        userSet.add(test);
+
+        var roleCustomer = roleDao.findByName(Roles.ROLE_CUSTOMER);
+        var customer = new UserEntity();
+        setUserProperties(customer, "customer", "customer", "customer" + emailPostFix, roleCustomer, faker);
+        userSet.add(customer);
+
+        userDao.saveAll(userSet);
+
     }
 
     @EventListener
@@ -291,13 +251,6 @@ public class InitialSetup {
             //create roles which depend on authorities
             //users depend on roles
             createRoles();
-        }
-
-        //users depend on roles, authorities
-        int targetCountOfUsers = 3;
-        if (userDao.getCount() < targetCountOfUsers) {
-            System.out.println("From Application ready event users...Creating");
-            CompletableFuture.runAsync(this::createUsers);
         }
 
         int targetCountOfCategories = Categories.values().length;
@@ -320,47 +273,50 @@ public class InitialSetup {
             CompletableFuture.runAsync(this::createProductsFromExternalApi);
         }
 
-        //create customers
-        int targetCountOfCustomers = 10;
-        CompletableFuture<Void> cfCustomers = CompletableFuture.completedFuture(null);
-        if (customerDao.getCount() < targetCountOfCustomers) {
-            System.out.println("From Application ready event customers...Creating");
-            cfCustomers = CompletableFuture.runAsync(() -> createCustomers(targetCountOfCustomers));
-        }
-
-        int targetCountOfCreditCards = targetCountOfCustomers * 2;
-        CompletableFuture<Void> cfCreditCards = CompletableFuture.completedFuture(null);
-        if (creditCardDao.getCount() < targetCountOfCreditCards) {
-            System.out.println("From Application ready event credit cards...Creating");
-            cfCreditCards = CompletableFuture.runAsync(() -> createCreditCards(targetCountOfCreditCards));
-        }
-
-        if (creditCardDao.getCount() < targetCountOfCreditCards && customerDao.getCount() < targetCountOfCustomers) {
-            //when cfUsers and cfCards ready... set cards on users
-            CompletableFuture.allOf(cfCreditCards, cfCustomers).get();
-            CompletableFuture.runAsync(this::setCreditCardsOnUsers);
+        //create users
+        int targetCountOfUsers = 4;
+        CompletableFuture<Void> cfUsers = CompletableFuture.completedFuture(null);
+        if (userDao.getCount() < targetCountOfUsers) {
+            System.out.println("From Application ready event users...Creating");
+            cfUsers = CompletableFuture.runAsync(this::createUsers);
         }
     }
 
-    @Transactional
-    void setCreditCardsOnUsers() {
-        var cards = creditCardDao.loadAll();
-        var customers = customerDao.loadAll();
-        var cardCounter = 0;
-        for (CustomerEntity each : customers) {
-            each.addCreditCard(cards.get(cardCounter));
-            each.addCreditCard(cards.get(cardCounter + 1));
-            cardCounter += 2;
-            customerDao.save(each);
-        }
-    }
+    private void setUserProperties(UserEntity user, String firstName, String lastName, String email, RoleEntity role, Faker faker) {
+        user.setId(UUID.randomUUID());
 
-    private void setUserProperties(UserEntity user, String firstName, String lastName, String email, RoleEntity role) {
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
+        var address = new AddressEntity();
+        address.setFirstName(firstName);
+        address.setLastName(lastName);
+        address.setUser(user);
+        address.setDefaultForShipping(true);
+
+        String phoneNumber = faker.phoneNumber().phoneNumber();
+        address.setPhoneNumber(phoneNumber.substring(0, Math.min(phoneNumber.length(), 15)));
+
+        address.setAddressLine1(faker.address().streetAddress());
+        address.setCity(faker.address().city());
+        address.setCountry(faker.address().country());
+        address.setPostalCode(faker.address().zipCode());
+
+        user.setAddress(address);
         user.setEmail(email);
         user.setVerified(true);
-        user.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
+        user.setEncryptedPassword(bCryptPasswordEncoder.encode(password));
+
+        var setOfCards = new HashSet<CreditCardEntity>(2);
+        var cc = 12345678900000L;
+        var random = new Random();
+        for (int i = 0; i < 2; i++) {
+            var current = new CreditCardEntity();
+            var month = (int) ((Math.random() * (12)));
+            current.setCreditCardNumber(String.valueOf(cc++));
+            current.setExpirationDate(month + "/" + "23");
+            current.setCvv(String.valueOf(random.nextInt(900) + 100));
+            setOfCards.add(current);
+        }
+        user.setCreditCards(setOfCards);
+
         user.addRole(role);
     }
 

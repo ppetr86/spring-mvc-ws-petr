@@ -15,42 +15,29 @@ public interface IdDao<T extends IdBasedEntity> {
 
     void delete(UUID id);
 
-
     boolean exists(Specification<T> spec);
-
 
     Optional<T> findOneBy(Specification<T> specification);
 
-
     Long getCount();
-
 
     Long getCountDelayed();
 
-
     Class<T> getPojoClass();
-
 
     IdBasedRepository<T> getRepository();
 
-
     List<T> loadAll();
-
 
     Page<T> loadAll(Specification<T> specification, Pageable pageRequest);
 
-
     List<T> loadAllDelayed();
-
 
     T loadById(UUID id);
 
-
     void onBeforeWrite(final T dbObj);
 
-
     T save(T obj);
-
 
     List<T> saveAll(Collection<T> values);
 

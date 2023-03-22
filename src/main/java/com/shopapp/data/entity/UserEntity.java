@@ -20,86 +20,119 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-public class UserEntity extends IdBasedTimeRevisionEntity implements Serializable{
+public class UserEntity extends IdBasedTimeRevisionEntity implements Serializable {
 
-	@Column(nullable = false, length = 50)
-	private String firstName;
+    @Column(nullable = false, length = 120, unique = true)
+    private String email;
 
-	@Column(nullable = false, length = 50)
-	private String lastName;
+    @Column(nullable = false)
+    private String encryptedPassword;
 
-	@Column(nullable = false, length = 120, unique = true)
-	private String email;
+    private String emailVerificationToken;
 
-	@Column(nullable = false)
-	private String encryptedPassword;
+    @Column(nullable = false)
+    private boolean isVerified;
 
-	private String emailVerificationToken;
+    @Column(length = 64)
+    private String photos;
 
-	@Column(nullable = false)
-	private boolean isVerified;
-	
-	@Column(length = 64)
-	private String photos;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
+    private Set<RoleEntity> roles = new HashSet<>();
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "users_roles",
-			joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
-	private Set<RoleEntity> roles = new HashSet<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    private AddressEntity address;
 
-	public void addRole(RoleEntity value) {
-		if (value != null && !this.roles.contains(value)) {
-			this.roles.add(value);
-			value.getUsers().add(this);
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "user")
+    private Set<CreditCardEntity> creditCards = new HashSet<>();
+
+    public void addCreditCard(CreditCardEntity value) {
+        if (value != null && !this.creditCards.contains(value)) {
+            this.creditCards.add(value);
+            value.setUser(this);
+        }
+    }
+
+    public void addRole(RoleEntity value) {
+        if (value != null && !this.roles.contains(value)) {
+            this.roles.add(value);
+            value.getUsers().add(this);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntity that)) return false;
+        if (!super.equals(o)) return false;
+        return super.equalsId(o) || email.equals(that.email);
+    }
+
+    @Transient
+    public String getFullName() {
+        return this.address.firstName + " " + this.address.lastName;
+    }
+
+    @Transient
+    public String getPhotosImagePath() {
+        if (id == null || photos == null) return "/images/default-user.png";
+
+        return Constants.S3_BASE_URI + "/user-photos/" + this.id + "/" + this.photos;
+    }
+
+    public boolean hasRole(String roleName) {
+        Iterator<RoleEntity> iterator = roles.iterator();
+
+        while (iterator.hasNext()) {
+            RoleEntity role = iterator.next();
+            if (role.getName().equals(roleName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(email);
+    }
+
+    public void removeCreditCard(CreditCardEntity value) {
+        if (value != null && this.creditCards.contains(value)) {
+            this.creditCards.remove(value);
+            value.setUser(null);
+        }
+    }
+
+    public void removeRole(RoleEntity value) {
+        if (value != null && this.roles.contains(value)) {
+            this.roles.remove(value);
+            value.getUsers().remove(this);
+        }
+    }
+
+
+    /*@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+	@JoinTable(name = "customers_addresses",
+			joinColumns = @JoinColumn(name = "customer", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "address", referencedColumnName = "id"))
+	private Set<AddressEntity> addresses = new HashSet<>();*/
+
+	/*public void addAddress(AddressEntity value) {
+		if (value != null && !this.addresses.contains(value)) {
+			this.addresses.add(value);
+			value.getCustomers().add(this);
 		}
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof UserEntity that)) return false;
-		if (!super.equals(o)) return false;
-		return super.equalsId(o) || email.equals(that.email);
-	}
-
-	@Override
-	public int hashCode() {
-		return hashCodeId() + Objects.hash(email);
-	}
+	}*/
 
 
-
-	public void removeRole(RoleEntity value) {
-		if (value != null && this.roles.contains(value)) {
-			this.roles.remove(value);
-			value.getUsers().remove(this);
+	/*public void removeAddress(AddressEntity value) {
+		if (value != null && this.addresses.contains(value)) {
+			this.addresses.remove(value);
+			value.setCustomers(null);
 		}
-	}
-
-	
-	@Transient
-	public String getPhotosImagePath() {
-		if (id == null || photos == null) return "/images/default-user.png";
-
-		return Constants.S3_BASE_URI + "/user-photos/" + this.id + "/" + this.photos;
-	}
-	
-	@Transient
-	public String getFullName() {
-		return firstName + " " + lastName;
-	}
-	
-	public boolean hasRole(String roleName) {
-		Iterator<RoleEntity> iterator = roles.iterator();
-
-		while (iterator.hasNext()) {
-			RoleEntity role = iterator.next();
-			if (role.getName().equals(roleName)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+	}*/
 }

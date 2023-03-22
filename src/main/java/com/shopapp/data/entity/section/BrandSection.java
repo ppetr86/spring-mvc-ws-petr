@@ -1,6 +1,5 @@
 package com.shopapp.data.entity.section;
 
-
 import com.shopapp.data.entity.BrandEntity;
 import com.shopapp.data.entity.superclass.IdBasedEntity;
 import jakarta.persistence.*;
@@ -17,11 +16,11 @@ import lombok.Setter;
 @Setter
 public class BrandSection extends IdBasedEntity {
 
-	@Column(name = "brand_order")
-	private int brandOrder;
+    @Column(name = "brand_order")
+    private int brandOrder;
 
-	@ManyToOne
-	@JoinColumn(name = "brand_id")
-	private BrandEntity brand;
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private BrandEntity brand;
 
 }

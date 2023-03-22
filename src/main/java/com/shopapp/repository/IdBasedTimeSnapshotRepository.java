@@ -10,7 +10,6 @@ public interface IdBasedTimeSnapshotRepository<T extends IdBasedTimeSnapshotEnti
     @Query("SELECT u from #{#entityName} u WHERE u.maxRevision = :revision")
     T getDataForRevision(long revision);
 
-
     @Query("SELECT MIN(maxRevision) from #{#entityName} WHERE maxRevision >= :revision")
     Long getSmallestRevisionGreaterThanThis(long revision);
 }

@@ -1,9 +1,7 @@
 package com.shopapp.data.entitydto;
 
-
 import lombok.Getter;
 import lombok.Setter;
-
 
 @Getter
 @Setter

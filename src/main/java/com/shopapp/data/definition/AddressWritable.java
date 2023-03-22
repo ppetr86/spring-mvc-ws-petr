@@ -1,20 +1,8 @@
 package com.shopapp.data.definition;
 
-import com.shopapp.data.entity.CustomerEntity;
+import com.shopapp.data.entity.UserEntity;
 
 public interface AddressWritable {
-
-    void setCustomer(CustomerEntity customer);
-
-    void setDefaultForShipping(boolean defaultForShipping);
-
-    void setCountry(String country);
-
-    void setFirstName(String value);
-
-    void setLastName(String value);
-
-    void setPhoneNumber(String value);
 
     void setAddressLine1(String value);
 
@@ -22,5 +10,17 @@ public interface AddressWritable {
 
     void setCity(String value);
 
+    void setCountry(String country);
+
+    void setDefaultForShipping(boolean defaultForShipping);
+
+    void setFirstName(String value);
+
+    void setLastName(String value);
+
+    void setPhoneNumber(String value);
+
     void setPostalCode(String value);
+
+    void setUser(UserEntity user);
 }

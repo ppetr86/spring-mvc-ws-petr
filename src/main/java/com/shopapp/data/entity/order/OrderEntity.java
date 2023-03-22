@@ -2,7 +2,7 @@ package com.shopapp.data.entity.order;
 
 import com.shopapp.data.entity.AbstractAddress;
 import com.shopapp.data.entity.AddressEntity;
-import com.shopapp.data.entity.CustomerEntity;
+import com.shopapp.data.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,211 +21,211 @@ import java.util.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderEntity extends AbstractAddress implements Serializable{
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(OrderEntity.class);
-	
-	@Column(nullable = false, length = 45)
-	private String country;
+public class OrderEntity extends AbstractAddress implements Serializable {
 
-	private Date orderTime;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderEntity.class);
 
-	private float shippingCost;
-	private float productCost;
-	private float subtotal;
-	private float tax;
-	private float total;
+    @Column(nullable = false, length = 45)
+    private String country;
 
-	private int deliverDays;
-	private Date deliverDate;
+    private Date orderTime;
 
-	@Enumerated(EnumType.STRING)
-	private PaymentMethod paymentMethod;
+    private float shippingCost;
+    private float productCost;
+    private float subtotal;
+    private float tax;
+    private float total;
 
-	@Enumerated(EnumType.STRING)
-	private OrderStatusEntity status;
+    private int deliverDays;
+    private Date deliverDate;
 
-	@ManyToOne
-	@JoinColumn(name = "customer_id")
-	private CustomerEntity customer;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<OrderDetailEntity> orderDetails = new HashSet<>();
-	
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("updatedTime ASC")
-	private List<OrderTrackEntity> orderTracks = new ArrayList<>();
-	
-	public OrderEntity(UUID id, Date orderTime, float productCost, float subtotal, float total) {
-		this.id = id;
-		this.orderTime = orderTime;
-		this.productCost = productCost;
-		this.subtotal = subtotal;
-		this.total = total;
-	}
-	
-	public void copyAddressFromCustomer() {
-		setFirstName(customer.getAddress().getFirstName());
-		setLastName(customer.getAddress().getLastName());
-		setPhoneNumber(customer.getAddress().getPhoneNumber());
-		setAddressLine1(customer.getAddress().getAddressLine1());
-		setAddressLine2(customer.getAddress().getAddressLine2());
-		setCity(customer.getAddress().getCity());
-		setCountry(customer.getAddress().getCountry());
-		setPostalCode(customer.getAddress().getPostalCode());
-	}
-	
-	public void copyShippingAddress(AddressEntity address) {
-		setFirstName(address.getFirstName());
-		setLastName(address.getLastName());
-		setPhoneNumber(address.getPhoneNumber());
-		setAddressLine1(address.getAddressLine1());
-		setAddressLine2(address.getAddressLine2());
-		setCity(address.getCity());
-		setCountry(address.getCountry());
-		setPostalCode(address.getPostalCode());
-	}
-	
-	@Transient
-	public String getDestination() {
-		String destination =  city + ", ";
-		destination += country;
+    @Enumerated(EnumType.STRING)
+    private OrderStatusEntity status;
 
-		return destination;
-	}
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
-	@Override
-	public String toString() {
-		return "Order [id=" + id + ", subtotal=" + subtotal + ", paymentMethod=" + paymentMethod + ", status=" + status
-				+ ", customer=" + customer.getFullName() + "]";
-	}
-	
-	@Transient
-	public String getShippingAddress() {
-		String address = firstName;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderDetailEntity> orderDetails = new HashSet<>();
 
-		if (lastName != null && !lastName.isEmpty()) address += " " + lastName;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("updatedTime ASC")
+    private List<OrderTrackEntity> orderTracks = new ArrayList<>();
 
-		if (!addressLine1.isEmpty()) address += ", " + addressLine1;
+    public OrderEntity(UUID id, Date orderTime, float productCost, float subtotal, float total) {
+        this.id = id;
+        this.orderTime = orderTime;
+        this.productCost = productCost;
+        this.subtotal = subtotal;
+        this.total = total;
+    }
 
-		if (addressLine2 != null && !addressLine2.isEmpty()) address += ", " + addressLine2;
+    public void copyAddressFromCustomer() {
+        setFirstName(user.getAddress().getFirstName());
+        setLastName(user.getAddress().getLastName());
+        setPhoneNumber(user.getAddress().getPhoneNumber());
+        setAddressLine1(user.getAddress().getAddressLine1());
+        setAddressLine2(user.getAddress().getAddressLine2());
+        setCity(user.getAddress().getCity());
+        setCountry(user.getAddress().getCountry());
+        setPostalCode(user.getAddress().getPostalCode());
+    }
 
-		if (!city.isEmpty()) address += ", " + city;
+    public void copyShippingAddress(AddressEntity address) {
+        setFirstName(address.getFirstName());
+        setLastName(address.getLastName());
+        setPhoneNumber(address.getPhoneNumber());
+        setAddressLine1(address.getAddressLine1());
+        setAddressLine2(address.getAddressLine2());
+        setCity(address.getCity());
+        setCountry(address.getCountry());
+        setPostalCode(address.getPostalCode());
+    }
 
-		address += ", " + country;
+    @Transient
+    public String getDeliverDateOnForm() {
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        //dateFormatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Istanbul"));
+        return dateFormatter.format(this.deliverDate);
+    }
 
-		if (!postalCode.isEmpty()) address += ". Postal Code: " + postalCode;
-		if (!phoneNumber.isEmpty()) address += ". Phone Number: " + phoneNumber;
+    public void setDeliverDateOnForm(String dateString) {
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        //dateFormatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Istanbul"));
+        try {
+            this.deliverDate = dateFormatter.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
-		return address;
-	}
-	
-	@Transient
-	public String getDeliverDateOnForm() {
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		//dateFormatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Istanbul"));
-		return dateFormatter.format(this.deliverDate);
-	}
-	
-	public void setDeliverDateOnForm(String dateString) {
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		//dateFormatter.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Istanbul"));
-		try {
-			this.deliverDate = dateFormatter.parse(dateString);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} 		
-	}
-	
-	@Transient
-	public String getRecipientName() {
-		String name = firstName;
-		if (lastName != null && !lastName.isEmpty()) name += " " + lastName;
-		return name;
-	}
+    @Transient
+    public String getDestination() {
+        String destination = city + ", ";
+        destination += country;
 
-	@Transient
-	public String getRecipientAddress() {
-		String address = addressLine1;
+        return destination;
+    }
 
-		if (addressLine2 != null && !addressLine2.isEmpty()) address += ", " + addressLine2;
+    @Transient
+    public String getProductNames() {
+        String productNames = "";
 
-		if (!city.isEmpty()) address += ", " + city;
+        productNames = "<ul>";
 
-		address += ", " + country;
+        for (OrderDetailEntity detail : orderDetails) {
+            productNames += "<li>" + detail.getProduct().getShortName() + "</li>";
+        }
 
-		if (!postalCode.isEmpty()) address += ". " + postalCode;
+        productNames += "</ul>";
 
-		return address;
-	}	
+        return productNames;
+    }
 
-	@Transient
-	public boolean isCOD() {
-		return paymentMethod.equals(PaymentMethod.COD);
-	}
+    @Transient
+    public String getRecipientAddress() {
+        String address = addressLine1;
 
-	@Transient
-	public boolean isPicked() {
-		return hasStatus(OrderStatusEntity.PICKED);
-	}
+        if (addressLine2 != null && !addressLine2.isEmpty()) address += ", " + addressLine2;
 
-	@Transient
-	public boolean isShipping() {
-		return hasStatus(OrderStatusEntity.SHIPPING);
-	}
+        if (!city.isEmpty()) address += ", " + city;
 
-	@Transient
-	public boolean isDelivered() {
-		return hasStatus(OrderStatusEntity.DELIVERED);
-	}
+        address += ", " + country;
 
-	@Transient
-	public boolean isReturned() {
-		return hasStatus(OrderStatusEntity.RETURNED);
-	}
-	
-	@Transient
-	public boolean isReturnRequested() {
-		return hasStatus(OrderStatusEntity.RETURN_REQUESTED);
-	}
-	
-	@Transient
-	public boolean isProcessing() {
-		return hasStatus(OrderStatusEntity.PROCESSING);
-	}
+        if (!postalCode.isEmpty()) address += ". " + postalCode;
 
-	public boolean hasStatus(OrderStatusEntity status) {
-		
-		LOGGER.info("Order | hasStatus is called");
-		
-		LOGGER.info("Order | hasStatus | status : " + status.toString());
-		
-		for (OrderTrackEntity aTrack : orderTracks) {
-			if (aTrack.getStatus().equals(status)) {
-				
-				LOGGER.info("Order | hasStatus | return True ");
-				
-				return true;
-			}
-		}
-		
-		LOGGER.info("Order | hasStatus | return False ");
-		
-		return false;
-	}
-	
-	@Transient
-	public String getProductNames() {
-		String productNames = "";
+        return address;
+    }
 
-		productNames = "<ul>";
+    @Transient
+    public String getRecipientName() {
+        String name = firstName;
+        if (lastName != null && !lastName.isEmpty()) name += " " + lastName;
+        return name;
+    }
 
-		for (OrderDetailEntity detail : orderDetails) {
-			productNames += "<li>" + detail.getProduct().getShortName() + "</li>";			
-		}
+    @Transient
+    public String getShippingAddress() {
+        String address = firstName;
 
-		productNames += "</ul>";
+        if (lastName != null && !lastName.isEmpty()) address += " " + lastName;
 
-		return productNames;
-	}	
+        if (!addressLine1.isEmpty()) address += ", " + addressLine1;
+
+        if (addressLine2 != null && !addressLine2.isEmpty()) address += ", " + addressLine2;
+
+        if (!city.isEmpty()) address += ", " + city;
+
+        address += ", " + country;
+
+        if (!postalCode.isEmpty()) address += ". Postal Code: " + postalCode;
+        if (!phoneNumber.isEmpty()) address += ". Phone Number: " + phoneNumber;
+
+        return address;
+    }
+
+    public boolean hasStatus(OrderStatusEntity status) {
+
+        LOGGER.info("Order | hasStatus is called");
+
+        LOGGER.info("Order | hasStatus | status : " + status.toString());
+
+        for (OrderTrackEntity aTrack : orderTracks) {
+            if (aTrack.getStatus().equals(status)) {
+
+                LOGGER.info("Order | hasStatus | return True ");
+
+                return true;
+            }
+        }
+
+        LOGGER.info("Order | hasStatus | return False ");
+
+        return false;
+    }
+
+    @Transient
+    public boolean isCOD() {
+        return paymentMethod.equals(PaymentMethod.COD);
+    }
+
+    @Transient
+    public boolean isDelivered() {
+        return hasStatus(OrderStatusEntity.DELIVERED);
+    }
+
+    @Transient
+    public boolean isPicked() {
+        return hasStatus(OrderStatusEntity.PICKED);
+    }
+
+    @Transient
+    public boolean isProcessing() {
+        return hasStatus(OrderStatusEntity.PROCESSING);
+    }
+
+    @Transient
+    public boolean isReturnRequested() {
+        return hasStatus(OrderStatusEntity.RETURN_REQUESTED);
+    }
+
+    @Transient
+    public boolean isReturned() {
+        return hasStatus(OrderStatusEntity.RETURNED);
+    }
+
+    @Transient
+    public boolean isShipping() {
+        return hasStatus(OrderStatusEntity.SHIPPING);
+    }
+
+    @Override
+    public String toString() {
+        return "Order [id=" + id + ", subtotal=" + subtotal + ", paymentMethod=" + paymentMethod + ", status=" + status
+                + ", customer=" + user.getFullName() + "]";
+    }
 }

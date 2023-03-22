@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface BrandRepository extends IdBasedTimeRevisionRepository<BrandEntity> {
 
-
     @Query("select c.brands from CategoryEntity c where c.name =:categoryName")
     List<BrandEntity> findBrandEntitiesByCategoryName(@Param("categoryName") String categoryName);
 }

@@ -1,6 +1,7 @@
 package com.shopapp.service.impl;
 
 import com.shopapp.api.model.response.ErrorMessages;
+import com.shopapp.data.entity.AddressEntity;
 import com.shopapp.data.entity.PasswordResetTokenEntity;
 import com.shopapp.data.entity.RoleEntity;
 import com.shopapp.data.entity.UserEntity;
@@ -210,8 +211,8 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
             snapshot.setMaxRevision(dbStateOfObj.getRevision());
             snapshot.setEmail(dbStateOfObj.getEmail());
             snapshot.setEncryptedPassword(dbStateOfObj.getEncryptedPassword());
-            snapshot.setFirstName(dbStateOfObj.getFirstName());
-            snapshot.setLastName(dbStateOfObj.getLastName());
+            snapshot.setFirstName(dbStateOfObj.getAddress().getFirstName());
+            snapshot.setLastName(dbStateOfObj.getAddress().getLastName());
             this.userSnapshotDao.save(snapshot);
         }
     }
@@ -235,7 +236,7 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
         passwordResetTokenRepository.save(passwordResetTokenEntity);
 
         returnValue = new AmazonSES().sendPasswordResetRequest(
-                userEntity.getFirstName(),
+                userEntity.getAddress().getFirstName(),
                 userEntity.getEmail(),
                 token);
 
@@ -281,10 +282,7 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
         if (entity == null)
             throw new UserServiceException(NO_RECORD_FOUND.getErrorMessage());
 
-        if (!dto.getFirstName().isBlank())
-            entity.setFirstName(dto.getFirstName());
-        if (!dto.getLastName().isBlank())
-            entity.setLastName(dto.getLastName());
+        entity.setAddress(new AddressEntity(dto.getAddress()));
 
         return userRepository.save(entity);
 

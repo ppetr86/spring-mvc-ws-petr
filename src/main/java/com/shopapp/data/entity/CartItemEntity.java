@@ -15,36 +15,36 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CartItemEntity extends IdBasedEntity implements Serializable{
+public class CartItemEntity extends IdBasedEntity implements Serializable {
 
-	@ManyToOne
-	@JoinColumn(name = "customer_id")
-	private CustomerEntity customer;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id")	
-	private ProductEntity product;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private ProductEntity product;
 
-	private int quantity;
-	
-	@Transient
-	private float shippingCost;
-	
-	@Transient
-	public float getSubtotal() {
-		return product.getDiscountPrice() * quantity;
-	}
+    private int quantity;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof CartItemEntity cartItem)) return false;
-		return super.equalsId(o);
-	}
+    @Transient
+    private float shippingCost;
 
-	@Override
-	public int hashCode() {
-		return hashCodeId() + Objects.hash(customer, product, quantity, shippingCost);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CartItemEntity cartItem)) return false;
+        return super.equalsId(o);
+    }
+
+    @Transient
+    public float getSubtotal() {
+        return product.getDiscountPrice() * quantity;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCodeId() + Objects.hash(user, product, quantity, shippingCost);
+    }
 
 }

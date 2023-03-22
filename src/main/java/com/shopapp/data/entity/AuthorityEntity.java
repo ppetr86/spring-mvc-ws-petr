@@ -2,13 +2,7 @@ package com.shopapp.data.entity;
 
 import com.shopapp.data.entity.superclass.IdBasedEntity;
 import com.shopapp.shared.Authority;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +11,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 
 @Entity
 @Table(name = "authorities")
@@ -32,10 +25,8 @@ public class AuthorityEntity extends IdBasedEntity implements Serializable {
     @Column(unique = true)
     private Authority name;
 
-    //TODO: consider different approach to EAGER...
     @ManyToMany(mappedBy = "authorities", fetch = FetchType.EAGER)
     private Set<RoleEntity> roles = new HashSet<>();
-
 
     public AuthorityEntity() {
         super();
