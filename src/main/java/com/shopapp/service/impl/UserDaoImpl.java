@@ -1,10 +1,7 @@
 package com.shopapp.service.impl;
 
 import com.shopapp.api.model.response.ErrorMessages;
-import com.shopapp.data.entity.AddressEntity;
-import com.shopapp.data.entity.PasswordResetTokenEntity;
-import com.shopapp.data.entity.RoleEntity;
-import com.shopapp.data.entity.UserEntity;
+import com.shopapp.data.entity.*;
 import com.shopapp.data.entity.snapshots.UserSnapshotEntity;
 import com.shopapp.exceptions.InvalidParameterException;
 import com.shopapp.exceptions.UserServiceException;
@@ -17,6 +14,7 @@ import com.shopapp.service.UserSnapshotDao;
 import com.shopapp.service.impl.superclass.AbstractIdTimeRevisionDaoImpl;
 import com.shopapp.service.specification.GenericSpecificationsBuilder;
 import com.shopapp.shared.AmazonSES;
+import com.shopapp.shared.Roles;
 import com.shopapp.shared.Utils;
 import com.shopapp.shared.dto.UserDtoIn;
 import lombok.AllArgsConstructor;
@@ -31,10 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.shopapp.api.model.response.ErrorMessages.*;
 import static com.shopapp.service.specification.GenericSpecification.SearchOperation;
@@ -51,27 +49,32 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
-    public UserEntity createUser(UserDtoIn user) {
+    public UserEntity createUser(UserDtoIn dtoIn) {
 
-        if (userRepository.existsByEmail(user.getEmail()))
+        if (userRepository.existsByEmail(dtoIn.getEmail()))
             throw new RuntimeException(EMAIL_ADDRESS_IN_USE.getErrorMessage());
 
         ModelMapper modelMapper = new ModelMapper();
-        UserEntity userEntity = modelMapper.map(user, UserEntity.class);
+        UserEntity userEntity = modelMapper.map(dtoIn, UserEntity.class);
+        userEntity.setId(UUID.randomUUID());
 
-        userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(user.getEmail()));
+        userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(dtoIn.getPassword()));
+        userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(dtoIn.getEmail()));
         userEntity.setVerified(false);
 
-        //Set Roles
-        Set<RoleEntity> roleEntities = new HashSet<>();
-        for (RoleEntity role : userEntity.getRoles()) {
-            RoleEntity roleEntity = roleRepository.findByName(role.getName());
-            if (roleEntity != null) {
-                roleEntities.add(roleEntity);
-            }
+        if (!dtoIn.getCreditCards().isEmpty())
+            userEntity.setCreditCards(dtoIn.getCreditCards()
+                    .stream()
+                    .map(each -> new CreditCardEntity(each, userEntity))
+                    .collect(Collectors.toSet()));
+
+        if (dtoIn.getAddress() != null) {
+            userEntity.setAddress(new AddressEntity(dtoIn.getAddress()));
+            userEntity.getAddress().setUser(userEntity);
         }
 
+        //Set Roles
+        Set<RoleEntity> roleEntities = Set.of(roleRepository.findByName(Roles.ROLE_CUSTOMER));
         userEntity.setRoles(roleEntities);
 
         return this.save(userEntity);

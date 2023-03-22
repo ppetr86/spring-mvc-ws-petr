@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
     private final UserRepository userRepository;
@@ -46,15 +45,21 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
             token = token.replace(SecurityConstants.TOKEN_PREFIX, "");
 
-            String user = Jwts.parserBuilder()
-                    .setSigningKey(SecurityConstants.getTokenSecret().getBytes()).build()
+            String user = Jwts.parser()
+                    .setSigningKey(SecurityConstants.getTokenSecret())
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
 
             if (user != null) {
+                var userEntity = userRepository.findByEmail(user);
+                if (userEntity == null) {
+                    return null;
+                }
 
-                return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+                UserPrincipal userPrincipal = new UserPrincipal(userEntity);
+                return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
+
             }
 
             return null;

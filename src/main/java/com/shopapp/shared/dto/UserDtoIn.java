@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,17 +21,18 @@ public class UserDtoIn implements Serializable {
     @Serial
     private static final long serialVersionUID = 6835192601898364280L;
 
-    @NotNull
-    private AddressDtoIn address;
-
     @Email
-    @Size(max = 120, message = "{validation.name.size.too_long}")
     private String email;
 
     @NotNull
     @Size(min = 8, message = "{validation.password.size.too_short}")
-    @Size(max = 50, message = "{validation.password.size.too_long}")
     private String password;
+
+    @NotNull
+    private AddressDtoIn address;
+
+    @NotNull
+    private Set<CreditCardDtoIn> creditCards;
 
     private String emailVerificationToken;
 }

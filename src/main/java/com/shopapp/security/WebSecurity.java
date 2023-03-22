@@ -94,7 +94,7 @@ public class WebSecurity {
 
     protected AuthenticationFilter getAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
         final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager);
-        filter.setFilterProcessesUrl("/login");
+        filter.setFilterProcessesUrl("/users/login");
         return filter;
     }
 }
