@@ -1,8 +1,8 @@
 package com.shopapp.shared.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,24 +10,30 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class CustomerDtoIn implements Serializable {
+public class CustomerDtoIn extends InResource implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 6835192601898364280L;
 
-    @NotNull
-    @Max(45)
+    @Email
     private String email;
 
     @NotNull
-    @Min(8)
+    @Size(min = 8, message = "{validation.password.size.too_short}")
     private String password;
 
     @NotNull
     private AddressDtoIn address;
+
+    @NotNull
+    private String authenticationType;
+
+    @NotNull
+    private Set<CreditCardDtoIn> creditCards;
 }

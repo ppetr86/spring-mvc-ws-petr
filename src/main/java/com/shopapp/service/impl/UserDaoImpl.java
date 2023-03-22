@@ -2,11 +2,13 @@ package com.shopapp.service.impl;
 
 import com.shopapp.api.model.response.ErrorMessages;
 import com.shopapp.data.entity.PasswordResetTokenEntity;
+import com.shopapp.data.entity.RoleEntity;
 import com.shopapp.data.entity.UserEntity;
 import com.shopapp.data.entity.snapshots.UserSnapshotEntity;
 import com.shopapp.exceptions.InvalidParameterException;
 import com.shopapp.exceptions.UserServiceException;
 import com.shopapp.repository.PasswordResetTokenRepository;
+import com.shopapp.repository.RoleRepository;
 import com.shopapp.repository.UserRepository;
 import com.shopapp.security.UserPrincipal;
 import com.shopapp.service.UserDao;
@@ -27,7 +29,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.shopapp.api.model.response.ErrorMessages.*;
@@ -47,6 +51,8 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
 
     private final UserSnapshotDao userSnapshotDao;
 
+    private final RoleRepository roleRepository;
+
     @Override
     public UserEntity createUser(UserDtoIn user) {
 
@@ -59,6 +65,17 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(user.getEmail()));
         userEntity.setVerified(false);
+
+        //Set Roles
+        Set<RoleEntity> roleEntities = new HashSet<>();
+        for(RoleEntity role:userEntity.getRoles()) {
+            RoleEntity roleEntity = roleRepository.findByName(role.getName());
+            if(roleEntity!=null) {
+                roleEntities.add(roleEntity);
+            }
+        }
+
+        userEntity.setRoles(roleEntities);
 
         return this.save(userEntity);
     }

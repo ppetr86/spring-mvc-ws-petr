@@ -1,7 +1,7 @@
 package com.shopapp.shared.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,37 +14,37 @@ import lombok.Setter;
 public class AddressDtoIn {
 
     @NotNull
-    @Min(3)
+    @Size(min = 3, message = "{validation.firstName.size.too_short}")
     protected String firstName;
 
     @NotNull
-    @Min(3)
+    @Size(min = 3, message = "{validation.lastName.size.too_short}")
     protected String lastName;
 
     @NotNull
-    @Min(3)
+    @Size(min = 5, message = "{validation.phoneNumber.size.too_short}")
     protected String phoneNumber;
 
     @NotNull
-    @Min(3)
+    @Size(min = 5, message = "{validation.addressLine1.size.too_short}")
     protected String addressLine1;
 
     @NotNull
-    @Min(3)
+    @Size(min = 5, message = "{validation.addressLine2.size.too_short}")
     protected String addressLine2;
 
     @NotNull
-    @Min(3)
+    @Size(min = 3, message = "{validation.city.size.too_short}")
     protected String city;
 
     @NotNull
-    @Min(3)
+    @Size(min = 3, message = "{validation.postalCode.size.too_short}")
     protected String postalCode;
 
     protected boolean defaultForShipping;
 
     @NotNull
-    @Min(3)
+    @Size(min = 3, message = "{validation.country.size.too_short}")
     protected String country;
 
 }

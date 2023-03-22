@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/customer")
+@RequestMapping("/customers")
 //@CrossOrigin(origins= {"http://localhost:8083", "http://localhost:8084"})
 public class CustomerController {
 
@@ -32,13 +32,9 @@ public class CustomerController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public CustomerDtoOut createCustomer(@RequestBody @Valid CustomerDtoIn customerDetails) {
-
-        var modelMapper = new ModelMapper();
-        CustomerDtoIn customerDtoIn = modelMapper.map(customerDetails, CustomerDtoIn.class);
-
+    public CustomerDtoOut createCustomer(@RequestBody @Valid CustomerDtoIn customerDtoIn) {
         var createdCustomer = customerDao.createCustomer(customerDtoIn);
-
+        var modelMapper = new ModelMapper();
         return modelMapper.map(createdCustomer, CustomerDtoOut.class);
 
     }

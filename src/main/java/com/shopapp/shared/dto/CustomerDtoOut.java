@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -15,4 +17,5 @@ public class CustomerDtoOut extends IdBasedResource {
     private String id;
     private String email;
     private AddressDtoOut address;
+    private Set<CreditCardDtoOut> creditCards;
 }

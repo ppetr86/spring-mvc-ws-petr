@@ -20,7 +20,7 @@ public class AddressEntity extends AbstractAddress implements Serializable, Addr
 	private Set<CustomerEntity> customers = new HashSet<>();*/
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@MapsId
+	@MapsId//You can use JPA’s @MapsId annotation to tell Hibernate that it shall use the foreign key of an associated entity as the primary key.
 	private CustomerEntity customer;
 
 	@Column(name = "default_address")
@@ -35,5 +35,6 @@ public class AddressEntity extends AbstractAddress implements Serializable, Addr
 		this.city=in.getCity();
 		this.postalCode=in.getPostalCode();
 		this.defaultForShipping=in.isDefaultForShipping();
+		this.country = in.getCountry();
 	}
 }

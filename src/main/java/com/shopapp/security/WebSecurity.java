@@ -52,6 +52,8 @@ public class WebSecurity {
                 .csrf().disable().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
                 .permitAll()
+                .requestMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL_CUSTOMER)
+                .permitAll()
                 .requestMatchers(HttpMethod.GET, SecurityConstants.VERIFICATION_EMAIL_URL)
                 .permitAll()
                 .requestMatchers(HttpMethod.POST, SecurityConstants.PASSWORD_RESET_REQUEST_URL)

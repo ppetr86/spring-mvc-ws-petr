@@ -1,13 +1,13 @@
 package com.shopapp.data.entity;
 
+import com.shopapp.data.definition.CustomerDefinition;
 import com.shopapp.data.entity.superclass.IdBasedTimeRevisionEntity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CustomerEntity extends IdBasedTimeRevisionEntity implements Serializable{
+public class CustomerEntity extends IdBasedTimeRevisionEntity implements CustomerDefinition, Serializable{
 
 	@Column(nullable = false, unique = true, length = 45)
 	private String email;
@@ -29,9 +29,6 @@ public class CustomerEntity extends IdBasedTimeRevisionEntity implements Seriali
 
 	@Column(nullable = false)
 	private boolean isVerified;
-
-	@Column(name = "created_time")
-	private Date createdTime;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "authentication_type", length = 10)

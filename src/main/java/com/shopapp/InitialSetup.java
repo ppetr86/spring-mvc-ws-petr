@@ -7,8 +7,6 @@ import com.shopapp.data.Categories;
 import com.shopapp.data.entity.*;
 import com.shopapp.data.entity.product.ProductEntity;
 import com.shopapp.service.*;
-import com.shopapp.service.specification.GenericSpecification;
-import com.shopapp.service.specification.GenericSpecificationsBuilder;
 import com.shopapp.shared.Authority;
 import com.shopapp.shared.Roles;
 import lombok.AllArgsConstructor;
@@ -28,6 +26,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,43 +47,31 @@ public class InitialSetup {
     private CustomerDao customerDao;
 
     @EventListener
-    public void onApplicationEvent(ApplicationReadyEvent event) {
+    public void onApplicationEvent(ApplicationReadyEvent event) throws ExecutionException, InterruptedException {
 
-        var faker = new Faker();
-
-        //create authorities which are authorization
-        for (var each : Authority.values()) {
-            createAuthority(each);
-            createAuthority(each);
-            createAuthority(each);
+        if (authorityDao.getCount() < Authority.values().length) {
+            //create authorities which are authorization
+            for (var each : Authority.values()) {
+                createAuthority(each);
+                createAuthority(each);
+                createAuthority(each);
+            }
         }
 
-        //create roles which depend on authorities
-        //users depend on roles
-        createRoles();
+        if (roleDao.getCount() < Roles.values().length) {
+            //create roles which depend on authorities
+            //users depend on roles
+            createRoles();
+        }
 
         //users depend on roles, authorities
-        int targetCountOfUsers = 50;
-        CompletableFuture<Void> cfUsers = null;
+        int targetCountOfUsers = 3;
         if (userDao.getCount() >= targetCountOfUsers)
             System.out.println("From Application ready event users...Will not create");
         else {
             System.out.println("From Application ready event users...Creating");
-            cfUsers = CompletableFuture.runAsync(this::createUsers);
-            //CompletableFuture.runAsync(this::createUsers);
+            CompletableFuture.runAsync(this::createUsers);
         }
-
-
-        //create addresses which I will set on users...
-        int targetCountOfCustomers = 50;
-        if (customerDao.getCount() >= targetCountOfCustomers)
-            System.out.println("From Application ready event customers...Will not create");
-        else {
-            System.out.println("From Application ready event addresses...Creating");
-            Set<AddressEntity> addressEntities = createAddresses(faker, targetCountOfCustomers);
-            //CompletableFuture.runAsync(() -> createAddresses(faker, targetCountOfAddresses));
-        }
-
 
         int targetCountOfCategories = Categories.values().length;
         if (categoryDao.getCount() >= targetCountOfCategories)
@@ -109,11 +96,21 @@ public class InitialSetup {
             System.out.println("From Application ready event products...Will not create...");
         else {
             System.out.println("From Application ready event products...Creating");
-            createProductsFromExternalApi();
+            CompletableFuture.runAsync(this::createProductsFromExternalApi);
         }
 
-        int targetCountOfCreditCards = targetCountOfUsers * 2;
-        CompletableFuture<Void> cfCreditCards = null;
+        //create customers
+        int targetCountOfCustomers = 10;
+        CompletableFuture<Void> cfCustomers = CompletableFuture.completedFuture(null);
+        if (customerDao.getCount() >= targetCountOfCustomers)
+            System.out.println("From Application ready event customers...Will not create");
+        else {
+            System.out.println("From Application ready event customers...Creating");
+            cfCustomers = CompletableFuture.runAsync(() -> createCustomers(targetCountOfCustomers));
+        }
+
+        int targetCountOfCreditCards = targetCountOfCustomers * 2;
+        CompletableFuture<Void> cfCreditCards = CompletableFuture.completedFuture(null);;
         if (creditCardDao.getCount() >= targetCountOfCreditCards)
             System.out.println("From Application ready event credit cards...Will not create...");
         else {
@@ -122,10 +119,46 @@ public class InitialSetup {
         }
 
         //when cfUsers and cfCards ready... set cards on users
-        /*if (cfCreditCards != null && cfUsers != null) {
-            CompletableFuture.allOf(cfCreditCards, cfUsers)
-                    .thenRunAsync(this::setCreditCardsOnUsers);
-        }*/
+        CompletableFuture.allOf(cfCreditCards, cfCustomers).get();
+
+
+        CompletableFuture.runAsync(this::setCreditCardsOnUsers);
+
+    }
+
+    private Set<CustomerEntity> createCustomers( int targetCountOfCustomers) {
+
+        Set<CustomerEntity> customerEntities = new HashSet<>(targetCountOfCustomers);
+        var faker = new Faker();
+
+        for (int i = 0; i < targetCountOfCustomers; i++) {
+            var customer = new CustomerEntity();
+            customer.setId(UUID.randomUUID());
+
+            var address = new AddressEntity();
+            address.setFirstName(faker.name().firstName());
+            address.setLastName(faker.name().lastName());
+            address.setCustomer(customer);
+            address.setDefaultForShipping(true);
+
+            String phoneNumber = faker.phoneNumber().phoneNumber();
+            address.setPhoneNumber(phoneNumber.substring(0,Math.min(phoneNumber.length(),15)));
+
+            address.setAddressLine1(faker.address().streetAddress());
+            address.setCity(faker.address().city());
+            address.setCountry(faker.address().country());
+            address.setPostalCode(faker.address().zipCode());
+
+            customer.setAddress(address);
+            customer.setEmail(customer.getAddress().getFirstName() + customer.getAddress().getLastName() + "@test.com");
+            customer.setEncryptedPassword(bCryptPasswordEncoder.encode("1234"));
+            customer.setVerified(true);
+            customer.setAuthenticationType(AuthenticationType.DATABASE);
+
+            customerEntities.add(customer);
+        }
+
+        return new HashSet<>(customerDao.saveAll(customerEntities));
     }
 
     @Transactional
@@ -204,46 +237,6 @@ public class InitialSetup {
         }
     }
 
-    private Set<AddressEntity> createAddresses(Faker faker, int addressCount) {
-        Set<AddressEntity> addresses = new HashSet<>(addressDao.loadAll());
-
-        var kocianovaAddress = new AddressEntity();
-        kocianovaAddress.setAddressLine1("Kocianova 1583/3");
-        kocianovaAddress.setCity("Praha");
-        kocianovaAddress.setCountry("Czech republic");
-        addresses.add(kocianovaAddress);
-
-        for (int i = 0; i < addressCount; i++) {
-            var zipCode = faker.address().zipCode();
-            while (zipCode.length() > 7) {
-                zipCode = faker.address().zipCode();
-            }
-
-            var country = faker.address().country();
-            while (country.length() > 15) {
-                country = faker.address().country();
-            }
-
-            var streetName = faker.address().streetName();
-            while (streetName.length() > 100) {
-                streetName = faker.address().streetName();
-            }
-
-            var city = faker.address().city();
-            while (city.length() > 15) {
-                city = faker.address().city();
-            }
-
-            var addressEntity = new AddressEntity();
-            addressEntity.setCity(city);
-            addressEntity.setCountry(country);
-            addressEntity.setAddressLine1(streetName);
-            addressEntity.setPostalCode(zipCode);
-        }
-
-        return addresses;
-    }
-
     private AuthorityEntity createAuthority(Authority value) {
         var entity = authorityDao.findByAuthority(value);
         if (entity != null)
@@ -255,18 +248,18 @@ public class InitialSetup {
         return entity;
     }
 
-    /*@Transactional
+    @Transactional
     void setCreditCardsOnUsers() {
         var cards = creditCardDao.loadAll();
-        var users = userDao.loadAll();
+        var customers = customerDao.loadAll();
         var cardCounter = 0;
-        for (UserEntity each : users) {
+        for (CustomerEntity each : customers) {
             each.addCreditCard(cards.get(cardCounter));
             each.addCreditCard(cards.get(cardCounter + 1));
             cardCounter += 2;
-            userDao.save(each);
+            customerDao.save(each);
         }
-    }*/
+    }
 
     private void createCreditCards(int targetCountOfCreditCards) {
         var setOfCards = new HashSet<CreditCardEntity>(targetCountOfCreditCards);
@@ -346,17 +339,6 @@ public class InitialSetup {
                 });
     }
 
-    private void createRandomUsers(int quantity, RoleEntity role) {
-
-        var addressList = new ArrayList<>(addressDao.loadAll());
-        var randomObj = new Random();
-        var faker = new Faker();
-
-        for (int i = 0; i < quantity; i++) {
-            createUser(role, addressList, randomObj, faker);
-        }
-    }
-
     private RoleEntity createRole(Roles name, Set<AuthorityEntity> authorities) {
         var role = roleDao.findByName(name);
         if (role == null)
@@ -378,38 +360,34 @@ public class InitialSetup {
 
         createRole(Roles.ROLE_ADMIN, Set.of(readAuthority, writeAuthority, deleteAuthority));
         createRole(Roles.ROLE_USER, Set.of(readAuthority, writeAuthority));
+        createRole(Roles.ROLE_CUSTOMER, Set.of(readAuthority));
     }
 
     private void createUsers() {
 
         var roleAdmin = roleDao.findByName(Roles.ROLE_ADMIN);
         var petr = new UserEntity();
-        var specBuilder = new GenericSpecificationsBuilder<AddressEntity>();
-        specBuilder.with("street", GenericSpecification.SearchOperation.EQUALITY, List.of("Kocianova"));
-        var addressPraha = addressDao.findOneBy(specBuilder.build()).orElse(null);
 
-        setUserProperties(petr, "Petr", "Novotny", "petr@test.com", roleAdmin, addressPraha);
+        setUserProperties(petr, "Petr", "Novotny", "petr@test.com", roleAdmin);
         if (!userDao.existsByEmail("petr@test.com")) {
             userDao.save(petr);
         }
 
         var roleUser = roleDao.findByName(Roles.ROLE_USER);
         var ivana = new UserEntity();
-        setUserProperties(ivana, "Ivana", "Michalova", "ivana@test.com", roleUser, addressPraha);
+        setUserProperties(ivana, "Ivana", "Michalova", "ivana@test.com", roleUser);
         if (!userDao.existsByEmail("ivana@test.com")) {
             userDao.save(ivana);
         }
 
         var test = new UserEntity();
-        setUserProperties(test, "test_name", "test_name", "test_email@test.com", roleUser, addressPraha);
+        setUserProperties(test, "test_name", "test_name", "test_email@test.com", roleUser);
         if (!userDao.existsByEmail("test_email@test.com")) {
             userDao.save(test);
         }
-
-        createRandomUsers(50, roleUser);
     }
 
-    private void setUserProperties(UserEntity user, String firstName, String lastName, String email, RoleEntity role, AddressEntity address) {
+    private void setUserProperties(UserEntity user, String firstName, String lastName, String email, RoleEntity role) {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);

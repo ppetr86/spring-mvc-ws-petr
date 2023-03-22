@@ -1,5 +1,7 @@
 package com.shopapp.service.impl;
 
+import com.shopapp.data.entity.AddressEntity;
+import com.shopapp.data.entity.CreditCardEntity;
 import com.shopapp.data.entity.CustomerEntity;
 import com.shopapp.data.entity.PasswordResetTokenEntity;
 import com.shopapp.exceptions.CustomerServiceException;
@@ -27,6 +29,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.shopapp.api.model.response.ErrorMessages.EMAIL_ADDRESS_IN_USE;
 import static com.shopapp.api.model.response.ErrorMessages.NO_RECORD_FOUND;
@@ -54,16 +57,28 @@ public class CustomerDaoImpl extends AbstractIdDaoImpl<CustomerEntity> implement
     }
 
     @Override
-    public CustomerEntity createCustomer(CustomerDtoIn customer) {
-        if (customerRepository.existsByEmail(customer.getEmail()))
+    public CustomerEntity createCustomer(CustomerDtoIn dtoIn) {
+        if (customerRepository.existsByEmail(dtoIn.getEmail()))
             throw new RuntimeException(EMAIL_ADDRESS_IN_USE.getErrorMessage());
 
         ModelMapper modelMapper = new ModelMapper();
-        CustomerEntity customerEntity = modelMapper.map(customer, CustomerEntity.class);
+        CustomerEntity customerEntity = modelMapper.map(dtoIn, CustomerEntity.class);
 
-        customerEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(customer.getPassword()));
-        customerEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(customer.getEmail()));
+        customerEntity.setId(UUID.randomUUID());
+        customerEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(dtoIn.getPassword()));
+        customerEntity.setEmailVerificationToken(utils.generateEmailVerificationToken(dtoIn.getEmail()));
         customerEntity.setVerified(false);
+
+        if (!dtoIn.getCreditCards().isEmpty())
+            customerEntity.setCreditCards(dtoIn.getCreditCards()
+                    .stream()
+                    .map(each -> new CreditCardEntity(each, customerEntity))
+                    .collect(Collectors.toSet()));
+
+        if (dtoIn.getAddress() != null) {
+            customerEntity.setAddress(new AddressEntity(dtoIn.getAddress()));
+            customerEntity.getAddress().setCustomer(customerEntity);
+        }
 
         return this.save(customerEntity);
     }

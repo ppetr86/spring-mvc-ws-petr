@@ -1,6 +1,7 @@
 package com.shopapp.data.entity;
 
 import com.shopapp.data.entity.superclass.IdBasedTimeRevisionEntity;
+import com.shopapp.shared.dto.CreditCardDtoIn;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,13 @@ public class CreditCardEntity extends IdBasedTimeRevisionEntity {
 
     public CreditCardEntity() {
         super();
+    }
+
+    public CreditCardEntity(CreditCardDtoIn each, CustomerEntity customer) {
+        this.setCvv(each.getCvv());
+        this.setCreditCardNumber(each.getCreditCardNumber());
+        this.setCustomer(customer);
+        this.setExpirationDate(each.getExpirationDate());
     }
 
     @Override

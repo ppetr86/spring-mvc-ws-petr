@@ -31,14 +31,12 @@ public class UserController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public UserDtoOut createUser(@RequestBody @Valid UserDtoIn userDetails) {
+    public UserDtoOut createUser(@RequestBody @Valid UserDtoIn userDtoIn) {
 
-        if (userDetails.getFirstName().isEmpty())
+        if (userDtoIn.getFirstName().isEmpty())
             throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
         var modelMapper = new ModelMapper();
-        UserDtoIn userDtoIn = modelMapper.map(userDetails, UserDtoIn.class);
-
         var createdUser = userDao.createUser(userDtoIn);
 
         return modelMapper.map(createdUser, UserDtoOut.class);
