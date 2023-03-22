@@ -27,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
@@ -41,17 +42,12 @@ import static com.shopapp.service.specification.GenericSpecification.SearchOpera
 @AllArgsConstructor
 public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> implements UserDao {
 
-    private UserRepository userRepository;
-
-    private Utils utils;
-
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private PasswordResetTokenRepository passwordResetTokenRepository;
-
     private final UserSnapshotDao userSnapshotDao;
-
     private final RoleRepository roleRepository;
+    private UserRepository userRepository;
+    private Utils utils;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
     public UserEntity createUser(UserDtoIn user) {
@@ -68,9 +64,9 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
 
         //Set Roles
         Set<RoleEntity> roleEntities = new HashSet<>();
-        for(RoleEntity role:userEntity.getRoles()) {
+        for (RoleEntity role : userEntity.getRoles()) {
             RoleEntity roleEntity = roleRepository.findByName(role.getName());
-            if(roleEntity!=null) {
+            if (roleEntity != null) {
                 roleEntities.add(roleEntity);
             }
         }
@@ -181,7 +177,6 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
         if (isVerified != null)
             userSpecificationBuilder.with("isVerified", SearchOperation.EQUALITY, false, List.of(isVerified));
 
-
         return this.loadAll(userSpecificationBuilder.build(), pageable).getContent();
 
         /*List<UserDtoIn> returnValue = new ArrayList<>();
@@ -192,6 +187,7 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
 
@@ -199,13 +195,6 @@ public class UserDaoImpl extends AbstractIdTimeRevisionDaoImpl<UserEntity> imple
             throw new UsernameNotFoundException(email);
 
         return new UserPrincipal(userEntity);
-
-        // return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(),
-        // 		userEntity.isVerified(),
-        // 		true, true,
-        // 		true, new ArrayList<>());
-
-        //return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
     }
 
     @Override

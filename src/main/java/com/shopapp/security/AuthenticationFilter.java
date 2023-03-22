@@ -7,7 +7,6 @@ import com.shopapp.shared.dto.LoginDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,7 +33,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
         try {
-
             var creds = new ObjectMapper()
                     .readValue(req.getInputStream(), LoginDto.class);
 
@@ -54,10 +52,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest req,
                                             HttpServletResponse res,
                                             FilterChain chain,
-                                            Authentication auth) throws IOException, ServletException {
+                                            Authentication auth) {
 
         String userName = ((UserPrincipal) auth.getPrincipal()).getUsername();
-
 
         Key hmacKey = new SecretKeySpec(Base64.getDecoder().decode(SecurityConstants.getTokenSecret().getBytes()),
                 SignatureAlgorithm.HS512.getJcaName());
@@ -68,18 +65,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .signWith(hmacKey)
                 .compact();
 
-        /*String token = Jwts.builder()
-                .setSubject(userName)
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret().getBytes())
-                .compact();*/
-
         UserDao userDao = (UserDao) SpringApplicationContext.getBean("userDaoImpl");
         var user = userDao.findByEmail(userName);
 
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
         res.addHeader("UserID", user.getId().toString());
-
     }
 
 }

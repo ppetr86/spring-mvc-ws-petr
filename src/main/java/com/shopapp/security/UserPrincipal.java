@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 
 public class UserPrincipal implements UserDetails {
 
@@ -18,17 +20,16 @@ public class UserPrincipal implements UserDetails {
     private static final long serialVersionUID = -7530187709860249942L;
 
     private final UserEntity userEntity;
-    private String userId;
-
     private final CustomerEntity customerEntity;
     private final String customerId;
+    private String userId;
 
     public UserPrincipal(UserEntity userEntity) {
         this.userEntity = userEntity;
         this.userId = userEntity.getId().toString();
 
         this.customerId = null;
-        this.customerEntity=null;
+        this.customerEntity = null;
     }
 
     public UserPrincipal(CustomerEntity customerEntity) {
@@ -36,7 +37,7 @@ public class UserPrincipal implements UserDetails {
         this.customerId = customerEntity.getId().toString();
 
         this.userEntity = null;
-        this.userId=null;
+        this.userId = null;
     }
 
     @Override
@@ -47,9 +48,12 @@ public class UserPrincipal implements UserDetails {
 
         //TODO: fix so that it works for both user and customer
         // Get user Roles
-        Collection<RoleEntity> roles = userEntity.getRoles();
+        Collection<RoleEntity> roles = Optional.ofNullable(userEntity)
+                .map(UserEntity::getRoles)
+                .orElse(Collections.emptySet());
 
-        if (roles == null) return authorities;
+        if (roles.isEmpty())
+            return authorities;
 
         roles.forEach((role) -> {
             authorities.add(new SimpleGrantedAuthority(role.getName().name()));

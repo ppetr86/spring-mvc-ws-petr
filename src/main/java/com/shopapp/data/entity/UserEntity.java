@@ -42,7 +42,7 @@ public class UserEntity extends IdBasedTimeRevisionEntity implements Serializabl
 	@Column(length = 64)
 	private String photos;
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "users_roles",
 			joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"),
 			inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
