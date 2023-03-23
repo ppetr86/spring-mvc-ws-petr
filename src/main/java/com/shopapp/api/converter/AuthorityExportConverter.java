@@ -40,7 +40,10 @@ public class AuthorityExportConverter extends AbstractIdExportConverter<Authorit
 
     @Override
     public void setSourcePropertiesToTarget(AuthorityEntity source, AuthorityDtoOut target) {
-        if (source.getId() != null) target.setId(source.getId().toString());
-        if (source.getName() != null) target.setName(source.getName().name());
+        if (source.getId() != null)
+            target.setId(source.getId().toString());
+
+        if (source.getName() != null)
+            target.setName(source.getName().name());
     }
 }

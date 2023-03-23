@@ -51,10 +51,8 @@ public class UserController {
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserDtoOut getUser(@PathVariable String id) {
 
-        var returnValue = new UserDtoOut();
-        var userDto = userDao.loadById(UUID.fromString(id));
-        BeanUtils.copyProperties(userDto, returnValue);
-        return returnValue;
+        var userEntity = userDao.loadById(UUID.fromString(id));
+        return new UserExportConverter().convertToDtoOut(userEntity);
     }
 
     //default return format is MediaType.APPLICATION_XML_VALUE or APPLICATION_JSON_VALUE. Depends on accept header

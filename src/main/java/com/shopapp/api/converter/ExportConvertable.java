@@ -24,7 +24,7 @@ public interface ExportConvertable<S extends IdBasedEntity, T extends IdBasedRes
 
     T convertToDtoOutUsingModelReferenceForChildEntities(final S source);
 
-    List<T> convertToListDtoOut(final List<S> source);
+    List<T> convertToListDtoOut(final Collection<S> source);
 
     Link createSelfLink(final UUID id);
 

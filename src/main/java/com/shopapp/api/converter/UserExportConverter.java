@@ -2,7 +2,6 @@ package com.shopapp.api.converter;
 
 import com.shopapp.api.controller.UserController;
 import com.shopapp.data.entity.UserEntity;
-import com.shopapp.shared.dto.AddressDtoOut;
 import com.shopapp.shared.dto.UserDtoOut;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -16,10 +15,6 @@ public class UserExportConverter extends AbstractIdExportConverter<UserEntity, U
         var target = new UserDtoOut();
         setSourcePropertiesToTarget(source, target);
         target.add(createSelfLink(source.getId()));
-
-        target.setRoles(new RoleExportConverter()
-                .convertIdBasedEntitiesToModelReference(source.getRoles()));
-
         return target;
     }
 
@@ -52,10 +47,17 @@ public class UserExportConverter extends AbstractIdExportConverter<UserEntity, U
         if (source.getId() != null)
             target.setId(source.getId().toString());
 
-        if (source.getAddress() != null)
-            target.setAddress(new AddressDtoOut(source.getAddress()));
-
         if (source.getEmail() != null)
             target.setEmail(source.getEmail());
+
+        target.setVerified(source.isVerified());
+
+        if (source.getPhotos() != null)
+            target.setPhotos(source.getPhotos());
+
+        if(source.getAddress()!=null)
+            target.setAddress(new AddressExportConverter().convertToDtoOut(source.getAddress()));
+
+        target.setRoles(new RoleExportConverter().convertToListDtoOut(source.getRoles()));
     }
 }

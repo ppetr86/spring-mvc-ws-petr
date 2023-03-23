@@ -14,7 +14,6 @@ public class AddressExportConverter extends AbstractIdExportConverter<AddressEnt
     public AddressDtoOut convertToDtoOut(final AddressEntity source) {
         var target = new AddressDtoOut();
         setSourcePropertiesToTarget(source, target);
-
         target.add(createSelfLink(source.getId()));
         return target;
     }

@@ -57,7 +57,7 @@ public abstract class AbstractIdExportConverter<S extends IdBasedEntity, T exten
                 .collect(Collectors.toList()));
     }
 
-    public final List<T> convertToListDtoOut(final List<S> source) {
+    public final List<T> convertToListDtoOut(final Collection<S> source) {
         if (source == null || source.isEmpty()) {
             return Collections.emptyList();
         }

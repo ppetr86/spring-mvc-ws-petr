@@ -19,7 +19,7 @@ public class RoleExportConverter extends AbstractIdExportConverter<RoleEntity, R
         var target = convertToDtoOut(source);
 
         var authorityConverter = new AuthorityExportConverter();
-        target.setAuthorities(authorityConverter.convertIdBasedEntitiesToModelReference(source.getAuthorities()));
+        // target.setAuthorities(authorityConverter.convertIdBasedEntitiesToModelReference(source.getAuthorities()));
         return target;
     }
 
