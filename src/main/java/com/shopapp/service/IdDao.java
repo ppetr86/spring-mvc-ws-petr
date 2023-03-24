@@ -29,6 +29,8 @@ public interface IdDao<T extends IdBasedEntity> {
 
     List<T> loadAll();
 
+    Page<T> loadAll(Pageable pageRequest);
+
     Page<T> loadAll(Specification<T> specification, Pageable pageRequest);
 
     List<T> loadAllDelayed();

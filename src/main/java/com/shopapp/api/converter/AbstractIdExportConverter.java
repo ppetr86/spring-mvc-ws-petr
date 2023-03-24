@@ -15,6 +15,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public abstract class AbstractIdExportConverter<S extends IdBasedEntity, T extends IdBasedResource> implements ExportConvertable<S, T> {
 
+    /*protected S source;
+    protected T target;
+
+    public AbstractIdExportConverter(Supplier<S> sourceSupplier, Supplier<T> targetSupplier) {
+        this.source = sourceSupplier.get();
+        this.target = targetSupplier.get();
+    }*/
+
     @Override
     public final Set<ModelReference> convertIdBasedEntitiesToModelReference(final Collection<S> source) {
         if (source == null || source.isEmpty()) {

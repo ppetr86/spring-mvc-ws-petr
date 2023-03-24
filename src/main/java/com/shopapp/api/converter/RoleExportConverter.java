@@ -6,11 +6,14 @@ import com.shopapp.shared.dto.RoleDtoOut;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
+import java.util.UUID;
+
 public class RoleExportConverter extends AbstractIdExportConverter<RoleEntity, RoleDtoOut> {
     @Override
     public RoleDtoOut convertToDtoOut(final RoleEntity source) {
         var target = new RoleDtoOut();
         setSourcePropertiesToTarget(source, target);
+        target.add(createSelfLink(source.getId()));
         return target;
     }
 
@@ -21,6 +24,11 @@ public class RoleExportConverter extends AbstractIdExportConverter<RoleEntity, R
         var authorityConverter = new AuthorityExportConverter();
         // target.setAuthorities(authorityConverter.convertIdBasedEntitiesToModelReference(source.getAuthorities()));
         return target;
+    }
+
+    @Override
+    public Link createSelfLink(UUID id) {
+        return createSelfLink(id.toString());
     }
 
     @Override

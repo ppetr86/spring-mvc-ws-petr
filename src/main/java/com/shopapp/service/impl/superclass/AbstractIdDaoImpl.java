@@ -63,6 +63,12 @@ public abstract class AbstractIdDaoImpl<T extends IdBasedEntity> implements IdDa
 
     @Override
     @Transactional
+    public Page<T> loadAll(Pageable pageRequest) {
+        return this.getRepository().findAll(pageRequest);
+    }
+
+    @Override
+    @Transactional
     public Page<T> loadAll(final Specification<T> specification, final Pageable pageRequest) {
         return this.getRepository().findAll(specification, pageRequest);
     }

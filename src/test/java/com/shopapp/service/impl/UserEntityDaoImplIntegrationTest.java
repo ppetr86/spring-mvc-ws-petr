@@ -80,7 +80,7 @@ class UserEntityDaoImplIntegrationTest {
         var editedUser = all.get(new Random().nextInt(all.size()));
 
         if (editedUser != null) {
-            editedUser.setLastName(editedUser.getLastName() + "_EDITED");
+            editedUser.getAddress().setLastName(editedUser.getAddress().getLastName() + "_EDITED");
             userService.save(editedUser);
         }
 
@@ -100,11 +100,11 @@ class UserEntityDaoImplIntegrationTest {
         var all = userService.loadAll();
         var ivanaUser = all.stream()
                 .filter(Objects::nonNull)
-                .filter(each -> each.getFirstName().toLowerCase().contains("ivana") && each.getLastName().toLowerCase().contains("michalova"))
+                .filter(each -> each.getAddress().getFirstName().toLowerCase().contains("ivana") && each.getAddress().getLastName().toLowerCase().contains("michalova"))
                 .findFirst()
                 .get();
 
-        ivanaUser.setFirstName(ivanaUser.getFirstName() + "_EDITEDv1");
+        ivanaUser.getAddress().setFirstName(ivanaUser.getAddress().getFirstName() + "_EDITEDv1");
         userService.save(ivanaUser);
 
         var ivanaRevision = ivanaUser.getRevision();
@@ -189,7 +189,7 @@ class UserEntityDaoImplIntegrationTest {
         var firstName = "Petr";
         var countFirstName = userService.loadAll()
                 .stream()
-                .filter(each -> each.getFirstName().contains(firstName))
+                .filter(each -> each.getAddress().getFirstName().contains(firstName))
                 .count();
 
         var users = userService.getUsers(1, Integer.MAX_VALUE, firstName,
