@@ -9,8 +9,11 @@ import io.swagger.v3.oas.annotations.info.License;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+//@EnableBatchProcessing - do not add with Spring Boot 3
 @SpringBootApplication
 @OpenAPIDefinition(
         info = @Info(
@@ -32,10 +35,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
                 url = "https://www.placeholder.net"
         )
 )
+//until now all jobs were done in synchronous manner. With enableAsync it goes non blocking...
+@EnableAsync
+@EnableScheduling//schedule batch jobs for specific time
 public class SpringmvcWsPetrApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringmvcWsPetrApplication.class, args);
+        SpringApplication application = new SpringApplication(SpringmvcWsPetrApplication.class);
+        application.setAdditionalProfiles("dev");
+        application.run(args);
     }
 
     @Bean
