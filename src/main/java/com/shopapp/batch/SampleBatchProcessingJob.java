@@ -3,8 +3,12 @@ package com.shopapp.batch;
 import com.shopapp.batch.listener.FirstJobListener;
 import com.shopapp.batch.listener.FirstStepListener;
 import com.shopapp.batch.processor.FirstItemProcessor;
+import com.shopapp.batch.processor.SecondItemProcessor;
 import com.shopapp.batch.reader.FirstItemReader;
+import com.shopapp.batch.reader.SecondItemReader;
 import com.shopapp.batch.writer.FirstItemWriter;
+import com.shopapp.batch.writer.SecondItemWriter;
+import com.shopapp.data.entitydto.CurrencyEntityDtoIn;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -13,11 +17,18 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.io.File;
 
 @Service
 @AllArgsConstructor
@@ -31,6 +42,10 @@ public class SampleBatchProcessingJob {
     private FirstItemReader firstItemReader;
     private FirstItemProcessor firstItemProcessor;
     private FirstItemWriter firstItemWriter;
+
+    private SecondItemReader secondItemReader;
+    private SecondItemProcessor secondItemProcessor;
+    private SecondItemWriter secondItemWriter;
 
     @Bean
     private Step firstChunkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
@@ -68,6 +83,41 @@ public class SampleBatchProcessingJob {
         };
     }
 
+    public FlatFileItemReader<CurrencyEntityDtoIn> flatFileItemReader() {
+        var reader = new FlatFileItemReader<CurrencyEntityDtoIn>();
+        reader.setResource(new FileSystemResource(
+                new File("C:\\Users\\ppetr\\code\\spring-mvc-ws-petr\\inputFiles\\currencies.csv")));
+
+        reader.setLineMapper(new DefaultLineMapper<>() {
+            {
+                setLineTokenizer(new DelimitedLineTokenizer() {
+                    {
+                        setNames("name", "symbol", "code");
+                        setDelimiter(",");
+                    }
+                });
+                setFieldSetMapper(new BeanWrapperFieldSetMapper<>() {
+                    {
+                        setTargetType(CurrencyEntityDtoIn.class);
+                    }
+                });
+
+            }
+        });
+
+        reader.setLinesToSkip(1);
+        return reader;
+    }
+
+    @Bean
+    private Step secondChunkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("secondChunkStep", jobRepository)
+                .<CurrencyEntityDtoIn, CurrencyEntityDtoIn>chunk(1, transactionManager)
+                .reader(flatFileItemReader())
+                .writer(secondItemWriter)
+                .build();
+    }
+
     @Bean
     public Job secondJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("secondJob", jobRepository)
@@ -89,5 +139,13 @@ public class SampleBatchProcessingJob {
             System.out.println("This is second tasklet step");
             return RepeatStatus.FINISHED;
         };
+    }
+
+    @Bean
+    public Job thirdJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new JobBuilder("thirdJob", jobRepository)
+                .incrementer(new RunIdIncrementer())
+                .start(secondChunkStep(jobRepository, transactionManager))
+                .build();
     }
 }
