@@ -1,11 +1,12 @@
 package com.shopapp.service.impl;
 
+import com.shopapp.data.entity.AddressEntity;
 import com.shopapp.data.entity.UserEntity;
+import com.shopapp.data.entitydto.in.AddressDtoIn;
+import com.shopapp.data.entitydto.in.UserDtoIn;
 import com.shopapp.exceptions.InvalidParameterException;
 import com.shopapp.repository.UserRepository;
 import com.shopapp.shared.Utils;
-import com.shopapp.data.entitydto.in.AddressDtoIn;
-import com.shopapp.data.entitydto.in.UserDtoIn;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,8 +79,12 @@ class UserEntityDaoImplTest {
     @Test
     void getUser() {
         var userFromRepo = new UserEntity();
-        userEntity.setFirstName("A");
-        userEntity.setLastName("B");
+        userEntity.setAddress(new AddressEntity() {
+            {
+                setFirstName("A");
+                setLastName("B");
+            }
+        });
         userEntity.setEmail("test@test.com");
         userEntity.setEncryptedPassword("123");
         //userEntity.setEnabled(true);
@@ -90,7 +95,7 @@ class UserEntityDaoImplTest {
 
         var userdto = userService.findByEmail("test@test.com");
         assertNotNull(userdto);
-        assertEquals("A", userdto.getFirstName());
+        assertEquals("A", userdto.getAddress().getFirstName());
     }
 
     @Test
@@ -124,18 +129,25 @@ class UserEntityDaoImplTest {
         MockitoAnnotations.openMocks(this);
 
         userEntity = new UserEntity();
-        userEntity.setFirstName("Petr");
-        userEntity.setLastName("Novotny");
+        userEntity.setAddress(new AddressEntity() {
+            {
+                setFirstName("Petr");
+                setLastName("Novotny");
+            }
+        });
         userEntity.setEmail("test@test.com");
         userEntity.setEncryptedPassword(encryptedPassword);
         //userEntity.setEnabled(true);
         userEntity.setVerified(true);
         userEntity.setId(UUID.randomUUID());
 
-
         userDtoIn = new UserDtoIn();
-        userDtoIn.setFirstName("Petr");
-        userDtoIn.setLastName("Novotny");
+        userDtoIn.setAddress(new AddressDtoIn() {
+            {
+                setFirstName("Petr");
+                setLastName("Novotny");
+            }
+        });
         userDtoIn.setEmail("test@test.com");
     }
 
@@ -148,16 +160,20 @@ class UserEntityDaoImplTest {
         UserDtoIn userDtoIn = new UserDtoIn();
         List<AddressDtoIn> addressesDto = getAddressesDto();
         //userDtoIn.setAddresses(addressesDto);
-        userDtoIn.setFirstName("user_from_test");
-        userDtoIn.setLastName("user_from_test");
+        userDtoIn.setAddress(new AddressDtoIn() {
+            {
+                setFirstName("user_from_test");
+                setLastName("user_from_test");
+            }
+        });
         userDtoIn.setPassword("12345678");
         userDtoIn.setEmail("user_from_test@test.com");
 
         var storedUserDetails = userService.createUser(userDtoIn);
 
         assertNotNull(storedUserDetails);
-        assertEquals(userEntity.getFirstName(), storedUserDetails.getFirstName());
-        assertEquals(userEntity.getLastName(), storedUserDetails.getLastName());
+        assertEquals(userEntity.getAddress().getFirstName(), storedUserDetails.getAddress().getFirstName());
+        assertEquals(userEntity.getAddress().getLastName(), storedUserDetails.getAddress().getLastName());
         assertNotNull(storedUserDetails.getId());
 
         //verify(utils,times(storedUserDetails.getAddresses().size())).generateAddressId(anyInt());
