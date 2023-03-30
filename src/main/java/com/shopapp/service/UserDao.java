@@ -1,7 +1,7 @@
 package com.shopapp.service;
 
 import com.shopapp.data.entity.UserEntity;
-import com.shopapp.shared.dto.UserDtoIn;
+import com.shopapp.data.entitydto.in.UserDtoIn;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

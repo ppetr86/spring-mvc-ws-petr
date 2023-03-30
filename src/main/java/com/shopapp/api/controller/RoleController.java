@@ -3,7 +3,7 @@ package com.shopapp.api.controller;
 import com.shopapp.api.converter.RoleExportConverter;
 import com.shopapp.data.entity.RoleEntity;
 import com.shopapp.service.RoleDao;
-import com.shopapp.shared.dto.RoleDtoOut;
+import com.shopapp.data.entitydto.out.RoleDtoOut;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

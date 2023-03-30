@@ -1,4 +1,4 @@
-package com.shopapp.shared.dto;
+package com.shopapp.data.entitydto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

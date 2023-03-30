@@ -1,4 +1,4 @@
-package com.shopapp.shared.dto;
+package com.shopapp.data.entitydto.in;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreditCardDtoIn {
+public class CreditCardDtoIn extends AbstractIdBasedDtoIn {
 
     @NotNull
     private String creditCardNumber;

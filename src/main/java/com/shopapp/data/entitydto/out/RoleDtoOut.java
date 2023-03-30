@@ -1,6 +1,5 @@
-package com.shopapp.shared.dto;
+package com.shopapp.data.entitydto.out;
 
-import com.shopapp.api.converter.IdBasedResource;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RoleDtoOut extends IdBasedResource {
+public class RoleDtoOut extends AbstractIdBasedDtoOut {
 
     private String name;
 

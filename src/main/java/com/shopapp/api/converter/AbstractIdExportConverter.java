@@ -3,6 +3,7 @@ package com.shopapp.api.converter;
 import com.shopapp.data.entity.superclass.IdBasedEntity;
 import com.shopapp.data.entitydto.ListEnvelope;
 import com.shopapp.data.entitydto.ModelReference;
+import com.shopapp.data.entitydto.out.AbstractIdBasedDtoOut;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.hateoas.Link;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
-public abstract class AbstractIdExportConverter<S extends IdBasedEntity, T extends IdBasedResource> implements ExportConvertable<S, T> {
+public abstract class AbstractIdExportConverter<S extends IdBasedEntity, T extends AbstractIdBasedDtoOut> implements ExportConvertable<S, T> {
 
     /*protected S source;
     protected T target;

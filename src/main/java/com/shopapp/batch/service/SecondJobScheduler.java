@@ -30,7 +30,7 @@ public class SecondJobScheduler {
     }
 
     //http://www.cronmaker.com - each one minute, do not include the last asterisk
-    @Scheduled(cron = "0 0/1 * 1/1 * ?")
+    @Scheduled(cron = "0 0/30 * 1/1 * ?")
     public void secondJobStarter() {
         Map<String, JobParameter<?>> params = new HashMap<>();
         params.put("currentTime", new JobParameter<>(System.currentTimeMillis(), Long.class));

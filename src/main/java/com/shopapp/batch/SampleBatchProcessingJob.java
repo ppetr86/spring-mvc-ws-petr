@@ -2,13 +2,14 @@ package com.shopapp.batch;
 
 import com.shopapp.batch.listener.FirstJobListener;
 import com.shopapp.batch.listener.FirstStepListener;
-import com.shopapp.batch.processor.FirstItemProcessor;
-import com.shopapp.batch.processor.SecondItemProcessor;
+import com.shopapp.batch.processor.Processors;
 import com.shopapp.batch.reader.FirstItemReader;
-import com.shopapp.batch.reader.SecondItemReader;
-import com.shopapp.batch.writer.FirstItemWriter;
-import com.shopapp.batch.writer.SecondItemWriter;
-import com.shopapp.data.entitydto.CurrencyEntityDtoIn;
+import com.shopapp.batch.reader.Readers;
+import com.shopapp.batch.writer.Writers;
+import com.shopapp.data.entity.CurrencyEntity;
+import com.shopapp.data.entitydto.in.CurrencyEntityDtoIn;
+import com.shopapp.data.entitydto.out.CurrencyEntityDtoOut;
+import com.shopapp.data.entitydto.out.UserDtoOut;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -17,43 +18,38 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import java.io.File;
 
 @Service
 @AllArgsConstructor
 @Profile("dev")
+@DependsOn()
 public class SampleBatchProcessingJob {
 
+    private FirstTaskLet firstTaskLet;
     private SecondTasklet secondTasklet;
     private FirstJobListener firstJobListener;
     private FirstStepListener firstStepListener;
 
-    private FirstItemReader firstItemReader;
-    private FirstItemProcessor firstItemProcessor;
-    private FirstItemWriter firstItemWriter;
+    private Processors processors;
 
-    private SecondItemReader secondItemReader;
-    private SecondItemProcessor secondItemProcessor;
-    private SecondItemWriter secondItemWriter;
+    private FirstItemReader firstItemReader;
+
+    private Readers readers;
+    private Writers writers;
 
     @Bean
     private Step firstChunkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("firstChunkStep", jobRepository)
                 .<Integer, Long>chunk(3, transactionManager)
                 .reader(firstItemReader) //item reader must be provided in chunk oriented step
-                .processor(firstItemProcessor) // processor is not mandatory in chunk oriented step
-                .writer(firstItemWriter) //item writer must be provided in chunk oriented steps
+                .processor(processors.getIntegerLongItemProcessor()) // processor is not mandatory in chunk oriented step
+                .writer(writers.longItemWriter()) //item writer must be provided in chunk oriented steps
                 .build();
     }
 
@@ -62,8 +58,12 @@ public class SampleBatchProcessingJob {
     public Job firstJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("firstJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(firstStep(jobRepository, transactionManager))
-                .next(secondStep(jobRepository, transactionManager))
+                /*.start(firstStep(jobRepository, transactionManager))
+                .next(secondStep(jobRepository, transactionManager))*/
+                //.start(jdbcChunkStep(jobRepository, transactionManager))
+                //.start(secondJdBcChunkStep(jobRepository,transactionManager))
+                .start(secondJdBc2ChunkStep(jobRepository, transactionManager))
+                //.start(restApiChunkStep(jobRepository, transactionManager))
                 .listener(firstJobListener)
                 .build();
     }
@@ -71,50 +71,56 @@ public class SampleBatchProcessingJob {
     @Bean
     private Step firstStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("firstStep", jobRepository)
-                .tasklet(firstTask(), transactionManager).allowStartIfComplete(true)
+                .tasklet(firstTaskLet, transactionManager).allowStartIfComplete(true)
                 .listener(firstStepListener)
                 .build();
     }
 
-    private Tasklet firstTask() {
-        return (contribution, chunkContext) -> {
-            System.out.println("this is first tasklet");
-            return RepeatStatus.FINISHED;
-        };
+    private Step jdbcChunkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("jdbcChunkStep", jobRepository)
+                .<CurrencyEntity, CurrencyEntity>chunk(1, transactionManager)
+                .reader(readers.jdbcCursorItemReader())
+                .writer(writers.idBasedEntityItemWriter())
+                .build();
     }
 
-    public FlatFileItemReader<CurrencyEntityDtoIn> flatFileItemReader() {
-        var reader = new FlatFileItemReader<CurrencyEntityDtoIn>();
-        reader.setResource(new FileSystemResource(
-                new File("C:\\Users\\ppetr\\code\\spring-mvc-ws-petr\\inputFiles\\currencies.csv")));
-
-        reader.setLineMapper(new DefaultLineMapper<>() {
-            {
-                setLineTokenizer(new DelimitedLineTokenizer() {
-                    {
-                        setNames("name", "symbol", "code");
-                        setDelimiter(",");
-                    }
-                });
-                setFieldSetMapper(new BeanWrapperFieldSetMapper<>() {
-                    {
-                        setTargetType(CurrencyEntityDtoIn.class);
-                    }
-                });
-
-            }
-        });
-
-        reader.setLinesToSkip(1);
-        return reader;
+    private Step restApiChunkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("restApiChunkStep", jobRepository)
+                .<UserDtoOut, UserDtoOut>chunk(1, transactionManager)
+                .reader(readers.itemReaderAdapter())
+                .writer(writers.abstractIdBasedDtoOutItemWriter())
+                .build();
     }
 
-    @Bean
     private Step secondChunkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("secondChunkStep", jobRepository)
-                .<CurrencyEntityDtoIn, CurrencyEntityDtoIn>chunk(1, transactionManager)
-                .reader(flatFileItemReader())
-                .writer(secondItemWriter)
+                .<CurrencyEntityDtoIn, CurrencyEntityDtoOut>chunk(1, transactionManager)
+                //.reader(readers.flatFileItemReader())
+                //.reader(readers.jsonItemReader())
+                .reader(readers.staxEventItemReader())
+                .processor(processors.getCurrencyEntityDtoInCurrencyEntityDtoOutItemProcessor()) // processor is not mandatory in chunk oriented step
+                //.reader(readers.jdbcCursorItemReader())
+                //.writer(dtoInItemWriter)
+                .writer(writers.flatFileItemWriter())
+                //.writer(writers.jsonFileItemWriter())
+                .build();
+    }
+
+    private Step secondJdBc2ChunkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("secondChunkStep", jobRepository)
+                .<CurrencyEntityDtoIn, CurrencyEntity>chunk(1, transactionManager)
+                .reader(readers.flatFileItemReader())
+                .processor(processors.getCurrencyEntityDtoInCurrencyEntityItemProcessor()) // processor is not mandatory in chunk oriented step
+                .writer(writers.jdbcBatchItemWriter())
+                .build();
+    }
+
+    private Step secondJdBcChunkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("secondChunkStep", jobRepository)
+                .<CurrencyEntity, CurrencyEntityDtoOut>chunk(1, transactionManager)
+                .reader(readers.jdbcCursorItemReader())
+                .processor(processors.getCurrencyEntityCurrencyEntityDtoOutProcessor()) // processor is not mandatory in chunk oriented step
+                .writer(writers.flatFileItemWriter())
                 .build();
     }
 
@@ -127,7 +133,6 @@ public class SampleBatchProcessingJob {
                 .build();
     }
 
-    @Bean
     private Step secondStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("secondStep", jobRepository)
                 .tasklet(secondTasklet, transactionManager).allowStartIfComplete(true)
@@ -141,11 +146,4 @@ public class SampleBatchProcessingJob {
         };
     }
 
-    @Bean
-    public Job thirdJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new JobBuilder("thirdJob", jobRepository)
-                .incrementer(new RunIdIncrementer())
-                .start(secondChunkStep(jobRepository, transactionManager))
-                .build();
-    }
 }

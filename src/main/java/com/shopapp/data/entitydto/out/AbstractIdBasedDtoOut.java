@@ -1,5 +1,6 @@
-package com.shopapp.api.converter;
+package com.shopapp.data.entitydto.out;
 
+import com.shopapp.api.converter.ApiHasId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,8 @@ import org.springframework.hateoas.RepresentationModel;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class IdBasedResource extends RepresentationModel<IdBasedResource> implements ApiHasId {
+public abstract class AbstractIdBasedDtoOut extends RepresentationModel<AbstractIdBasedDtoOut> implements ApiHasId {
 
-    private String id;
+    protected String id;
 
 }

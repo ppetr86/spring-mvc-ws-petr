@@ -1,11 +1,11 @@
 package com.shopapp.data.entitydto;
 
-import com.shopapp.api.converter.IdBasedResource;
+import com.shopapp.data.entitydto.out.AbstractIdBasedDtoOut;
 import com.shopapp.data.entity.superclass.IdBasedEntity;
 
 import java.util.Objects;
 
-public class ModelReference extends IdBasedResource {
+public class ModelReference extends AbstractIdBasedDtoOut {
 
     public ModelReference(IdBasedEntity obj) {
         if (obj.getId() != null)

@@ -2,7 +2,7 @@ package com.shopapp.api.controller;
 
 import com.shopapp.api.converter.AuthorityExportConverter;
 import com.shopapp.service.AuthorityDao;
-import com.shopapp.shared.dto.AuthorityDtoOut;
+import com.shopapp.data.entitydto.out.AuthorityDtoOut;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

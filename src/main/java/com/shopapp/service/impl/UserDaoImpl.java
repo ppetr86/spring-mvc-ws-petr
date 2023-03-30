@@ -16,7 +16,7 @@ import com.shopapp.service.specification.GenericSpecificationsBuilder;
 import com.shopapp.shared.AmazonSES;
 import com.shopapp.shared.Roles;
 import com.shopapp.shared.Utils;
-import com.shopapp.shared.dto.UserDtoIn;
+import com.shopapp.data.entitydto.in.UserDtoIn;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;

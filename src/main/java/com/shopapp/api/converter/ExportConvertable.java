@@ -3,6 +3,7 @@ package com.shopapp.api.converter;
 import com.shopapp.data.entity.superclass.IdBasedEntity;
 import com.shopapp.data.entitydto.ListEnvelope;
 import com.shopapp.data.entitydto.ModelReference;
+import com.shopapp.data.entitydto.out.AbstractIdBasedDtoOut;
 import org.springframework.hateoas.Link;
 
 import java.util.Collection;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public interface ExportConvertable<S extends IdBasedEntity, T extends IdBasedResource> {
+public interface ExportConvertable<S extends IdBasedEntity, T extends AbstractIdBasedDtoOut> {
 
     Set<ModelReference> convertIdBasedEntitiesToModelReference(final Collection<S> source);
 

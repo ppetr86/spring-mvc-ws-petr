@@ -2,7 +2,7 @@ package com.shopapp.api.converter;
 
 import com.shopapp.api.controller.UserController;
 import com.shopapp.data.entity.UserEntity;
-import com.shopapp.shared.dto.UserDtoOut;
+import com.shopapp.data.entitydto.out.UserDtoOut;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 

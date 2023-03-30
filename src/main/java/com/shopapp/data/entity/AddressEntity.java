@@ -1,13 +1,14 @@
 package com.shopapp.data.entity;
 
 import com.shopapp.data.definition.AddressDefinition;
-import com.shopapp.shared.dto.AddressDtoIn;
+import com.shopapp.data.entitydto.in.AddressDtoIn;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "addresses")
@@ -38,4 +39,20 @@ public class AddressEntity extends AbstractAddress implements Serializable, Addr
         this.defaultForShipping = in.isDefaultForShipping();
         this.country = in.getCountry();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(super.equalsId(o))
+            return true;
+        if (this == o) return true;
+        if (!(o instanceof AddressEntity that)) return false;
+        return defaultForShipping == that.defaultForShipping && Objects.equals(user, that.user);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return hashCodeId();
+    }
+
 }

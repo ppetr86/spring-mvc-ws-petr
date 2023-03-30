@@ -1,7 +1,7 @@
 package com.shopapp.data.entity;
 
 import com.shopapp.data.entity.superclass.IdBasedTimeRevisionEntity;
-import com.shopapp.shared.dto.CreditCardDtoIn;
+import com.shopapp.data.entitydto.in.CreditCardDtoIn;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

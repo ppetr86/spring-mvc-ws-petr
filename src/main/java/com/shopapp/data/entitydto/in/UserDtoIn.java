@@ -1,4 +1,4 @@
-package com.shopapp.shared.dto;
+package com.shopapp.data.entitydto.in;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserDtoIn implements Serializable {
+public class UserDtoIn extends AbstractIdBasedDtoIn {
 
     @Serial
     private static final long serialVersionUID = 6835192601898364280L;

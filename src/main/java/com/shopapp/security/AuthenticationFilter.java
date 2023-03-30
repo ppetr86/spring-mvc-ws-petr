@@ -3,7 +3,7 @@ package com.shopapp.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopapp.SpringApplicationContext;
 import com.shopapp.service.UserDao;
-import com.shopapp.shared.dto.LoginDto;
+import com.shopapp.data.entitydto.LoginDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.FilterChain;

@@ -1,7 +1,7 @@
 package com.shopapp.service;
 
 import com.shopapp.data.entity.AddressEntity;
-import com.shopapp.shared.dto.AddressDtoIn;
+import com.shopapp.data.entitydto.in.AddressDtoIn;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.shopapp.shared.dto;
+package com.shopapp.data.entitydto.in;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddressDtoIn {
+public class AddressDtoIn extends AbstractIdBasedDtoIn {
 
     @NotNull
     @Size(min = 5, message = "{validation.phoneNumber.size.too_short}")

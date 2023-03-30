@@ -4,7 +4,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
-import com.shopapp.shared.dto.UserDtoIn;
+import com.shopapp.data.entitydto.in.UserDtoIn;
 import org.springframework.stereotype.Service;
 
 @Service

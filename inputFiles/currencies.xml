@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<currencyentitiesdtoin>
+	<currencyentitydtoin>
+		<name>Czech koruna</name>
+		<symbol>Kč</symbol>
+		<code>CZK</code>
+	</currencyentitydtoin>
+	<currencyentity>
+		<name>Croatian kuna</name>
+		<symbol>kn</symbol>
+		<code>HRK</code>
+	</currencyentity>
+	<currencyentity>
+		<name>Danish krone</name>
+		<symbol>kr</symbol>
+		<code>DKK</code>
+	</currencyentity>
+	<currencyentity>
+		<name>Hungarian forint</name>
+		<symbol>ft</symbol>
+		<code>HUF</code>
+	</currencyentity>
+	<currencyentity>
+		<name>Euro</name>
+		<symbol>€</symbol>
+		<code>EUR</code>
+	</currencyentity>
+</currencyentitiesdtoin>

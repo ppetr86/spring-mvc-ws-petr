@@ -1,0 +1,37 @@
+[
+	{
+		"name": "Czech koruna",
+		"symbol": "Kč",
+		"code": "CZK"
+	},
+	{
+		"name": "Croatian kuna",
+		"symbol": "kn",
+		"code": "HRK"
+	},
+	{
+		"name": "Danish krone",
+		"symbol": "kr",
+		"code": "DKK"
+	},
+	{
+		"name": "Hungarian forint",
+		"symbol": "ft",
+		"code": "HUF"
+	},
+	{
+		"name": "Euro",
+		"symbol": "€",
+		"code": "EUR"
+	},
+	{
+		"symbol": "$",
+		"name": "US Dollar",
+		"code": "USD"
+	},
+	{
+	"symbol": "CA$",
+	"name": "Canadian Dollar",
+	"code": "CAD"
+	}
+]

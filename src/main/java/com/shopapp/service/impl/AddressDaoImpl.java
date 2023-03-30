@@ -6,7 +6,7 @@ import com.shopapp.service.AddressDao;
 import com.shopapp.service.impl.superclass.AbstractIdDaoImpl;
 import com.shopapp.service.specification.GenericSpecificationsBuilder;
 import com.shopapp.service.specification.SpecificationFactory;
-import com.shopapp.shared.dto.AddressDtoIn;
+import com.shopapp.data.entitydto.in.AddressDtoIn;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

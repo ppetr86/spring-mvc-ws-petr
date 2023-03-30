@@ -8,7 +8,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.UUID;
 
-public class AddressExportConverter extends AbstractIdExportConverter<AddressEntity, AddressDtoOut> {
+public class CurrencyExportConverter extends AbstractIdExportConverter<AddressEntity, AddressDtoOut> {
 
     @Override
     public AddressDtoOut convertToDtoOut(final AddressEntity source) {

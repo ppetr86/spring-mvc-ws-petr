@@ -1,4 +1,4 @@
-package com.shopapp.shared.dto;
+package com.shopapp.data.entitydto.out;
 
 import com.shopapp.data.entity.CreditCardEntity;
 import lombok.AllArgsConstructor;

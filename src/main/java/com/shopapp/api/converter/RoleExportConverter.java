@@ -2,7 +2,7 @@ package com.shopapp.api.converter;
 
 import com.shopapp.api.controller.RoleController;
 import com.shopapp.data.entity.RoleEntity;
-import com.shopapp.shared.dto.RoleDtoOut;
+import com.shopapp.data.entitydto.out.RoleDtoOut;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
